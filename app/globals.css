@@ -1,0 +1,74 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-paper text-ink font-sans antialiased;
+  }
+
+  /* Accessibility-first: a single, clearly visible focus ring everywhere. */
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 2px solid theme("colors.accent");
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+
+  ::selection {
+    background: theme("colors.pin-soft");
+    color: theme("colors.ink");
+  }
+
+  h1, h2, h3 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  /* Reusable eyebrow label (mono, spaced) — a structural device used across screens */
+  .eyebrow {
+    @apply font-mono text-[11px] uppercase tracking-eyebrow text-accent-soft;
+  }
+
+  /* "Skip to content" link for keyboard users */
+  .skip-link {
+    @apply sr-only;
+  }
+  .skip-link:focus {
+    @apply not-sr-only fixed left-4 top-4 z-50 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow-lift;
+  }
+}
+
+@layer utilities {
+  /* Signature tactile-dot field used as ambient texture (decorative, aria-hidden). */
+  .pin-texture {
+    background-image: radial-gradient(theme("colors.pin-soft") 1.4px, transparent 1.5px);
+    background-size: 16px 16px;
+    background-position: 0 0;
+  }
+  .pin-texture-dense {
+    background-image: radial-gradient(theme("colors.line") 1.2px, transparent 1.3px);
+    background-size: 11px 11px;
+  }
+}
+
+/* Respect reduced-motion preferences. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

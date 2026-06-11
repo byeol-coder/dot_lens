@@ -1,0 +1,866 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>Dot Pad Simulator · Dot Lens with Gemini</title>
+<style>
+  :root{
+    --bg:#0d1017;
+    --bg2:#10141d;
+    --surface:#161b27;
+    --surface2:#1b2230;
+    --line:#28303f;
+    --ink:#eef2f8;
+    --muted:#93a0b5;
+    --faint:#5b6679;
+    --pin-low:#262e3d;     /* lowered pin */
+    --pin-ctx:#3d4759;     /* context pin */
+    --amber:#f2c14e;       /* raised pin */
+    --amber-hi:#fde9b0;
+    --cyan:#56c5e8;
+    --green:#5fd6a0;
+    --red:#f08a8a;
+    --mono:ui-monospace,"SF Mono",Menlo,"Cascadia Mono",Consolas,monospace;
+    --sans:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    background:
+      radial-gradient(1200px 700px at 78% -10%, #16203200 0%, #0d1017 60%),
+      radial-gradient(900px 500px at 10% 110%, #131a2a 0%, #0d1017 55%),
+      var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+    min-height:100vh;
+  }
+  .visually-hidden{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+  a{color:var(--cyan)}
+
+  /* ---------- layout ---------- */
+  .wrap{max-width:1180px;margin:0 auto;padding:22px clamp(14px,3vw,32px) 56px}
+  header.bar{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:22px;
+  }
+  .brand{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .brand .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--cyan)}
+  .brand h1{margin:0;font-size:clamp(18px,2.4vw,23px);font-weight:650;letter-spacing:-.01em}
+  .brand .assign{font-size:13px;color:var(--muted)}
+  .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+
+  .seg{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px;gap:2px}
+  .seg button{
+    appearance:none;border:0;background:transparent;color:var(--muted);
+    font-family:var(--mono);font-size:12px;letter-spacing:.04em;
+    padding:6px 11px;border-radius:7px;cursor:pointer;transition:.15s;
+  }
+  .seg button[aria-pressed="true"]{background:var(--surface2);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+  .seg button:hover{color:var(--ink)}
+
+  .conn{
+    display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12px;
+    background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 11px;cursor:pointer;color:var(--ink);
+  }
+  .conn .led{width:9px;height:9px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+  .conn.off .led{background:var(--red);box-shadow:0 0 10px var(--red)}
+
+  .grid{display:grid;grid-template-columns:1.55fr 1fr;gap:22px;align-items:start}
+  @media (max-width:860px){.grid{grid-template-columns:1fr}}
+
+  .card{background:linear-gradient(180deg,var(--surface) 0%,var(--bg2) 100%);border:1px solid var(--line);border-radius:18px}
+  .card .hd{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .card .hd h2{margin:0;font-size:12px;font-family:var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .card .bd{padding:18px}
+
+  /* ---------- device / dot field ---------- */
+  .device .bd{padding:16px 16px 18px}
+  .surface-wrap{
+    position:relative;border-radius:13px;padding:12px;
+    background:
+      repeating-linear-gradient(0deg,#0a0d14 0 1px,transparent 1px 10px),
+      repeating-linear-gradient(90deg,#0a0d14 0 1px,transparent 1px 10px),
+      #0b0e15;
+    border:1px solid #222a39;box-shadow:inset 0 2px 22px #00000066;
+    transition:filter .25s, opacity .25s;
+  }
+  .surface-wrap.disconnected{filter:grayscale(1) brightness(.62);opacity:.85}
+  svg.field{display:block;width:100%;height:auto}
+  .dot{transition:fill .28s ease, r .28s ease}
+  .disconnected .dot{transition:none}
+  @media (prefers-reduced-motion:reduce){.dot{transition:none}}
+
+  .obj-readout{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin:14px 2px 12px;flex-wrap:wrap}
+  .obj-readout .where{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--cyan)}
+  .obj-readout .name{font-size:21px;font-weight:650;letter-spacing:-.01em}
+  .obj-readout .step{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  /* braille strip */
+  .braille{
+    background:#0b0e15;border:1px solid #222a39;border-radius:11px;padding:12px 12px 9px;
+    box-shadow:inset 0 2px 14px #00000055;transition:opacity .25s;
+  }
+  .braille.dim{opacity:.45}
+  .braille-cells{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px}
+  .bcell{flex:0 0 auto}
+  .bdot-on{fill:var(--amber)}
+  .bdot-off{fill:#1c2433}
+  .braille .mirror{margin-top:9px;display:flex;justify-content:space-between;gap:10px;align-items:center}
+  .braille .mirror .txt{font-family:var(--mono);font-size:13px;letter-spacing:.05em;color:var(--ink)}
+  .braille .mirror .tag{font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.08em;white-space:nowrap}
+
+  /* keys */
+  .keys{margin-top:16px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+  .panrow{grid-column:1 / -1;display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .fkrow{grid-column:1 / -1;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  .key{
+    appearance:none;cursor:pointer;text-align:left;color:var(--ink);
+    background:linear-gradient(180deg,#222a3a 0%,#161c28 100%);
+    border:1px solid #2c3547;border-radius:12px;
+    border-top:1px solid #3a4459;
+    padding:11px 13px;display:flex;flex-direction:column;gap:2px;
+    box-shadow:0 2px 0 #0a0d14, 0 6px 16px #00000040;
+    transition:transform .06s, box-shadow .06s, border-color .15s;
+  }
+  .key:hover{border-color:#46536c}
+  .key:active,.key.flash{transform:translateY(2px);box-shadow:0 0 0 #0a0d14, 0 2px 8px #00000040}
+  .key .kk{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--cyan)}
+  .key .kl{font-size:14px;font-weight:600}
+  .key .ks{font-size:11.5px;color:var(--muted);line-height:1.35}
+  .key:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+
+  .toggles{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .chip{
+    appearance:none;cursor:pointer;font-family:var(--mono);font-size:11.5px;letter-spacing:.04em;
+    background:var(--surface);border:1px solid var(--line);border-radius:999px;color:var(--muted);padding:7px 12px;display:inline-flex;gap:7px;align-items:center;
+  }
+  .chip[aria-pressed="true"]{color:var(--ink);border-color:#3c4860;background:var(--surface2)}
+  .chip .dotind{width:7px;height:7px;border-radius:50%;background:var(--faint)}
+  .chip[aria-pressed="true"] .dotind{background:var(--cyan);box-shadow:0 0 8px var(--cyan)}
+
+  /* ---------- side panel ---------- */
+  .panel .modes{display:flex;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+  .mode{
+    appearance:none;cursor:pointer;flex:1;min-width:90px;
+    background:var(--surface);border:1px solid var(--line);border-radius:11px;color:var(--muted);
+    padding:10px 8px;text-align:center;transition:.15s;
+  }
+  .mode .mt{font-size:13px;font-weight:650;color:inherit}
+  .mode .md{font-size:10.5px;font-family:var(--mono);letter-spacing:.04em;margin-top:2px;color:var(--faint)}
+  .mode[aria-pressed="true"]{border-color:var(--cyan);background:#11202b;color:var(--ink)}
+  .mode[aria-pressed="true"] .md{color:var(--cyan)}
+  .mode:hover{color:var(--ink)}
+
+  .transcript{padding:8px 18px 4px;max-height:330px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+  .msg{display:flex;gap:10px;align-items:flex-start}
+  .msg .av{flex:0 0 auto;width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:700;margin-top:1px}
+  .msg.gemini .av{background:#13212c;color:var(--cyan);border:1px solid #224050}
+  .msg.system .av{background:#1c2230;color:var(--muted);border:1px solid var(--line)}
+  .msg.result.ok .av{background:#10241a;color:var(--green);border:1px solid #1f4a36}
+  .msg.result.no .av{background:#2a1719;color:var(--red);border:1px solid #4a2226}
+  .msg .body{font-size:13.5px}
+  .msg.gemini .body strong{color:var(--cyan);font-weight:600}
+  .msg .body .who{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-bottom:2px}
+
+  .meta{display:flex;gap:8px;flex-wrap:wrap;padding:14px 18px;border-top:1px solid var(--line);margin-top:6px}
+  .stat{flex:1;min-width:84px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:9px 11px}
+  .stat .sv{font-family:var(--mono);font-size:17px;color:var(--ink)}
+  .stat .sl{font-size:10.5px;color:var(--muted);letter-spacing:.04em}
+
+  /* legend */
+  .legend{margin-top:22px}
+  .legend .bd{padding:6px 18px 16px}
+  .legend table{width:100%;border-collapse:collapse;font-size:13px}
+  .legend td{padding:9px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+  .legend tr:last-child td{border-bottom:0}
+  .legend .k{font-family:var(--mono);color:var(--cyan);white-space:nowrap;width:120px}
+  .legend .d{color:var(--muted)}
+  .footnote{color:var(--faint);font-size:12px;margin-top:18px;text-align:center}
+  .footnote code{font-family:var(--mono);color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <div class="brand">
+      <span class="kicker">Dot Lens with Gemini · Dot Pad</span>
+      <h1 id="appTitle">Dot Pad Simulator</h1>
+      <span class="assign" id="assignTitle">Assignment: Explore the Water Cycle Diagram</span>
+    </div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Language">
+        <button id="langEn" aria-pressed="true">EN</button>
+        <button id="langKo" aria-pressed="false">한국어</button>
+      </div>
+      <button class="conn" id="connBtn" aria-pressed="true">
+        <span class="led"></span><span id="connLabel">Dot Pad connected</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- DEVICE -->
+    <section class="card device" aria-label="Dot Pad device">
+      <div class="hd"><h2 id="deviceHd">Tactile surface · 60 × 40</h2><span id="modeTag" style="font-family:var(--mono);font-size:11px;color:var(--cyan);letter-spacing:.12em">GUIDED</span></div>
+      <div class="bd">
+        <div class="surface-wrap" id="surfaceWrap">
+          <svg class="field" id="field" viewBox="0 0 600 400" role="img" aria-label="Tactile graphic area"></svg>
+        </div>
+
+        <div class="obj-readout">
+          <div>
+            <div class="where" id="whereLbl">YOU ARE HERE</div>
+            <div class="name" id="objName">Water cycle</div>
+          </div>
+          <div class="step" id="stepLbl">Step 1 of 6</div>
+        </div>
+
+        <div class="braille" id="brailleBox" aria-hidden="true">
+          <div class="braille-cells" id="brailleCells"></div>
+          <div class="mirror">
+            <span class="txt" id="brailleText">water cycle</span>
+            <span class="tag" id="brailleTag">braille · uncontracted</span>
+          </div>
+        </div>
+
+        <div class="keys" aria-label="Dot Pad keys">
+          <div class="panrow">
+            <button class="key" id="kLeft"><span class="kk">◀ LEFT PAN</span><span class="kl" data-l="left">Previous</span><span class="ks" data-l="leftSub">previous object / step</span></button>
+            <button class="key" id="kRight"><span class="kk">RIGHT PAN ▶</span><span class="kl" data-l="right">Next</span><span class="ks" data-l="rightSub">next object / step</span></button>
+          </div>
+          <div class="fkrow">
+            <button class="key" id="kF1"><span class="kk">F1</span><span class="kl" data-l="f1">Where am I</span><span class="ks" data-l="f1Sub">explain here</span></button>
+            <button class="key" id="kF2"><span class="kk">F2</span><span class="kl" data-l="f2">Hint</span><span class="ks" data-l="f2Sub">a nudge</span></button>
+            <button class="key" id="kF3"><span class="kk">F3</span><span class="kl" data-l="f3">Quiz / Check</span><span class="ks" data-l="f3Sub">open or submit</span></button>
+            <button class="key" id="kF4"><span class="kk">F4</span><span class="kl" data-l="f4">Repeat</span><span class="ks" data-l="f4Sub">2× = full summary</span></button>
+          </div>
+        </div>
+
+        <div class="toggles">
+          <button class="chip" id="ctxChip" aria-pressed="false"><span class="dotind"></span><span data-l="ctxChip">Show full diagram</span></button>
+          <button class="chip" id="speakChip" aria-pressed="false"><span class="dotind"></span><span data-l="speakChip">Speak aloud</span></button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SIDE PANEL -->
+    <aside class="card panel" aria-label="Dot Lens Gemini side panel">
+      <div class="hd"><h2 id="panelHd">Gemini side panel</h2><span id="hintTag" style="font-family:var(--mono);font-size:11px;color:var(--muted)">hints: 0</span></div>
+      <div class="modes" role="group" aria-label="Learning mode">
+        <button class="mode" id="mGuided" aria-pressed="true"><span class="mt" data-l="mGuided">Guided</span><span class="md">F-LED</span></button>
+        <button class="mode" id="mExplore" aria-pressed="false"><span class="mt" data-l="mExplore">Explore</span><span class="md">FREE</span></button>
+        <button class="mode" id="mQuiz" aria-pressed="false"><span class="mt" data-l="mQuiz">Quiz</span><span class="md">CHECK</span></button>
+      </div>
+      <div class="transcript" id="transcript" aria-hidden="true"></div>
+      <div class="meta">
+        <div class="stat"><div class="sv" id="statObjects">0/4</div><div class="sl" data-l="statObjects">objects explored</div></div>
+        <div class="stat"><div class="sv" id="statHints">0</div><div class="sl" data-l="statHints">hints used</div></div>
+        <div class="stat"><div class="sv" id="statQuiz">–</div><div class="sl" data-l="statQuiz">quiz</div></div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- LEGEND -->
+  <section class="card legend" aria-label="Key guide">
+    <div class="hd"><h2 data-l="legendHd">Key guide</h2><span style="font-family:var(--mono);font-size:11px;color:var(--faint)" data-l="legendKbd">keyboard: ← →  ·  1 2 3 4</span></div>
+    <div class="bd">
+      <table>
+        <tr><td class="k">◀ / ▶ <span data-l="lgPan">Panning</span></td><td class="d" data-l="lgPanD">Move backward / forward through objects, layers, or steps.</td></tr>
+        <tr><td class="k">F1</td><td class="d" data-l="lgF1D">Explain the current area — what is under your fingers right now.</td></tr>
+        <tr><td class="k">F2</td><td class="d" data-l="lgF2D">A hint: a spatial nudge from Gemini, not the answer.</td></tr>
+        <tr><td class="k">F3</td><td class="d" data-l="lgF3D">Open a quiz, or submit the focused object as your answer.</td></tr>
+        <tr><td class="k">F4</td><td class="d" data-l="lgF4D">Repeat the last audio. Press twice for a full summary.</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <p class="footnote" data-l="footnote">
+    Prototype · the tactile graphic uses the live <code>60×40</code> matrix; braille is uncontracted (illustrative). Click the keys or use your keyboard.
+  </p>
+</div>
+
+<div class="visually-hidden" id="live" aria-live="polite" role="status"></div>
+
+<script>
+"use strict";
+
+/* ============================ i18n ============================ */
+const I18N = {
+  en:{
+    appTitle:"Dot Pad Simulator",
+    assignTitle:"Assignment: Explore the Water Cycle Diagram",
+    deviceHd:"Tactile surface · 60 × 40",
+    panelHd:"Gemini side panel",
+    connOn:"Dot Pad connected", connOff:"Dot Pad disconnected · audio mode",
+    where:"YOU ARE HERE",
+    left:"Previous", leftSub:"previous object / step",
+    right:"Next", rightSub:"next object / step",
+    f1:"Where am I", f1Sub:"explain here",
+    f2:"Hint", f2Sub:"a nudge",
+    f3:"Quiz / Check", f3Sub:"open or submit",
+    f4:"Repeat", f4Sub:"2× = full summary",
+    ctxChip:"Show full diagram", speakChip:"Speak aloud",
+    mGuided:"Guided", mExplore:"Explore", mQuiz:"Quiz",
+    statObjects:"objects explored", statHints:"hints used", statQuiz:"quiz",
+    legendHd:"Key guide", legendKbd:"keyboard: ← →  ·  1 2 3 4",
+    lgPan:"Panning",
+    lgPanD:"Move backward / forward through objects, layers, or steps.",
+    lgF1D:"Explain the current area — what is under your fingers right now.",
+    lgF2D:"A hint: a spatial nudge from Gemini, not the answer.",
+    lgF3D:"Open a quiz, or submit the focused object as your answer.",
+    lgF4D:"Repeat the last audio. Press twice for a full summary.",
+    footnote:"Prototype · the tactile graphic uses the live 60×40 matrix; braille is uncontracted (illustrative). Click the keys or use your keyboard.",
+    brailleTag:"braille · uncontracted",
+    stepOf:(a,b)=>`Step ${a} of ${b}`,
+    objectN:"object", layerN:"layer",
+    overviewName:"Water cycle",
+    start:"You're at the start.", end:"You're at the end.",
+    audioMode:"Dot Pad disconnected. I've saved your place. Reconnect to keep feeling, or keep going by audio.",
+    reconnected:"Dot Pad reconnected.",
+    fullSummary:"Full summary: four parts — ocean at the bottom, evaporation rising, a cloud at the top, and rain coming down. Together they make the water cycle.",
+    quizOpen:"Quiz mode. I'll ask you to find parts of the diagram. Navigate, then press F3 to submit.",
+    correct:"Correct!", incorrect:"Not quite — that's",
+    tryAgain:"try again, or press F2 for a hint.",
+    quizDone:"Quiz complete. Nice work — you found every part by touch.",
+    submitted:"You submitted",
+    whoGemini:"Gemini", whoDotpad:"Dot Pad", whoResult:"Result",
+    lang:"en-US"
+  },
+  ko:{
+    appTitle:"Dot Pad 시뮬레이터",
+    assignTitle:"과제: 물의 순환 다이어그램 탐색하기",
+    deviceHd:"촉각 표면 · 60 × 40",
+    panelHd:"Gemini 사이드 패널",
+    connOn:"Dot Pad 연결됨", connOff:"Dot Pad 연결 해제 · 음성 모드",
+    where:"현재 위치",
+    left:"이전", leftSub:"이전 객체 / 단계",
+    right:"다음", rightSub:"다음 객체 / 단계",
+    f1:"여기 설명", f1Sub:"현재 영역",
+    f2:"힌트", f2Sub:"넌지시",
+    f3:"퀴즈 / 확인", f3Sub:"열기 또는 제출",
+    f4:"다시 듣기", f4Sub:"두 번 = 전체 요약",
+    ctxChip:"전체 다이어그램 보기", speakChip:"소리 내어 읽기",
+    mGuided:"안내", mExplore:"탐색", mQuiz:"퀴즈",
+    statObjects:"탐색한 객체", statHints:"사용한 힌트", statQuiz:"퀴즈",
+    legendHd:"키 안내", legendKbd:"키보드: ← →  ·  1 2 3 4",
+    lgPan:"패닝",
+    lgPanD:"객체·레이어·단계를 이전/다음으로 이동합니다.",
+    lgF1D:"현재 영역 설명 — 지금 손끝 아래에 무엇이 있는지 알려줍니다.",
+    lgF2D:"힌트: 정답이 아니라 Gemini의 공간적 넌지시입니다.",
+    lgF3D:"퀴즈를 열거나, 포커스된 객체를 답으로 제출합니다.",
+    lgF4D:"마지막 음성을 다시 듣습니다. 두 번 누르면 전체 요약.",
+    footnote:"프로토타입 · 촉각 그래픽은 실제 60×40 매트릭스를 사용합니다. 점자는 약자 없이(예시용) 표시됩니다. 키를 클릭하거나 키보드를 사용하세요.",
+    brailleTag:"점자 · 약자 없음",
+    stepOf:(a,b)=>`${b}단계 중 ${a}단계`,
+    objectN:"객체", layerN:"레이어",
+    overviewName:"물의 순환",
+    start:"처음이에요.", end:"끝이에요.",
+    audioMode:"Dot Pad 연결이 끊겼어요. 위치를 저장했어요. 다시 연결하면 이어서 만질 수 있고, 음성으로 계속할 수도 있어요.",
+    reconnected:"Dot Pad가 다시 연결됐어요.",
+    fullSummary:"전체 요약: 네 부분이에요 — 아래의 바다, 위로 올라가는 증발, 위쪽의 구름, 내려오는 비. 이것이 함께 물의 순환을 이뤄요.",
+    quizOpen:"퀴즈 모드예요. 다이어그램의 부분을 찾아보라고 할게요. 이동한 뒤 F3을 눌러 제출하세요.",
+    correct:"정답이에요!", incorrect:"아쉬워요 — 그건",
+    tryAgain:"다시 시도하거나, F2로 힌트를 받아요.",
+    quizDone:"퀴즈 완료. 잘했어요 — 손끝으로 모든 부분을 찾았어요.",
+    submitted:"제출:",
+    whoGemini:"Gemini", whoDotpad:"Dot Pad", whoResult:"결과",
+    lang:"ko-KR"
+  }
+};
+
+/* ============================ payload: water cycle ============================ */
+const OBJ_ORDER = ["ocean","evaporation","cloud","rain"];
+const OBJECTS = {
+  ocean:{
+    en:{label:"Ocean", braille:"ocean",
+        audio:"The ocean is along the bottom of the diagram. Most of Earth's water is here.",
+        hint:"Slide your fingers to the lower area and feel the wide textured band."},
+    ko:{label:"바다", braille:"바다",
+        audio:"바다는 다이어그램의 아래쪽에 있어요. 지구 물의 대부분이 여기 있어요.",
+        hint:"손가락을 아래쪽으로 밀어 넓은 질감의 띠를 느껴 보세요."}
+  },
+  evaporation:{
+    en:{label:"Evaporation", braille:"evaporation",
+        audio:"Water rises from the ocean into the air as the sun warms it. Feel the dotted lines going up.",
+        hint:"Slide up from the ocean — feel the small dots rising into the air."},
+    ko:{label:"증발", braille:"증발",
+        audio:"햇빛이 물을 데우면 바다에서 공기 중으로 물이 올라가요. 위로 향하는 점선을 느껴 보세요.",
+        hint:"바다에서 위로 밀어 공기 중으로 올라가는 작은 점들을 느껴 보세요."}
+  },
+  cloud:{
+    en:{label:"Cloud", braille:"cloud",
+        audio:"The water vapor cools and gathers into a cloud near the top. Feel the rounded shape.",
+        hint:"Move to the upper-center and feel the wide rounded shape."},
+    ko:{label:"구름", braille:"구름",
+        audio:"수증기가 식어서 위쪽에 구름으로 모여요. 둥근 모양을 느껴 보세요.",
+        hint:"위쪽 가운데로 가서 넓고 둥근 모양을 느껴 보세요."}
+  },
+  rain:{
+    en:{label:"Rain", braille:"rain",
+        audio:"Water falls from the cloud back toward the ocean as rain. Feel the lines coming down.",
+        hint:"Feel the slanted lines coming down from the cloud toward the ocean."},
+    ko:{label:"비", braille:"비",
+        audio:"물이 구름에서 비가 되어 다시 바다로 떨어져요. 내려오는 선들을 느껴 보세요.",
+        hint:"구름에서 바다 쪽으로 기울어져 내려오는 선들을 느껴 보세요."}
+  }
+};
+const OVERVIEW = {
+  en:{label:"Water cycle", braille:"water cycle",
+      audio:"This diagram has four parts: ocean, evaporation, cloud, and rain. Feel the whole shape first."},
+  ko:{label:"물의 순환", braille:"물 흐름",
+      audio:"이 다이어그램에는 네 부분이 있어요: 바다, 증발, 구름, 비. 먼저 전체 모양을 느껴 보세요."}
+};
+
+const GUIDED = [
+  {obj:"__overview__",
+   en:"Welcome. This diagram has four parts: ocean, evaporation, cloud, and rain. Feel the whole shape, then press Right to begin.",
+   ko:"환영해요. 이 다이어그램에는 네 부분이 있어요: 바다, 증발, 구름, 비. 전체 모양을 느껴 보고, '다음'을 누르세요."},
+  {obj:"ocean",
+   en:"This is the ocean, along the bottom. Most of Earth's water starts here. Press Right.",
+   ko:"여기는 아래쪽의 바다예요. 지구 물의 대부분이 여기서 시작해요. '다음'을 누르세요."},
+  {obj:"evaporation",
+   en:"Feel the dotted lines rising from the ocean. When the sun heats the water, what do you think happens to it?",
+   ko:"바다에서 올라오는 점선을 느껴 보세요. 햇빛이 물을 데우면 물에 무슨 일이 일어날까요?"},
+  {obj:"cloud",
+   en:"The vapor cooled and gathered into this cloud near the top. Press Right.",
+   ko:"수증기가 식어서 위쪽의 이 구름으로 모였어요. '다음'을 누르세요."},
+  {obj:"rain",
+   en:"Feel the lines coming down from the cloud. What falls from clouds back toward the ocean?",
+   ko:"구름에서 내려오는 선들을 느껴 보세요. 구름에서 바다로 다시 떨어지는 건 무엇일까요?"},
+  {obj:"__overview__",
+   en:"That's the water cycle — the rain returns to the ocean and it repeats. Try Explore or Quiz mode next.",
+   ko:"이것이 물의 순환이에요 — 비가 바다로 돌아가고 다시 반복돼요. 다음으로 탐색이나 퀴즈 모드를 해보세요."}
+];
+
+const QUIZ = [
+  {answer:"evaporation",
+   en:"Find the part where water rises from the ocean into the air. Move with Left and Right, then press F3.",
+   ko:"물이 바다에서 공기로 올라가는 부분을 찾으세요. 왼쪽/오른쪽으로 이동한 뒤 F3을 누르세요.",
+   hintEn:"It's just above the ocean — feel the rising dots.",
+   hintKo:"바다 바로 위예요 — 올라가는 점들을 느껴 보세요."},
+  {answer:"rain",
+   en:"Now find the part where water falls back down toward the ocean. Press F3 when you're on it.",
+   ko:"이제 물이 다시 바다로 떨어지는 부분을 찾으세요. 그 위에 있을 때 F3을 누르세요.",
+   hintEn:"It comes down from the cloud.",
+   hintKo:"구름에서 내려와요."}
+];
+
+/* ============================ tactile matrix (60×40) ============================ */
+const COLS=60, ROWS=40;
+function key(x,y){return x+","+y;}
+function add(s,x,y){ if(x>=0&&x<COLS&&y>=0&&y<ROWS) s.add(key(x,y)); }
+
+function oceanPins(){const s=new Set();
+  for(let y=34;y<=38;y++) for(let x=0;x<COLS;x++) add(s,x,y);
+  for(let x=0;x<COLS;x++){ const c=33-(Math.sin(x/2.1)>0.25?1:0); add(s,x,c); }
+  return s;}
+function evapPins(){const s=new Set();
+  [11,20,29].forEach(cx=>{
+    for(let y=32;y>=20;y-=2) add(s,cx,y);
+    add(s,cx-1,22); add(s,cx+1,22); add(s,cx,20);
+  });
+  return s;}
+function cloudPins(){const s=new Set();
+  function ell(cx,cy,rx,ry){for(let y=cy-ry;y<=cy+ry;y++)for(let x=cx-rx;x<=cx+rx;x++){const dx=(x-cx)/rx,dy=(y-cy)/ry;if(dx*dx+dy*dy<=1)add(s,x,y);}}
+  ell(40,11,13,4); ell(31,12,6,3); ell(49,12,6,3); ell(40,8,8,2);
+  return s;}
+function rainPins(){const s=new Set();
+  [33,38,43,48].forEach(cx=>{ for(let y=16;y<=30;y+=2) add(s,cx+Math.floor((y-16)/7),y); });
+  return s;}
+
+const PINS = {ocean:oceanPins(), evaporation:evapPins(), cloud:cloudPins(), rain:rainPins()};
+const ALLPINS = (()=>{const s=new Set(); OBJ_ORDER.forEach(o=>PINS[o].forEach(k=>s.add(k))); return s;})();
+
+/* ============================ braille ============================ */
+const EN_BRAILLE = {
+  a:[1],b:[1,2],c:[1,4],d:[1,4,5],e:[1,5],f:[1,2,4],g:[1,2,4,5],h:[1,2,5],i:[2,4],j:[2,4,5],
+  k:[1,3],l:[1,2,3],m:[1,3,4],n:[1,3,4,5],o:[1,3,5],p:[1,2,3,4],q:[1,2,3,4,5],r:[1,2,3,5],
+  s:[2,3,4],t:[2,3,4,5],u:[1,3,6],v:[1,2,3,6],w:[2,4,5,6],x:[1,3,4,6],y:[1,3,4,5,6],z:[1,3,5,6]," ":[]
+};
+// Korean jamo → braille (uncontracted, illustrative)
+const KO_LEAD = {0:[4],/*ㄱ*/2:[1,4],/*ㄴ*/3:[2,4],/*ㄷ*/5:[5],/*ㄹ*/6:[1,5],/*ㅁ*/7:[4,5],/*ㅂ*/9:[6],/*ㅅ*/11:[],/*ㅇ*/12:[4,6],/*ㅈ*/14:[5,6],/*ㅊ*/15:[1,2,4],/*ㅋ*/16:[1,2,5],/*ㅌ*/17:[1,4,5],/*ㅍ*/18:[2,4,5]/*ㅎ*/};
+const KO_VOWEL = {0:[1,2,6],/*ㅏ*/2:[3,4,5],/*ㅑ*/4:[2,3,4],/*ㅓ*/6:[1,5,6],/*ㅕ*/8:[1,3,6],/*ㅗ*/12:[3,4,6],/*ㅛ*/13:[1,3,4],/*ㅜ*/17:[1,4,6],/*ㅠ*/18:[2,4,6],/*ㅡ*/20:[1,3,5],/*ㅣ*/1:[1,2,3,5],/*ㅐ*/5:[1,3,4,5]/*ㅔ*/};
+const KO_TAIL = {1:[1],/*ㄱ*/4:[2,5],/*ㄴ*/7:[3,5],/*ㄷ*/8:[2],/*ㄹ*/16:[2,6],/*ㅁ*/17:[1,2],/*ㅂ*/19:[3],/*ㅅ*/21:[2,3,5,6],/*ㅇ*/22:[1,3]/*ㅈ*/};
+
+function brailleCellsFor(str, lang){
+  const cells=[];
+  if(lang==="en"){
+    for(const ch of str.toLowerCase()){ cells.push(EN_BRAILLE[ch]||[]); }
+  }else{
+    for(const ch of str){
+      const code=ch.charCodeAt(0);
+      if(ch===" "){ cells.push([]); continue; }
+      if(code>=0xAC00 && code<=0xD7A3){
+        const s=code-0xAC00, lead=Math.floor(s/588), v=Math.floor((s%588)/28), tail=s%28;
+        if(KO_LEAD[lead] && KO_LEAD[lead].length) cells.push(KO_LEAD[lead]);
+        if(KO_VOWEL[v]) cells.push(KO_VOWEL[v]);
+        if(tail>0 && KO_TAIL[tail]) cells.push(KO_TAIL[tail]);
+      }else{ cells.push([]); }
+    }
+  }
+  return cells.slice(0,20);
+}
+
+/* ============================ DOM build ============================ */
+const field = document.getElementById("field");
+const cellEls = []; // [y][x]
+(function buildField(){
+  const NS="http://www.w3.org/2000/svg";
+  for(let y=0;y<ROWS;y++){ cellEls[y]=[];
+    for(let x=0;x<COLS;x++){
+      const c=document.createElementNS(NS,"circle");
+      c.setAttribute("cx", x*10+5); c.setAttribute("cy", y*10+5);
+      c.setAttribute("r", 1.7); c.setAttribute("class","dot");
+      c.setAttribute("fill","var(--pin-low)");
+      field.appendChild(c); cellEls[y][x]=c;
+    }
+  }
+})();
+
+const brailleCellsBox = document.getElementById("brailleCells");
+function renderBraille(str, lang){
+  brailleCellsBox.innerHTML="";
+  const cells = brailleCellsFor(str, lang);
+  const total = Math.min(20, Math.max(cells.length,1));
+  const NS="http://www.w3.org/2000/svg";
+  for(let i=0;i<20;i++){
+    const dots = cells[i]||[];
+    const svg=document.createElementNS(NS,"svg");
+    svg.setAttribute("class","bcell"); svg.setAttribute("width","18"); svg.setAttribute("height","26"); svg.setAttribute("viewBox","0 0 30 44");
+    const pos={1:[9,9],2:[9,22],3:[9,35],4:[21,9],5:[21,22],6:[21,35]};
+    for(let d=1;d<=6;d++){
+      const cir=document.createElementNS(NS,"circle");
+      cir.setAttribute("cx",pos[d][0]); cir.setAttribute("cy",pos[d][1]);
+      cir.setAttribute("r", dots.includes(d)?4.2:2);
+      cir.setAttribute("class", dots.includes(d)?"bdot-on":"bdot-off");
+      svg.appendChild(cir);
+    }
+    brailleCellsBox.appendChild(svg);
+  }
+}
+
+/* ============================ state ============================ */
+const state = {
+  lang:"en",
+  mode:"guided",       // guided | explore | quiz
+  connected:true,
+  showContext:false,
+  speak:false,
+  guidedStep:0,
+  exploreIdx:0,
+  quizIdx:0,
+  quizFocus:0,
+  quizAwaiting:true,
+  hints:0,
+  explored:new Set(),
+  quizScore:0, quizAnswered:0,
+  lastAudio:"",
+  f4timer:null
+};
+
+/* ============================ helpers ============================ */
+function t(){ return I18N[state.lang]; }
+function objContent(id){ return (id==="__overview__"?OVERVIEW:OBJECTS[id])[state.lang]; }
+
+function currentObjId(){
+  if(state.mode==="guided") return GUIDED[state.guidedStep].obj;
+  if(state.mode==="explore") return OBJ_ORDER[state.exploreIdx];
+  return OBJ_ORDER[state.quizFocus]; // quiz
+}
+
+function renderField(){
+  const id = currentObjId();
+  let raised = (id==="__overview__") ? ALLPINS : PINS[id];
+  let ctx = null;
+  if(id!=="__overview__" && (state.showContext || state.mode==="explore" && state.showContext)){
+    ctx = ALLPINS;
+  }
+  if(state.showContext && id!=="__overview__") ctx = ALLPINS;
+  for(let y=0;y<ROWS;y++) for(let x=0;x<COLS;x++){
+    const k=key(x,y), el=cellEls[y][x];
+    if(raised.has(k)){ el.setAttribute("r",4.1); el.setAttribute("fill","var(--amber)"); }
+    else if(ctx && ctx.has(k)){ el.setAttribute("r",2.6); el.setAttribute("fill","var(--pin-ctx)"); }
+    else { el.setAttribute("r",1.7); el.setAttribute("fill","var(--pin-low)"); }
+  }
+}
+
+function setText(){
+  const T=t();
+  document.documentElement.lang = state.lang;
+  document.getElementById("appTitle").textContent=T.appTitle;
+  document.getElementById("assignTitle").textContent=T.assignTitle;
+  document.getElementById("deviceHd").textContent=T.deviceHd;
+  document.getElementById("panelHd").textContent=T.panelHd;
+  document.getElementById("whereLbl").textContent=T.where;
+  document.getElementById("connLabel").textContent=state.connected?T.connOn:T.connOff;
+  document.getElementById("brailleTag").textContent=T.brailleTag;
+  document.querySelectorAll("[data-l]").forEach(el=>{
+    const k=el.getAttribute("data-l"); if(T[k]!==undefined && typeof T[k]==="string") el.textContent=T[k];
+  });
+}
+
+function updateReadout(){
+  const T=t(), id=currentObjId(), oc=objContent(id);
+  document.getElementById("objName").textContent=oc.label;
+  document.getElementById("modeTag").textContent=T[("m"+state.mode.charAt(0).toUpperCase()+state.mode.slice(1))].toUpperCase();
+  const stepEl=document.getElementById("stepLbl");
+  if(state.mode==="guided") stepEl.textContent=T.stepOf(state.guidedStep+1, GUIDED.length);
+  else if(state.mode==="explore") stepEl.textContent=`${state.exploreIdx+1} / ${OBJ_ORDER.length}`;
+  else stepEl.textContent=`Q${state.quizIdx+1} / ${QUIZ.length}`;
+  // braille
+  const bstr = oc.braille;
+  renderBraille(bstr, state.lang);
+  document.getElementById("brailleText").textContent=bstr;
+  // meta
+  document.getElementById("statObjects").textContent=`${state.explored.size}/4`;
+  document.getElementById("statHints").textContent=state.hints;
+  document.getElementById("hintTag").textContent=(state.lang==="en"?"hints: ":"힌트: ")+state.hints;
+  document.getElementById("statQuiz").textContent = state.quizAnswered? `${state.quizScore}/${state.quizAnswered}` : "–";
+}
+
+const transcriptEl=document.getElementById("transcript");
+function addMsg(who, text, cls){
+  const wrap=document.createElement("div");
+  wrap.className="msg "+(cls||who);
+  const av=document.createElement("div"); av.className="av";
+  av.textContent = who==="gemini"?"G":(who==="result"?(cls&&cls.includes("ok")?"✓":"✕"):"●");
+  const body=document.createElement("div"); body.className="body";
+  const T=t();
+  const whoLabel = who==="gemini"?T.whoGemini:(who==="result"?T.whoResult:T.whoDotpad);
+  body.innerHTML=`<span class="who">${whoLabel}</span>${text}`;
+  wrap.appendChild(av); wrap.appendChild(body);
+  transcriptEl.appendChild(wrap);
+  transcriptEl.scrollTop=transcriptEl.scrollHeight;
+}
+
+let voices=[];
+function loadVoices(){ voices=window.speechSynthesis?window.speechSynthesis.getVoices():[]; }
+if(window.speechSynthesis){ loadVoices(); window.speechSynthesis.onvoiceschanged=loadVoices; }
+function speak(text){
+  if(!state.speak || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const u=new SpeechSynthesisUtterance(text);
+  u.lang=t().lang;
+  const v=voices.find(v=>v.lang && v.lang.toLowerCase().startsWith(state.lang==="ko"?"ko":"en"));
+  if(v) u.voice=v;
+  u.rate=0.97;
+  window.speechSynthesis.speak(u);
+}
+
+function announce(text, who, cls){
+  state.lastAudio=text;
+  document.getElementById("live").textContent=text;
+  if(who) addMsg(who, text, cls);
+  speak(text);
+}
+
+/* ============================ core interaction ============================ */
+function markExplored(){
+  const id=currentObjId();
+  if(id!=="__overview__") state.explored.add(id);
+}
+
+function present(opts){ // refresh everything + announce current
+  renderField(); updateReadout();
+  markExplored();
+  if(opts && opts.announce){
+    const id=currentObjId();
+    if(state.mode==="guided"){
+      announce(GUIDED[state.guidedStep][state.lang], "gemini");
+    }else if(state.mode==="quiz"){
+      // announce focus name softly (no auto-question)
+      announce((state.lang==="en"?"On: ":"위치: ")+objContent(id).label, "system");
+    }else{
+      announce(objContent(id).audio, "system");
+    }
+  } else { renderField(); updateReadout(); }
+}
+
+function onPan(dir){
+  flash(dir>0?"kRight":"kLeft");
+  if(!state.connected){ /* audio nav still works */ }
+  if(state.mode==="guided"){
+    const n=GUIDED.length, ni=state.guidedStep+dir;
+    if(ni<0){ announce(t().start,"system"); return; }
+    if(ni>=n){ announce(t().end,"system"); return; }
+    state.guidedStep=ni; present({announce:true});
+  }else if(state.mode==="explore"){
+    const n=OBJ_ORDER.length, ni=state.exploreIdx+dir;
+    if(ni<0){ announce(t().start,"system"); return; }
+    if(ni>=n){ announce(t().end,"system"); return; }
+    state.exploreIdx=ni; present({announce:true});
+  }else{ // quiz: move focus
+    const n=OBJ_ORDER.length, ni=state.quizFocus+dir;
+    if(ni<0){ announce(t().start,"system"); return; }
+    if(ni>=n){ announce(t().end,"system"); return; }
+    state.quizFocus=ni; renderField(); updateReadout(); markExplored();
+    announce((state.lang==="en"?"On: ":"위치: ")+objContent(currentObjId()).label, "system");
+  }
+}
+
+function onF1(){
+  flash("kF1");
+  const id=currentObjId();
+  const oc=objContent(id);
+  const text = (id==="__overview__")?oc.audio:`${oc.label} — ${oc.audio}`;
+  announce(text, "system");
+}
+
+function onF2(){
+  flash("kF2");
+  state.hints++;
+  let hint;
+  if(state.mode==="quiz"){
+    const q=QUIZ[state.quizIdx]; hint = state.lang==="en"?q.hintEn:q.hintKo;
+  }else{
+    const id=currentObjId();
+    hint = (id==="__overview__")
+      ? (state.lang==="en"?"Press Right to feel the first part — the ocean at the bottom.":"'다음'을 눌러 첫 부분인 아래쪽 바다를 느껴 보세요.")
+      : objContent(id).hint;
+  }
+  updateReadout();
+  announce(hint, "gemini");
+}
+
+function startQuiz(){
+  state.mode="quiz"; state.quizIdx=0; state.quizFocus=0; state.quizAwaiting=true;
+  state.quizScore=0; state.quizAnswered=0;
+  syncModeButtons();
+  renderField(); updateReadout();
+  announce(t().quizOpen, "gemini");
+  setTimeout(()=>announce(QUIZ[0][state.lang], "gemini"), 60);
+}
+
+function onF3(){
+  flash("kF3");
+  if(state.mode!=="quiz"){ startQuiz(); return; }
+  // submit focused object
+  const q=QUIZ[state.quizIdx];
+  const picked=OBJ_ORDER[state.quizFocus];
+  const pickedLabel=objContent(picked).label;
+  state.quizAnswered = Math.max(state.quizAnswered, state.quizIdx+1);
+  if(picked===q.answer){
+    state.quizScore++;
+    updateReadout();
+    announce(`${t().correct} ${t().submitted} ${pickedLabel}.`, "result", "result ok");
+    setTimeout(()=>{
+      if(state.quizIdx < QUIZ.length-1){
+        state.quizIdx++; state.quizFocus=0; renderField(); updateReadout();
+        announce(QUIZ[state.quizIdx][state.lang], "gemini");
+      }else{
+        announce(t().quizDone, "gemini");
+      }
+    }, 120);
+  }else{
+    updateReadout();
+    announce(`${t().incorrect} ${pickedLabel}. ${t().tryAgain}`, "result", "result no");
+  }
+}
+
+function onF4(){
+  flash("kF4");
+  if(state.f4timer){ // double-press → full summary
+    clearTimeout(state.f4timer); state.f4timer=null;
+    // briefly show overview
+    const prevMode=state.mode;
+    announce(t().fullSummary, "gemini");
+    // visual: flash overview
+    const saved={raised:null};
+    for(let y=0;y<ROWS;y++)for(let x=0;x<COLS;x++){const el=cellEls[y][x];if(ALLPINS.has(key(x,y))){el.setAttribute("r",4.1);el.setAttribute("fill","var(--amber)");}}
+    setTimeout(renderField, 1500);
+  }else{
+    state.f4timer=setTimeout(()=>{ // single → repeat
+      state.f4timer=null;
+      if(state.lastAudio){ document.getElementById("live").textContent=state.lastAudio; speak(state.lastAudio); }
+    }, 280);
+  }
+}
+
+/* ============================ mode / lang / conn ============================ */
+function syncModeButtons(){
+  document.getElementById("mGuided").setAttribute("aria-pressed", state.mode==="guided");
+  document.getElementById("mExplore").setAttribute("aria-pressed", state.mode==="explore");
+  document.getElementById("mQuiz").setAttribute("aria-pressed", state.mode==="quiz");
+}
+function setMode(m){
+  state.mode=m; syncModeButtons();
+  if(m==="guided"){ renderField(); updateReadout(); announce(GUIDED[state.guidedStep][state.lang],"gemini"); }
+  else if(m==="explore"){ renderField(); updateReadout(); markExplored(); announce(objContent(currentObjId()).audio,"system"); }
+  else { startQuiz(); }
+}
+
+function setLang(l){
+  state.lang=l;
+  document.getElementById("langEn").setAttribute("aria-pressed", l==="en");
+  document.getElementById("langKo").setAttribute("aria-pressed", l==="ko");
+  setText(); renderField(); updateReadout();
+  document.getElementById("connLabel").textContent=state.connected?t().connOn:t().connOff;
+}
+
+function setConnected(c){
+  state.connected=c;
+  const wrap=document.getElementById("surfaceWrap");
+  const bbox=document.getElementById("brailleBox");
+  const btn=document.getElementById("connBtn");
+  wrap.classList.toggle("disconnected", !c);
+  bbox.classList.toggle("dim", !c);
+  btn.classList.toggle("off", !c);
+  btn.setAttribute("aria-pressed", c);
+  document.getElementById("connLabel").textContent=c?t().connOn:t().connOff;
+  announce(c?t().reconnected:t().audioMode, "system");
+}
+
+/* ============================ key flash ============================ */
+function flash(id){ const el=document.getElementById(id); if(!el) return; el.classList.add("flash"); setTimeout(()=>el.classList.remove("flash"),120); }
+
+/* ============================ wiring ============================ */
+document.getElementById("kLeft").onclick=()=>onPan(-1);
+document.getElementById("kRight").onclick=()=>onPan(1);
+document.getElementById("kF1").onclick=onF1;
+document.getElementById("kF2").onclick=onF2;
+document.getElementById("kF3").onclick=onF3;
+document.getElementById("kF4").onclick=onF4;
+
+document.getElementById("mGuided").onclick=()=>setMode("guided");
+document.getElementById("mExplore").onclick=()=>setMode("explore");
+document.getElementById("mQuiz").onclick=()=>setMode("quiz");
+
+document.getElementById("langEn").onclick=()=>setLang("en");
+document.getElementById("langKo").onclick=()=>setLang("ko");
+document.getElementById("connBtn").onclick=()=>setConnected(!state.connected);
+
+const ctxChip=document.getElementById("ctxChip");
+ctxChip.onclick=()=>{ state.showContext=!state.showContext; ctxChip.setAttribute("aria-pressed",state.showContext); renderField(); };
+const speakChip=document.getElementById("speakChip");
+speakChip.onclick=()=>{
+  state.speak=!state.speak; speakChip.setAttribute("aria-pressed",state.speak);
+  if(state.speak && state.lastAudio) speak(state.lastAudio);
+  else if(window.speechSynthesis) window.speechSynthesis.cancel();
+};
+
+window.addEventListener("keydown",(e)=>{
+  if(e.target.closest("input,textarea")) return;
+  switch(e.key){
+    case "ArrowLeft": e.preventDefault(); onPan(-1); break;
+    case "ArrowRight": e.preventDefault(); onPan(1); break;
+    case "1": onF1(); break;
+    case "2": onF2(); break;
+    case "3": onF3(); break;
+    case "4": onF4(); break;
+    case "Escape": if(state.f4timer){clearTimeout(state.f4timer);state.f4timer=null;} break;
+  }
+});
+
+/* ============================ init ============================ */
+setLang("en");
+setMode("guided");
+addMsg("system", state.lang==="en"
+  ? "Dot Pad connected. Water Cycle Diagram is ready. Press Right to begin."
+  : "Dot Pad 연결됨. 물의 순환 다이어그램이 준비됐어요. '다음'을 누르세요.");
+renderField(); updateReadout();
+</script>
+</body>
+</html>

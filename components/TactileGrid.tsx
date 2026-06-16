@@ -1,22 +1,28 @@
 import type { TactileGridData } from "@/types";
 import { cn } from "@/lib/cn";
 
+export type PinColor = "white" | "amber";
+
 /**
- * Visual mirror of the Dot Pad's tactile graphic area.
- * The grid is decorative for assistive tech (aria-hidden); the meaning is
- * conveyed via the braille line and the tutor live region. A concise text
- * description is provided for sighted low-vision users via `title`.
+ * Dot Pad 60×40 tactile field.
+ * Props:
+ *  pinColor   — "white" (device default) | "amber" (brand signature)
+ *  scanSweep  — when true, a scanning beam animates across the field
  */
 export function TactileGrid({
   matrix,
   objectName,
+  pinColor = "white",
+  scanSweep = false,
   className,
 }: {
   matrix: TactileGridData;
   objectName?: string;
+  pinColor?: PinColor;
+  scanSweep?: boolean;
   className?: string;
 }) {
-  const cell = 10; // px per pin in the viewBox
+  const cell = 10;
   const w = matrix.cols * cell;
   const h = matrix.rows * cell;
 
@@ -28,13 +34,16 @@ export function TactileGrid({
     }
   }
 
+  const litFill   = pinColor === "amber" ? "#E0A12E" : "#f3f4f6";
+  const glowColor = pinColor === "amber"
+    ? "drop-shadow(0 0 1.4px rgba(224,161,46,0.55))"
+    : "drop-shadow(0 0 1.1px rgba(255,255,255,0.40))";
+
+  // unique id per instance to avoid SVG defs collision
+  const uid = `dp-${pinColor}-${scanSweep ? "s" : "n"}`;
+
   return (
-    <div
-      className={cn(
-        "relative rounded-2xl border border-[#222a3a] bg-[#0d1320] p-3 shadow-[inset_0_2px_22px_rgba(0,0,0,0.45)]",
-        className
-      )}
-    >
+    <div className={cn("relative overflow-hidden rounded-md bg-black", className)}>
       <svg
         viewBox={`0 0 ${w} ${h}`}
         className="block h-auto w-full"
@@ -42,28 +51,54 @@ export function TactileGrid({
         aria-hidden="true"
       >
         {objectName && <title>{`Tactile graphic: ${objectName}`}</title>}
+
         <defs>
-          <pattern
-            id="dp-lowered"
-            width={cell}
-            height={cell}
-            patternUnits="userSpaceOnUse"
-          >
-            <circle cx={cell / 2} cy={cell / 2} r={1.5} fill="#283143" />
+          <pattern id={`${uid}-low`} width={cell} height={cell} patternUnits="userSpaceOnUse">
+            <circle cx={cell / 2} cy={cell / 2} r={1.35} fill="#2b2c30" />
           </pattern>
+
+          {/* Scan-sweep gradient — tall horizontal band */}
+          {scanSweep && (
+            <linearGradient id={`${uid}-beam`} x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0%"   stopColor={litFill} stopOpacity="0" />
+              <stop offset="40%"  stopColor={litFill} stopOpacity="0.06" />
+              <stop offset="50%"  stopColor={litFill} stopOpacity="0.18" />
+              <stop offset="60%"  stopColor={litFill} stopOpacity="0.06" />
+              <stop offset="100%" stopColor={litFill} stopOpacity="0" />
+            </linearGradient>
+          )}
         </defs>
-        {/* Lowered pins (entire field) */}
-        <rect width={w} height={h} fill="url(#dp-lowered)" />
-        {/* Raised pins */}
-        {raised.map(([x, y]) => (
-          <circle
-            key={`${x}-${y}`}
-            cx={x * cell + cell / 2}
-            cy={y * cell + cell / 2}
-            r={4.1}
-            fill="#F2C14E"
+
+        {/* full lowered-pin field */}
+        <rect width={w} height={h} fill={`url(#${uid}-low)`} />
+
+        {/* raised (lit) pins */}
+        <g style={{ filter: glowColor }}>
+          {raised.map(([x, y]) => (
+            <circle
+              key={`${x}-${y}`}
+              cx={x * cell + cell / 2}
+              cy={y * cell + cell / 2}
+              r={4}
+              fill={litFill}
+            />
+          ))}
+        </g>
+
+        {/* scan beam overlay — animates top to bottom */}
+        {scanSweep && (
+          <rect
+            x={0}
+            y={0}
+            width={w}
+            height={h * 0.28}
+            fill={`url(#${uid}-beam)`}
+            style={{
+              animation: "scan-sweep 3.4s ease-in-out infinite",
+              transformOrigin: `${w / 2}px 0`,
+            }}
           />
-        ))}
+        )}
       </svg>
     </div>
   );

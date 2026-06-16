@@ -7,11 +7,10 @@ import type { Language } from "@/types";
 // or null if nothing has been approved yet.
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ assignmentId: string }> }
+  { params }: { params: { assignmentId: string } }
 ) {
-  const { assignmentId } = await params;
   const url = new URL(req.url);
   const lang: Language = url.searchParams.get("lang") === "ko" ? "ko" : "en";
-  const approvedText = getApprovedSummaryText(assignmentId, lang);
+  const approvedText = getApprovedSummaryText(params.assignmentId, lang);
   return NextResponse.json({ approvedText, language: lang });
 }

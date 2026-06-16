@@ -13,6 +13,12 @@
 
   body {
     @apply bg-paper text-ink font-sans antialiased;
+    /* Premium cool atmosphere: layered Gemini-spectrum glows over a near-white base */
+    background-image:
+      radial-gradient(60rem 42rem at 82% -12%, rgba(59, 130, 246, 0.10), transparent 60%),
+      radial-gradient(52rem 38rem at -8% -4%, rgba(34, 195, 218, 0.08), transparent 58%),
+      radial-gradient(56rem 42rem at 50% 118%, rgba(34, 176, 125, 0.07), transparent 56%);
+    background-attachment: fixed;
   }
 
   /* Accessibility-first: a single, clearly visible focus ring everywhere. */
@@ -45,6 +51,14 @@
   .skip-link:focus {
     @apply not-sr-only fixed left-4 top-4 z-50 rounded-lg bg-accent px-4 py-2 text-sm font-medium text-white shadow-lift;
   }
+
+  /* Glassmorphism surface — used sparingly for nav and floating chips */
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+  }
 }
 
 @layer utilities {
@@ -58,9 +72,84 @@
     background-image: radial-gradient(theme("colors.line") 1.2px, transparent 1.3px);
     background-size: 11px 11px;
   }
+  /* Cool dot field for premium dark device surfaces */
+  .pin-texture-device {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.10) 1.2px, transparent 1.4px);
+    background-size: 10px 10px;
+  }
+
+  /* Gemini-spectrum gradient text + bars */
+  .spectrum-text {
+    background-image: linear-gradient(96deg, #3B82F6 0%, #22C3DA 48%, #22B07D 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .spectrum-bar {
+    background-image: linear-gradient(96deg, #3B82F6 0%, #22C3DA 50%, #22B07D 100%);
+  }
+  .spectrum-ring {
+    background-image: linear-gradient(135deg, rgba(59,130,246,0.5), rgba(34,195,218,0.5), rgba(34,176,125,0.5));
+  }
 }
 
-/* Respect reduced-motion preferences. */
+/* Scan-sweep beam animation for the Dot Pad tactile field. */
+@keyframes scan-sweep {
+  0%   { transform: translateY(-120%); }
+  100% { transform: translateY(420%); }
+}
+@keyframes fade-up {
+  0%   { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ── High-contrast mode ─────────────────────────────────────── */
+@media (prefers-contrast: more) {
+  :root {
+    --hc-border: 2px solid #000;
+  }
+  body {
+    background-image: none;
+    background-color: #fff;
+  }
+  .glass {
+    background: #fff;
+    backdrop-filter: none;
+    border: 2px solid #000;
+  }
+  :where(a, button, input, select, textarea, [tabindex]):focus-visible {
+    outline: 3px solid #000;
+    outline-offset: 3px;
+  }
+}
+
+/* ── Forced-colors (Windows High Contrast) ─────────────────── */
+@media (forced-colors: active) {
+  .spectrum-bar,
+  .spectrum-ring { background-image: none; }
+  .spectrum-text { background-image: none; color: inherit; -webkit-background-clip: unset; background-clip: unset; }
+  .pin-texture,
+  .pin-texture-dense,
+  .pin-texture-device { background-image: none; }
+}
+
+/* ── Status text classes (status never conveyed by color alone) */
+@layer components {
+  .status-label {
+    @apply flex items-center gap-1.5 text-[12px] font-semibold;
+  }
+  .status-label::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
+}
+
+/* ── Respect reduced-motion preferences ────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -70,5 +159,12 @@
   *::after {
     animation-duration: 0.001ms !important;
     transition-duration: 0.001ms !important;
+  }
+}
+
+/* ── Font-size scaling support ─────────────────────────────── */
+@media (min-width: 1px) {
+  :root {
+    font-size: clamp(14px, 1vw + 12px, 18px);
   }
 }

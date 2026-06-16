@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Fraunces, Figtree, IBM_Plex_Mono } from "next/font/google";
+import { Sora, Figtree, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { AppShell } from "@/components/AppShell";
 import { PRODUCT } from "@/lib/constants";
 
-const display = Fraunces({
+const display = Sora({
   subsets: ["latin"],
   variable: "--font-display",
   display: "swap",
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
 });
 
 const sans = Figtree({

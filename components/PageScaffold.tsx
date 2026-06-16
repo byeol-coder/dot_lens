@@ -14,19 +14,26 @@ export function PageHeader({
   phase: number;
 }) {
   return (
-    <div className="border-b border-line bg-surface">
-      <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
+    <div className="relative overflow-hidden border-b border-line bg-surface">
+      <div className="spectrum-bar absolute inset-x-0 top-0 h-0.5 opacity-60" aria-hidden />
+      <div
+        className="pointer-events-none absolute right-0 top-0 h-full w-1/2 opacity-60"
+        aria-hidden
+      >
+        <div className="absolute right-[-10%] top-[-40%] h-72 w-72 rounded-full bg-brand-blue/10 blur-3xl" />
+      </div>
+      <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="flex items-center gap-3">
           <p className="eyebrow">{eyebrow}</p>
           <StatusBadge variant={phase === 0 ? "live" : "review"}>
             {phase === 0 ? "ready" : `Phase ${phase}`}
           </StatusBadge>
         </div>
-        <h1 className="mt-2 text-3xl font-semibold text-ink sm:text-4xl">
+        <h1 className="mt-2.5 text-balance text-3xl font-semibold leading-tight text-ink sm:text-[40px]">
           {title}
         </h1>
         {titleKo && (
-          <p className="mt-1 font-mono text-[12px] tracking-wide text-accent-soft">
+          <p className="mt-1.5 font-mono text-[12px] tracking-wide text-accent-soft">
             {titleKo}
           </p>
         )}

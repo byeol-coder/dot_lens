@@ -4,13 +4,12 @@ import { getJob } from "@/lib/brailleStore";
 // GET /api/braille/jobs/[id] — a single braille translation job.
 export async function GET(
   _req: Request,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: { id: string } }
 ) {
-  const { id } = await params;
-  const job = getJob(id);
+  const job = getJob(params.id);
   if (!job) {
     return NextResponse.json(
-      { error: `Job '${id}' not found` },
+      { error: `Job '${params.id}' not found` },
       { status: 404 }
     );
   }

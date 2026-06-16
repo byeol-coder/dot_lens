@@ -2,22 +2,22 @@ export interface NavItem {
   href: string;
   label: string;
   labelKo: string;
-  /** Short note shown on scaffold pages and the landing map. */
   blurb: string;
-  /** Which phase this surface is slated for. */
   phase: number;
+  role?: "teacher" | "expert" | "activist" | "student" | "all";
 }
 
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/", label: "Home", labelKo: "홈", blurb: "Product overview and demo entry points.", phase: 0 },
-  { href: "/teacher", label: "Teacher", labelKo: "교사", blurb: "Build a tactile-ready assignment in three steps.", phase: 1 },
-  { href: "/student", label: "Student", labelKo: "학생", blurb: "Explore the diagram on the Dot Pad with Gemini.", phase: 2 },
-  { href: "/dashboard", label: "Dashboard", labelKo: "대시보드", blurb: "Review who explored what — and where they got stuck.", phase: 3 },
-  { href: "/review", label: "Braille QA", labelKo: "점자 검수", blurb: "Verify and approve braille before it reaches a student.", phase: 3 },
-  { href: "/settings", label: "Settings", labelKo: "설정", blurb: "Braille standard, language, speech, and contrast.", phase: 2 },
-  { href: "/admin", label: "Admin", labelKo: "관리자", blurb: "Privacy, data region, and per-OU controls.", phase: 4 },
-  { href: "/pitch", label: "Partner Pitch", labelKo: "파트너 피치", blurb: "The three-slide case for collaboration.", phase: 5 },
+  { href: "/", label: "Home", labelKo: "홈", blurb: "Platform overview and role entry points.", phase: 0, role: "all" },
+  { href: "/dashboard", label: "Dashboard", labelKo: "대시보드", blurb: "Platform-wide stats — lessons, teachers, impact.", phase: 1, role: "all" },
+  { href: "/teacher", label: "Teacher", labelKo: "교사 모드", blurb: "Build a tactile-ready lesson in minutes.", phase: 1, role: "teacher" },
+  { href: "/student", label: "Student", labelKo: "학생 모드", blurb: "Explore diagrams on Dot Pad with audio guidance.", phase: 2, role: "student" },
+  { href: "/expert-review", label: "Expert Review", labelKo: "전문가 검수", blurb: "Review and approve AI-generated tactile materials.", phase: 1, role: "expert" },
+  { href: "/field-data", label: "Field Data", labelKo: "현장 데이터", blurb: "Monitor teacher usage and field impact.", phase: 1, role: "activist" },
+  { href: "/lesson-library", label: "Lessons", labelKo: "수업 자료", blurb: "Browse and reuse approved lesson materials.", phase: 1, role: "all" },
+  { href: "/settings", label: "Settings", labelKo: "설정", blurb: "Accessibility, language, and display options.", phase: 2, role: "all" },
+  { href: "/pitch", label: "Partner Pitch", labelKo: "파트너 피치", blurb: "The case for partnership.", phase: 5, role: "all" },
 ];
 
-/** Items shown in the top navigation bar (excludes Home, which is the wordmark). */
+/** Items shown in the top navigation bar (excludes Home). */
 export const PRIMARY_NAV = NAV_ITEMS.filter((i) => i.href !== "/");

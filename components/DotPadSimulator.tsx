@@ -9,8 +9,7 @@ import {
   getInitialState,
 } from "@/lib/dotpadEngine";
 import { OBJECT_COUNT } from "@/lib/tactileMatrix";
-import { TactileGrid } from "@/components/TactileGrid";
-import { BrailleDisplay } from "@/components/BrailleDisplay";
+import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { PanningKeyControls } from "@/components/PanningKeyControls";
 import { cn } from "@/lib/cn";
 
@@ -176,11 +175,13 @@ export function DotPadSimulator({ className }: { className?: string }) {
       </header>
 
       <div className="grid gap-5 p-5 lg:grid-cols-[1.4fr_1fr]">
-        {/* Device surface */}
-        <div className="space-y-3">
-          <TactileGrid matrix={state.currentMatrix} objectName={state.currentObjectName} />
-          <BrailleDisplay text={state.currentBrailleText} />
-        </div>
+        {/* Device surface — the Dot Pad screen */}
+        <DotPadScreen
+          matrix={state.currentMatrix}
+          brailleText={state.currentBrailleText}
+          demoLabel={connected ? state.currentObjectName : "water cycle"}
+          objectName={state.currentObjectName}
+        />
 
         {/* Readout + tutor + keys + session */}
         <div className="flex flex-col gap-4">

@@ -13,31 +13,35 @@ const LETTER: Record<string, number[]> = {
 const CELLS = 20;
 
 function toCells(text: string): number[][] {
-  const cells = text
-    .toLowerCase()
-    .split("")
-    .map((ch) => LETTER[ch] ?? []);
-  return cells.slice(0, CELLS);
+  return text.toLowerCase().split("").map((ch) => LETTER[ch] ?? []).slice(0, CELLS);
 }
 
 function BrailleCell({ dots }: { dots: number[] }) {
-  // positions 1..6 → grid order (1,2,3 left column; 4,5,6 right column)
-  const order = [1, 4, 2, 5, 3, 6];
+  const order = [1, 4, 2, 5, 3, 6]; // 1,2,3 left column; 4,5,6 right column
   return (
     <span className="grid grid-cols-2 grid-rows-3 gap-[3px]" aria-hidden>
-      {order.map((d) => (
-        <span
-          key={d}
-          className={cn(
-            "h-[6px] w-[6px] rounded-full",
-            dots.includes(d) ? "bg-[#F2C14E]" : "bg-[#283143]"
-          )}
-        />
-      ))}
+      {order.map((d) => {
+        const on = dots.includes(d);
+        return (
+          <span
+            key={d}
+            className="h-[7px] w-[7px] rounded-full"
+            style={{
+              backgroundColor: on ? "#f3f4f6" : "#2b2c30",
+              boxShadow: on ? "0 0 1.5px rgba(255,255,255,0.45)" : undefined,
+            }}
+          />
+        );
+      })}
     </span>
   );
 }
 
+/**
+ * 20-cell refreshable braille line — bright lit dots on black, matching the
+ * tactile field. Renders dots only; the device frame supplies the "TEXT 20"
+ * label and layout.
+ */
 export function BrailleDisplay({
   text,
   className,
@@ -50,26 +54,13 @@ export function BrailleDisplay({
 
   return (
     <div
-      className={cn(
-        "rounded-2xl border border-[#222a3a] bg-[#0d1320] px-4 py-3",
-        className
-      )}
+      className={cn("flex items-center justify-between gap-1", className)}
+      role="img"
+      aria-label={`Braille line showing: ${text}`}
     >
-      <div className="flex items-center justify-between">
-        <span className="font-mono text-[10px] uppercase tracking-[0.18em] text-[#6b7689]">
-          Braille line · 20 cells
-        </span>
-        <span className="font-mono text-[11px] text-[#8a93a3]">{text}</span>
-      </div>
-      <div
-        className="mt-2 flex gap-[9px] overflow-x-auto"
-        role="img"
-        aria-label={`Braille line showing: ${text}`}
-      >
-        {padded.map((dots, i) => (
-          <BrailleCell key={i} dots={dots} />
-        ))}
-      </div>
+      {padded.map((dots, i) => (
+        <BrailleCell key={i} dots={dots} />
+      ))}
     </div>
   );
 }

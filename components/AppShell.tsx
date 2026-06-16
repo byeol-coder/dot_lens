@@ -1,10 +1,12 @@
 import { TopNavigation } from "@/components/TopNavigation";
 import { LangProvider } from "@/components/LangProvider";
+import { ApiShim } from "@/components/ApiShim";
 import { PRODUCT } from "@/lib/constants";
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <LangProvider>
+      <ApiShim />
       <div className="flex min-h-screen flex-col">
         <a href="#main" className="skip-link">
           Skip to content

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useLang, useT } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
+import { VoiceSearchHero } from "@/components/VoiceSearchHero";
 
 function useL() {
   const { lang } = useLang();
@@ -169,69 +170,8 @@ export function LandingView() {
 
   return (
     <>
-      {/* ── 1. HERO ─────────────────────────────────────────── */}
-      <section className="relative overflow-hidden border-b border-line bg-surface">
-        <div className="pin-texture absolute inset-0 opacity-[0.5]" aria-hidden />
-        <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:py-16">
-          <p className="eyebrow">{t("home.hero.eyebrow")}</p>
-
-          <h1 className="mt-3 max-w-3xl text-balance text-[28px] font-semibold leading-[1.15] text-ink sm:text-[38px] lg:text-[48px] sm:leading-[1.12]">
-            {L(
-              "See classroom visuals through a tactile lens.",
-              "보이지 않던 수업 자료를, 촉각으로 이해할 수 있게."
-            )}
-          </h1>
-
-          <p className="mt-4 max-w-2xl text-[17px] leading-relaxed text-muted">
-            {L(
-              "Dot Lens turns diagrams and images into tactile lessons that blind and low-vision students can explore with their classmates.",
-              "닷 렌즈는 교실 속 다이어그램과 이미지를 시각장애 및 저시력 학생이 함께 탐색할 수 있는 촉각 수업 자료로 바꿉니다."
-            )}
-          </p>
-
-          <div className="mt-7 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-            <Link
-              href="/guided-demo"
-              className="rounded-xl bg-accent px-5 py-3 text-center text-[15px] font-semibold text-white shadow-glow transition-colors hover:bg-accent-soft sm:w-auto"
-            >
-              {L("Start Guided Demo →", "시연 시작하기 →")}
-            </Link>
-            <Link
-              href="/teacher"
-              className="rounded-xl border border-accent bg-surface px-5 py-3 text-center text-[15px] font-semibold text-accent transition-colors hover:bg-accent-tint sm:w-auto"
-            >
-              {L("Create a Lesson", "수업 자료 만들기")}
-            </Link>
-          </div>
-
-          {/* Flow chip */}
-          <div className="mt-9 flex max-w-md items-center gap-2 rounded-2xl border border-line bg-surface p-3 shadow-card">
-            {[
-              { icon: "🖼", en: "Visual material", ko: "수업 자료", tone: "muted" },
-              { icon: "◎", en: "Dot Lens analysis", ko: "렌즈 분석", tone: "accent" },
-              { icon: "⠿", en: "Tactile lesson", ko: "촉각 수업", tone: "verify" },
-            ].map((s, i) => (
-              <div key={i} className="flex items-center gap-2">
-                <div className="flex min-w-[84px] flex-col items-center gap-1 rounded-xl bg-surface-sunk px-2 py-2.5 text-center">
-                  <span
-                    className={cn(
-                      "grid h-8 w-8 place-items-center rounded-full text-[14px]",
-                      s.tone === "accent" ? "bg-accent text-white" :
-                      s.tone === "verify" ? "bg-verify-tint text-verify" :
-                      "bg-surface text-muted"
-                    )}
-                    aria-hidden
-                  >
-                    {s.icon}
-                  </span>
-                  <span className="text-[11px] font-semibold leading-tight text-ink">{L(s.en, s.ko)}</span>
-                </div>
-                {i < 2 && <span className="text-[15px] text-accent" aria-hidden>→</span>}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── 1. HERO — Gemini-style voice search ────────────── */}
+      <VoiceSearchHero />
 
       {/* ── 2. HOW IT WORKS ──────────────────────────────────── */}
       <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6" aria-labelledby="how-heading">

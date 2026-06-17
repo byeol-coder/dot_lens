@@ -3,6 +3,7 @@ import { LangProvider } from "@/components/LangProvider";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { AccessibilityBar } from "@/components/AccessibilityBar";
 import { AnnouncementBar } from "@/components/AnnouncementBar";
+import { VoiceSearchButton } from "@/components/VoiceSearchButton";
 import { DemoBar } from "@/components/DemoBar";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DemoSeeder } from "@/components/DemoSeeder";
@@ -25,6 +26,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             {children}
           </main>
           <SiteFooter />
+          <VoiceSearchButton />
           <AccessibilityBar />
         </div>
       </AccessibilityProvider>

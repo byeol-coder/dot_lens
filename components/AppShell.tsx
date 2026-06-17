@@ -2,6 +2,7 @@ import { TopNavigation } from "@/components/TopNavigation";
 import { LangProvider } from "@/components/LangProvider";
 import { AccessibilityProvider } from "@/components/AccessibilityProvider";
 import { AccessibilityBar } from "@/components/AccessibilityBar";
+import { AnnouncementBar } from "@/components/AnnouncementBar";
 import { DemoBar } from "@/components/DemoBar";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DemoSeeder } from "@/components/DemoSeeder";
@@ -17,6 +18,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <a href="#main" className="skip-link">
             Skip to content
           </a>
+          <AnnouncementBar />
           <TopNavigation />
           <DemoBar />
           <main id="main" className="flex-1">

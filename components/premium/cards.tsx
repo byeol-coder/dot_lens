@@ -118,7 +118,7 @@ export function StatImpactCard({
 
 /* ---- Gemini insight panel -------------------------------------------- */
 export function GeminiInsightPanel({
-  title = "Gemini insight",
+  title = "Dot Lens insight",
   children,
   className,
 }: {

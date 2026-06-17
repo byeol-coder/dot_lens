@@ -13,6 +13,7 @@ import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { PanningKeyControls } from "@/components/PanningKeyControls";
 import { cn } from "@/lib/cn";
 import { clientApi } from "@/lib/clientApi";
+import { useLang } from "@/lib/i18n";
 
 const STUDENT = { id: "s-self", name: "You (demo)" };
 const ASSIGNMENT_ID = "wc-001";
@@ -20,6 +21,8 @@ const ASSIGNMENT_ID = "wc-001";
 type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 export function DotPadSimulator({ className }: { className?: string }) {
+  const { lang } = useLang();
+  const L = (en: string, ko: string) => lang === "ko" ? ko : en;
   const [state, setState] = useState<DotPadState>(() => getInitialState("en"));
   const [connecting, setConnecting] = useState(false);
   const [startedAt, setStartedAt] = useState<number | null>(null);
@@ -150,7 +153,7 @@ export function DotPadSimulator({ className }: { className?: string }) {
               Dot Pad · 60 × 40
             </p>
             <p className="text-[13px] font-medium text-ink">
-              {connected ? "Connected" : "Not connected"}
+              {connected ? L("Connected", "연결됨") : L("Not connected", "미연결")}
             </p>
           </div>
         </div>
@@ -165,7 +168,7 @@ export function DotPadSimulator({ className }: { className?: string }) {
               : "bg-accent text-white hover:bg-accent-soft"
           )}
         >
-          {connecting ? "Connecting…" : connected ? "Disconnect" : "Connect Dot Pad"}
+          {connecting ? L("Connecting…", "연결 중…") : connected ? L("Disconnect", "연결 해제") : L("Connect Dot Pad", "Dot Pad 연결")}
         </button>
       </header>
 
@@ -183,7 +186,7 @@ export function DotPadSimulator({ className }: { className?: string }) {
           <div className="rounded-2xl border border-line bg-paper px-4 py-3">
             <div className="flex items-center justify-between gap-2">
               <p className="font-mono text-[11px] uppercase tracking-eyebrow text-accent-soft">
-                Now exploring
+                {L("Now exploring", "지금 탐색 중")}
               </p>
               {connected && q.active && (
                 <span className="rounded-full bg-pin-soft px-2 py-0.5 font-mono text-[10px] font-semibold text-ink">
@@ -198,8 +201,8 @@ export function DotPadSimulator({ className }: { className?: string }) {
             </p>
             <p className="font-mono text-[11px] text-faint">
               {connected
-                ? `Object ${state.currentObjectIndex + 1} of ${OBJECT_COUNT}`
-                : "Connect to begin"}
+                ? L(`Object ${state.currentObjectIndex + 1} of ${OBJECT_COUNT}`, `${state.currentObjectIndex + 1} / ${OBJECT_COUNT} 탐색`)
+                : L("Connect to begin", "연결 후 시작")}
             </p>
           </div>
 
@@ -213,7 +216,7 @@ export function DotPadSimulator({ className }: { className?: string }) {
                 G
               </span>
               <p className="font-mono text-[11px] uppercase tracking-eyebrow text-accent">
-                Dot Lens tutor
+                {L("Dot Lens tutor", "닷 렌즈 튜터")}
               </p>
             </div>
             <p
@@ -235,14 +238,14 @@ export function DotPadSimulator({ className }: { className?: string }) {
           {connected && (
             <div className="rounded-2xl border border-line bg-surface px-4 py-3">
               <div className="flex items-center justify-between">
-                <p className="eyebrow">Session</p>
+                <p className="eyebrow">{L("Session", "세션")}</p>
                 <span className="font-mono text-[11px] text-faint" aria-live="polite">
                   {saveStatus === "saving"
-                    ? "saving…"
+                    ? L("saving…", "저장 중…")
                     : saveStatus === "saved"
-                    ? "saved ✓"
+                    ? L("saved ✓", "저장됨 ✓")
                     : saveStatus === "error"
-                    ? "save failed"
+                    ? L("save failed", "저장 실패")
                     : ""}
                 </span>
               </div>
@@ -251,17 +254,17 @@ export function DotPadSimulator({ className }: { className?: string }) {
                   <dd className="font-mono text-[15px] text-ink">
                     {state.exploredIds.length}/{OBJECT_COUNT}
                   </dd>
-                  <dt className="text-[10px] text-muted">objects</dt>
+                  <dt className="text-[10px] text-muted">{L("objects", "객체")}</dt>
                 </div>
                 <div>
                   <dd className="font-mono text-[15px] text-ink">{state.hintsUsed}</dd>
-                  <dt className="text-[10px] text-muted">hints</dt>
+                  <dt className="text-[10px] text-muted">{L("hints", "힌트")}</dt>
                 </div>
                 <div>
                   <dd className="font-mono text-[15px] text-ink">
                     {q.active || q.finished ? `${q.score}/${q.total}` : "–"}
                   </dd>
-                  <dt className="text-[10px] text-muted">quiz</dt>
+                  <dt className="text-[10px] text-muted">{L("quiz", "퀴즈")}</dt>
                 </div>
               </dl>
               <div className="mt-3 flex items-center gap-2">
@@ -271,14 +274,14 @@ export function DotPadSimulator({ className }: { className?: string }) {
                   disabled={saveStatus === "saving"}
                   className="flex-1 rounded-xl bg-accent px-3 py-2 text-[13.5px] font-semibold text-white transition-colors hover:bg-accent-soft disabled:opacity-50"
                 >
-                  Save to dashboard
+                  {L("Save to dashboard", "대시보드에 저장")}
                 </button>
                 {saveStatus === "saved" && (
                   <Link
                     href="/dashboard"
                     className="rounded-xl border border-line px-3 py-2 text-[13.5px] font-semibold text-accent hover:bg-accent-tint"
                   >
-                    View dashboard
+                    {L("View dashboard", "대시보드 보기")}
                   </Link>
                 )}
               </div>

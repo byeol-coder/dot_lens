@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useT } from "@/lib/i18n";
+import { useT, useLang } from "@/lib/i18n";
 
 export function DashboardHeader() {
   const { t } = useT();
@@ -27,6 +27,22 @@ export function DashboardHeader() {
           {t("dashboard.sampleButton")} →
         </Link>
       </div>
+    </div>
+  );
+}
+
+export function StudentProgressSectionHeader() {
+  const { lang } = useLang();
+  return (
+    <div>
+      <h2 className="text-[17px] font-semibold text-ink">
+        {lang === "ko" ? "학생 학습 현황 (체험 수업)" : "Student Progress (Demo Lesson)"}
+      </h2>
+      <p className="mt-1 text-[13px] text-muted">
+        {lang === "ko"
+          ? "물의 순환 수업 실시간 학생 Dot Pad 세션 현황입니다."
+          : "Per-student Dot Pad session progress for the water cycle assignment."}
+      </p>
     </div>
   );
 }

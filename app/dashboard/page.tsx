@@ -1,7 +1,7 @@
 import { PlatformDashboard } from "@/components/PlatformDashboard";
 import { DashboardTable } from "@/components/DashboardTable";
 import { ComingNext } from "@/components/PageScaffold";
-import { DashboardHeader } from "@/components/DashboardHeader";
+import { DashboardHeader, StudentProgressSectionHeader } from "@/components/DashboardHeader";
 
 export const metadata = {
   title: "Dashboard | Dot Lens",
@@ -15,12 +15,9 @@ export default function DashboardPage() {
 
       <PlatformDashboard />
 
-      {/* Original student-progress table preserved below */}
+      {/* Student-progress table */}
       <div className="mt-12 border-t border-line pt-8">
-        <h2 className="text-[17px] font-semibold text-ink">Student Progress (Demo Lesson)</h2>
-        <p className="mt-1 text-[13px] text-muted">
-          Per-student Dot Pad session progress for the water cycle assignment.
-        </p>
+        <StudentProgressSectionHeader />
         <div className="mt-4">
           <DashboardTable />
         </div>
@@ -30,6 +27,11 @@ export default function DashboardPage() {
               "Replay a student's session and quiz answers.",
               "Export a short summary for IEP records.",
               "Charts mirrored as accessible tables.",
+            ]}
+            pointsKo={[
+              "학생 세션과 퀴즈 답변 다시 보기",
+              "IEP 기록을 위한 요약 내보내기",
+              "차트를 접근 가능한 표로 표시",
             ]}
           />
         </div>

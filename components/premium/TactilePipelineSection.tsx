@@ -1,17 +1,44 @@
+"use client";
+
 import { SectionHeading } from "@/components/premium/cards";
 import { cn } from "@/lib/cn";
+import { useLang } from "@/lib/i18n";
 
 interface Stage {
   step: string;
-  title: string;
-  body: string;
+  title: { en: string; ko: string };
+  body: { en: string; ko: string };
   motif: "scan" | "analyze" | "tactile";
 }
 
 const STAGES: Stage[] = [
-  { step: "01", title: "Scan the material", body: "A teacher attaches any Classroom diagram. Dot Lens reads it on the Chromebook.", motif: "scan" },
-  { step: "02", title: "Gemini analyzes", body: "Objects, relationships, and flow are detected, then sequenced for learning.", motif: "analyze" },
-  { step: "03", title: "Tactile + braille out", body: "A 60×40 tactile graphic and reviewed braille reach the student's Dot Pad.", motif: "tactile" },
+  {
+    step: "01",
+    title: { en: "Scan the material", ko: "자료 스캔" },
+    body: {
+      en: "A teacher attaches any Classroom diagram. Dot Lens reads it on the Chromebook.",
+      ko: "교사가 수업 자료를 첨부하면 닷 렌즈가 Chromebook에서 바로 읽어냅니다.",
+    },
+    motif: "scan",
+  },
+  {
+    step: "02",
+    title: { en: "Dot Lens analyzes", ko: "닷 렌즈 분석" },
+    body: {
+      en: "Objects, relationships, and flow are detected, then sequenced for learning.",
+      ko: "객체·관계·흐름을 감지하고 학습에 최적화된 순서로 재구성합니다.",
+    },
+    motif: "analyze",
+  },
+  {
+    step: "03",
+    title: { en: "Tactile + braille out", ko: "촉각 + 점자 출력" },
+    body: {
+      en: "A 60×40 tactile graphic and reviewed braille reach the student's Dot Pad.",
+      ko: "60×40 촉각 그래픽과 검수된 점자가 학생의 Dot Pad에 전달됩니다.",
+    },
+    motif: "tactile",
+  },
 ];
 
 function Motif({ kind }: { kind: Stage["motif"] }) {
@@ -52,12 +79,21 @@ function Motif({ kind }: { kind: Stage["motif"] }) {
 }
 
 export function TactilePipelineSection() {
+  const { lang } = useLang();
+  const L = (en: string, ko: string) => lang === "ko" ? ko : en;
+
   return (
     <section className="mx-auto max-w-6xl px-4 py-16 sm:px-6">
       <SectionHeading
-        eyebrow="The pipeline"
-        title="From a flat diagram to something a student can feel"
-        intro="One assignment moves through three stages — without leaving the Chromebook the student already uses."
+        eyebrow={L("The pipeline", "변환 파이프라인")}
+        title={L(
+          "From a flat diagram to something a student can feel",
+          "평면 다이어그램에서 학생이 손으로 느낄 수 있는 것으로"
+        )}
+        intro={L(
+          "One assignment moves through three stages — without leaving the Chromebook the student already uses.",
+          "수업 자료 하나가 세 단계를 거쳐 — 학생이 이미 쓰는 Chromebook을 벗어나지 않고."
+        )}
       />
       <ol className="mt-8 grid gap-4 md:grid-cols-3">
         {STAGES.map((s, i) => (
@@ -69,8 +105,8 @@ export function TactilePipelineSection() {
                   <span className="text-faint" aria-hidden>→</span>
                 )}
               </div>
-              <h3 className="mt-2 text-[16px] font-semibold text-ink">{s.title}</h3>
-              <p className="mt-1.5 mb-4 flex-1 text-[13px] leading-relaxed text-muted">{s.body}</p>
+              <h3 className="mt-2 text-[16px] font-semibold text-ink">{lang === "ko" ? s.title.ko : s.title.en}</h3>
+              <p className="mt-1.5 mb-4 flex-1 text-[13px] leading-relaxed text-muted">{lang === "ko" ? s.body.ko : s.body.en}</p>
               <Motif kind={s.motif} />
             </div>
           </li>

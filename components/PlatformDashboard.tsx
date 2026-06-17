@@ -54,6 +54,7 @@ function SubjectBar({ subject, count, max }: { subject: string; count: number; m
 }
 
 function ChampionRow({ teacher }: { teacher: (typeof CHAMPION_TEACHERS)[0] }) {
+  const { lang } = useLang();
   const badgeClass =
     teacher.championStatus === "champion"
       ? "bg-verify-tint text-verify border-verify/20"
@@ -77,12 +78,12 @@ function ChampionRow({ teacher }: { teacher: (typeof CHAMPION_TEACHERS)[0] }) {
           className={cn("rounded-full border px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide", badgeClass)}
         >
           {teacher.championStatus === "champion"
-            ? "Champion"
+            ? lang === "ko" ? "챔피언" : "Champion"
             : teacher.championStatus === "candidate"
-            ? "Candidate"
-            : "Member"}
+            ? lang === "ko" ? "후보" : "Candidate"
+            : lang === "ko" ? "멤버" : "Member"}
         </span>
-        <span className="text-[11px] font-mono text-muted">Score {teacher.score}</span>
+        <span className="text-[11px] font-mono text-muted">{lang === "ko" ? "점수" : "Score"} {teacher.score}</span>
       </div>
     </div>
   );
@@ -112,13 +113,13 @@ export function PlatformDashboard() {
             label="Pending Review"
             labelKo="검수 대기"
             value={stats.pendingReview}
-            sub="Needs expert attention"
+            sub={lang === "ko" ? "전문가 검수 필요" : "Needs expert attention"}
           />
           <StatCard
             label="Used in Class"
             labelKo="실제 수업 활용"
             value={stats.usedInClass}
-            sub={`${Math.round((stats.usedInClass / stats.totalLessonsCreated) * 100)}% utilisation`}
+            sub={lang === "ko" ? `${Math.round((stats.usedInClass / stats.totalLessonsCreated) * 100)}% 활용` : `${Math.round((stats.usedInClass / stats.totalLessonsCreated) * 100)}% utilisation`}
           />
           <StatCard label="Teachers" labelKo="참여 교사" value={stats.totalTeachers} />
           <StatCard
@@ -269,16 +270,17 @@ export function PlatformDashboard() {
 }
 
 function StatusPill({ status }: { status: string }) {
-  const map: Record<string, { label: string; cls: string }> = {
-    used_in_class: { label: "Used in Class", cls: "bg-verify-tint text-verify border-verify/20" },
-    approved: { label: "Approved", cls: "bg-accent-tint text-accent border-accent/20" },
-    pending_review: { label: "Pending Review", cls: "bg-pin-soft text-warn border-pin-soft" },
-    draft: { label: "Draft", cls: "bg-surface-sunk text-muted border-line" },
+  const { lang } = useLang();
+  const map: Record<string, { label: string; labelKo: string; cls: string }> = {
+    used_in_class: { label: "Used in Class", labelKo: "수업 활용", cls: "bg-verify-tint text-verify border-verify/20" },
+    approved: { label: "Approved", labelKo: "승인", cls: "bg-accent-tint text-accent border-accent/20" },
+    pending_review: { label: "Pending Review", labelKo: "검수 대기", cls: "bg-pin-soft text-warn border-pin-soft" },
+    draft: { label: "Draft", labelKo: "초안", cls: "bg-surface-sunk text-muted border-line" },
   };
-  const { label, cls } = map[status] ?? { label: status, cls: "bg-surface-sunk text-muted border-line" };
+  const entry = map[status] ?? { label: status, labelKo: status, cls: "bg-surface-sunk text-muted border-line" };
   return (
-    <span className={cn("rounded-full border px-2.5 py-0.5 text-[11px] font-semibold", cls)}>
-      {label}
+    <span className={cn("rounded-full border px-2.5 py-0.5 text-[11px] font-semibold", entry.cls)}>
+      {lang === "ko" ? entry.labelKo : entry.label}
     </span>
   );
 }

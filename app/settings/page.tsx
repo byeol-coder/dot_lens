@@ -1,6 +1,7 @@
 import { PageHeader } from "@/components/PageScaffold";
 import { ScreenCard } from "@/components/ScreenCard";
 import { AccessibilitySettings } from "@/components/AccessibilitySettings";
+import { LocalizationPanel } from "@/components/LocalizationPanel";
 
 const LEARNER_SETTINGS = [
   { label: "Braille standard", labelKo: "점자 규격", value: "UEB Grade 2" },
@@ -22,6 +23,8 @@ export default function SettingsPage() {
       />
       <div className="mx-auto max-w-3xl space-y-6 px-4 py-10 sm:px-6">
         <AccessibilitySettings />
+
+        <LocalizationPanel />
 
         <ScreenCard eyebrow="Per-learner profile" title="Braille & speech">
           <dl className="divide-y divide-line">

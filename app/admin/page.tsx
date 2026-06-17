@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader, ComingNext } from "@/components/PageScaffold";
+import { MonitoringDashboard } from "@/components/MonitoringDashboard";
 import { useLang } from "@/lib/i18n";
 
 const CONTROLS = [
@@ -64,7 +65,20 @@ export default function AdminPage() {
           ))}
         </div>
 
-        <div className="mt-6">
+        {/* Data collection & basic monitoring */}
+        <section className="mt-10" aria-labelledby="monitoring-heading">
+          <h2 id="monitoring-heading" className="text-[17px] font-semibold text-ink">
+            {lang === "ko" ? "데이터 수집 · 기본 모니터링" : "Data collection & basic monitoring"}
+          </h2>
+          <p className="mt-1 mb-5 text-[13px] text-muted">
+            {lang === "ko"
+              ? "사용량·오류·피드백을 로컬에 기록하고, 정의된 성과 기준 대비 현황을 보여줍니다. (개인정보 없는 익명 이벤트)"
+              : "Usage, errors, and feedback are logged locally and measured against defined success criteria. (Anonymous events, no PII.)"}
+          </p>
+          <MonitoringDashboard />
+        </section>
+
+        <div className="mt-10">
           <ComingNext
             points={[
               "Scope review and minimized OAuth justifications.",

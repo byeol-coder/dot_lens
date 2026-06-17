@@ -33,6 +33,7 @@ npm run typecheck    # tsc --noEmit
 | ------------ | ------------------------------- | ----- |
 | `/`          | Landing                         | 0 ✅  |
 | `/teacher`   | Assignment builder              | 1     |
+| `/builder`   | Custom tactile lesson builder   | ✅    |
 | `/student`   | Tactile explorer                | 2     |
 | `/settings`  | Accessibility settings          | 2     |
 | `/dashboard` | Teacher dashboard               | 3     |
@@ -40,6 +41,16 @@ npm run typecheck    # tsc --noEmit
 | `/pitch`     | Partner pitch mode              | 5     |
 
 All routes are reachable now; non-landing routes are polished scaffolds with mock data and a "Coming next" block.
+
+### Custom tactile builder (`/builder`)
+
+Teachers author their own tactile lessons end to end — no coding:
+
+- Start from a **template** (process/flow, bar chart, geometry, blank) or scratch.
+- For each object, pick a **shape** and place it on the 60×40 grid with keyboard-accessible sliders, write a **braille label** (auto-suggested) plus F1 explanation / F2 hint.
+- The **Global Braille QA** layer checks every label with the real engine and blocks publishing on untranslatable characters.
+- **Try it interactively** in the same six-key Dot Pad explorer a student uses, then **publish** to the lesson library.
+- Lessons persist in `localStorage` (`lib/customLessons.ts`) and replay through a generalized, scene-driven engine (`lib/lessonPlayer.ts`) — the same model as the built-in lessons, no longer hard-coded to the water cycle.
 
 ## Structure
 

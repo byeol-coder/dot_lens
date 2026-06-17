@@ -14,6 +14,7 @@ import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { ChromebookMockup } from "@/components/premium/ChromebookMockup";
 import { GeminiInsightPanel } from "@/components/premium/cards";
 import { StatusBadge } from "@/components/StatusBadge";
+import { MyLessonsSection } from "@/components/MyLessonsSection";
 import { cn } from "@/lib/cn";
 import { useLang } from "@/lib/i18n";
 
@@ -127,6 +128,9 @@ export function LessonLibraryPage() {
           </div>
         </div>
       </div>
+
+      {/* Teacher-authored custom lessons (localStorage) */}
+      <MyLessonsSection />
 
       <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
 

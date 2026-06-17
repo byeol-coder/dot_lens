@@ -7,6 +7,7 @@ import { playerApplyKey, playerConnected, playerInitial } from "@/lib/lessonPlay
 import { logEvent } from "@/lib/telemetry";
 import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { PanningKeyControls } from "@/components/PanningKeyControls";
+import { DotPadDeviceBar } from "@/components/DotPadDeviceControl";
 import { useLang } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 
@@ -183,6 +184,8 @@ export function LessonExplorer({
           </div>
 
           <PanningKeyControls onKey={handleKey} lastKey={state.lastKeyPressed} disabled={!connected} />
+
+          <DotPadDeviceBar matrix={state.currentMatrix} brailleText={state.currentBrailleText} />
         </div>
       </div>
     </section>

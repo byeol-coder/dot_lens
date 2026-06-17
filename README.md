@@ -94,6 +94,16 @@ styles/                 # reserved
 - Chromebook-inspired (light, rounded, soft shadows) with **no Google logos**.
 - Accessibility-first: semantic HTML, visible focus rings, keyboard-navigable nav, ARIA labels, reduced-motion support, AA-minded contrast.
 
+## Connecting a real Dot Pad
+
+By default the Dot Pad is **simulated on screen** (no hardware output). To drive a
+physical device, the app exposes a single SDK seam:
+
+- `lib/dotpadDevice.ts` — `registerDotPad({ connect, disconnect, showGraphic, showText })`. The explorer and student simulator mirror their 60×40 grid + braille line to whatever binding is registered (`components/DotPadDeviceControl.tsx`). Until one is registered, nothing changes — it stays a simulation (no false "connected" state).
+- `public/dotpad-sdk-bridge.example.js` — a template that maps the **Dot Inc Web SDK** to this binding via `window.registerDotPad(...)`. Fill in the three SDK calls + the bitmap mapping, host it as `dotpad-sdk-bridge.js`, and load it after the app (e.g. a `<script defer>` in `app/layout.tsx`).
+
+Web SDK / Web Bluetooth note: browser device access works in **Chrome/Edge over HTTPS** (GitHub Pages is HTTPS); **Safari/iOS do not support Web Bluetooth**. Plan field demos on Chrome (laptop or Android).
+
 ## Not in this phase (by design)
 
 - API routes (`app/api/...`)

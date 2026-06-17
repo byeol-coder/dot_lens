@@ -73,6 +73,9 @@ function patch(id: string, p: Partial<DotPadDevice>) {
 const STUDENTS = ["Student A", "Student B", "Student C", "Student D", "Student E"];
 const nowIso = () => new Date().toISOString();
 
+/** Per-step tactile frames pushed to real devices on start / next / reset. */
+const STEP_OBJECTS = ["sun", "cloud", "rain", "cycle"];
+
 /* ── mock adapter ─────────────────────────────────────────────────────────── */
 
 export const MockDotPadAdapter: DotPadAdapter = {
@@ -253,8 +256,18 @@ export async function syncLessonToAllDevices(lessonId: string): Promise<void> {
 
 /* ── global controls ──────────────────────────────────────────────────────── */
 
+/** Push the frame for `step` to a real device (no-op for simulated devices). */
+function pushStepFrame(id: string, step: number): void {
+  const dim = dims.get(id);
+  if (!sdk || !dim) return;
+  const obj = STEP_OBJECTS[Math.max(0, Math.min(STEP_OBJECTS.length - 1, step - 1))];
+  sdk.showGraphicHex(id, gridToGraphicHex(getMatrix(obj), dim.cols, dim.rows));
+  sdk.showTextHex(id, textToTextHex(obj, "en", dim.cells));
+}
+
 export function startLessonForAll(): void {
-  devices = devices.map((d) => (d.status === "not_connected" ? d : { ...d, currentStep: 1 }));
+  devices = devices.map((d) => (d.status === "not_connected" ? d : { ...d, currentStep: 1, status: "ready" }));
+  devices.forEach((d) => d.status !== "not_connected" && pushStepFrame(d.id, 1));
   emit();
 }
 export function pauseAll(): void {
@@ -267,10 +280,12 @@ export function nextStepForAll(): void {
       ? d
       : { ...d, currentStep: Math.min((d.totalSteps ?? 4), (d.currentStep ?? 1) + 1) }
   );
+  devices.forEach((d) => d.status !== "not_connected" && pushStepFrame(d.id, d.currentStep ?? 1));
   emit();
 }
 export function resetAllDevices(): void {
   devices = devices.map((d) => (d.status === "not_connected" ? d : { ...d, currentStep: 1, status: "ready" }));
+  devices.forEach((d) => d.status !== "not_connected" && pushStepFrame(d.id, 1));
   emit();
 }
 export function disconnectAll(): void {

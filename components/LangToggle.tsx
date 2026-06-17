@@ -29,7 +29,7 @@ export function LangToggle({ className }: { className?: string }) {
         aria-pressed={lang === "en"}
         aria-label={lang === "en" ? "Current language: English" : "Switch to English"}
         className={cn(
-          "rounded-md px-2.5 py-1 transition-colors",
+          "rounded-md px-2 py-0.5 text-[11px] transition-colors sm:px-2.5 sm:py-1 sm:text-[12px]",
           lang === "en" ? "bg-accent text-white shadow-sm" : "text-muted hover:text-ink"
         )}
       >
@@ -41,7 +41,7 @@ export function LangToggle({ className }: { className?: string }) {
         aria-pressed={lang === "ko"}
         aria-label={lang === "ko" ? "현재 언어: 한국어" : "한국어로 전환"}
         className={cn(
-          "rounded-md px-2.5 py-1 transition-colors",
+          "rounded-md px-2 py-0.5 text-[11px] transition-colors sm:px-2.5 sm:py-1 sm:text-[12px]",
           lang === "ko" ? "bg-accent text-white shadow-sm" : "text-muted hover:text-ink"
         )}
       >

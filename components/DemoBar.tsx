@@ -36,10 +36,10 @@ export function DemoBar() {
         <p className="hidden min-w-0 flex-1 truncate text-[12px] text-muted sm:block">
           {t("demo.banner")}
         </p>
-        <div className="ml-auto flex items-center gap-1.5">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5">
           <Link
             href="/dashboard"
-            className="rounded-lg px-2.5 py-1 text-[12px] font-medium text-muted transition-colors hover:bg-surface hover:text-ink"
+            className="hidden whitespace-nowrap rounded-lg px-2.5 py-1 text-[12px] font-medium text-muted transition-colors hover:bg-surface hover:text-ink sm:block"
           >
             {t("common.dashboard")}
           </Link>
@@ -47,7 +47,7 @@ export function DemoBar() {
             type="button"
             onClick={resetDemo}
             aria-label={t("demo.reset")}
-            className="rounded-lg border border-accent/40 bg-surface px-2.5 py-1 text-[12px] font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
+            className="whitespace-nowrap rounded-lg border border-accent/40 bg-surface px-2.5 py-1 text-[12px] font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
           >
             ↺ {t("demo.reset")}
           </button>

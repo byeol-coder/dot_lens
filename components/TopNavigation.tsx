@@ -18,7 +18,7 @@ export function TopNavigation() {
       <div className="glass border-b border-line/80">
         <nav
           aria-label="Primary"
-          className="mx-auto flex h-16 max-w-6xl items-center gap-3 px-4 sm:px-6"
+          className="mx-auto flex h-16 max-w-6xl items-center gap-2 px-4 sm:gap-3 sm:px-6"
         >
           {/* Wordmark → home */}
           <Link

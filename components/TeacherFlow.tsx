@@ -216,8 +216,15 @@ export function TeacherFlow() {
 
   function goScan() {
     setStep(2);
-    if (scanPhase === "idle") runScan();
   }
+
+  // Whenever the teacher lands on step 2 without having analyzed yet, start the
+  // scan automatically — so the flow never dead-ends on an empty step (whether
+  // reached via the "Analyze" button or by tapping the stepper).
+  useEffect(() => {
+    if (step === 2 && scanPhase === "idle") runScan();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
 
   function canGoTo(target: number): boolean {
     if (target <= step) return true;
@@ -512,38 +519,28 @@ function SetupStep({
         <button
           type="button"
           onClick={onScan}
-          className="rounded-xl bg-accent px-4 py-2.5 text-[14px] font-semibold text-white transition-colors hover:bg-accent-soft"
+          className="rounded-xl bg-accent px-5 py-2.5 text-[14px] font-semibold text-white transition-colors hover:bg-accent-soft"
         >
-          {tr("Analyze with Dot Lens", "닷 렌즈로 분석하기")}
-        </button>
-        <button
-          type="button"
-          disabled={!scanned}
-          title={scanned ? undefined : tr("Analyze the material first", "먼저 자료를 분석하세요")}
-          className="rounded-xl border border-line bg-surface px-4 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-surface-sunk disabled:opacity-50"
-        >
-          {tr("Generate Tactile Lesson", "촉각 자료 생성")}
+          {tr("Next: analyze with Dot Lens →", "다음: 닷 렌즈로 분석 →")}
         </button>
         <button
           type="button"
           onClick={onSaveDraft}
           className="rounded-xl border border-line bg-surface px-4 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-surface-sunk"
         >
-          {tr("Save Draft", "임시 저장")}
-        </button>
-        <button
-          type="button"
-          disabled={!canPublish}
-          title={canPublish ? undefined : tr("Expert review must pass first", "전문가 검수를 먼저 통과해야 합니다")}
-          className="rounded-xl border border-line bg-surface px-4 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-surface-sunk disabled:opacity-50"
-        >
-          {tr("Add to Class", "학급에 추가")}
+          {tr("Save draft", "임시 저장")}
         </button>
         {draftSaved && (
           <span className="font-mono text-[12px] text-verify" role="status">
             {tr("draft saved ✓", "임시 저장됨 ✓")}
           </span>
         )}
+        <Link
+          href="/builder"
+          className="ml-auto rounded-xl border border-accent/40 bg-accent-tint/40 px-4 py-2.5 text-[13px] font-semibold text-accent transition-colors hover:bg-accent-tint"
+        >
+          {tr("Build a custom diagram (e.g. volcano) →", "직접 만들기 (예: 화산) →")}
+        </Link>
       </div>
     </ScreenCard>
   );
@@ -580,6 +577,21 @@ function ScannerStep({
       eyebrow={tr("Step 2 · reading the material", "2단계 · 자료 분석")}
       title={tr("Dot Lens is reading your material", "닷 렌즈가 자료를 살펴봅니다")}
     >
+      {phase === "idle" && (
+        <div className="py-6 text-center">
+          <p className="text-[14px] text-ink">
+            {tr("Ready to analyze your material with Dot Lens.", "닷 렌즈로 자료를 분석할 준비가 되었습니다.")}
+          </p>
+          <button
+            type="button"
+            onClick={onRetry}
+            className="mt-3 rounded-xl bg-accent px-5 py-2.5 text-[14px] font-semibold text-white hover:bg-accent-soft"
+          >
+            {tr("Start analysis", "분석 시작")}
+          </button>
+        </div>
+      )}
+
       {phase === "scanning" && (
         <div className="py-6">
           <div className="mx-auto flex max-w-md flex-col items-center gap-4">
@@ -670,6 +682,23 @@ function ScannerStep({
               </span>
               <StatusBadge variant="review">{tr("Science process diagram", "과학 과정 다이어그램")}</StatusBadge>
               <StatusBadge variant="verified">{Math.round(analysis.confidence * 100)}% {tr("confidence", "신뢰도")}</StatusBadge>
+            </div>
+          )}
+
+          {!imgGrid && (
+            <div className="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-[#EBD9B6] bg-[#FBF3E2] px-4 py-3">
+              <p className="text-[13px] leading-relaxed text-warn">
+                {tr(
+                  "This is a built-in sample analysis (Water Cycle). To build your own diagram — like a volcano — from scratch, use the Tactile Builder.",
+                  "이 분석은 내장 샘플(물의 순환)입니다. 화산처럼 직접 다이어그램을 만들려면 촉각 빌더를 사용하세요."
+                )}
+              </p>
+              <Link
+                href="/builder"
+                className="shrink-0 rounded-lg bg-warn px-3 py-1.5 text-[13px] font-semibold text-white hover:brightness-95"
+              >
+                {tr("Open Tactile Builder →", "촉각 빌더 열기 →")}
+              </Link>
             </div>
           )}
 

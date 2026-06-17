@@ -28,13 +28,21 @@ export default function ReviewPage() {
         {/* What to check — review criteria */}
         <section aria-labelledby="criteria-heading" className="rounded-2xl border border-line bg-surface p-6 shadow-card">
           <h2 id="criteria-heading" className="eyebrow">{t("review.criteriaTitle")}</h2>
-          <ul className="mt-3 grid gap-3 sm:grid-cols-3">
-            {[t("review.q.touch"), t("review.q.goal"), t("review.q.align")].map((q, i) => (
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+            {[
+              { name: L("Tactile Readability", "촉각 판독성"), q: L("Can this structure be understood by touch?", "손으로 만졌을 때 구조를 이해할 수 있나요?") },
+              { name: L("Educational Accuracy", "교육적 정확성"), q: L("Does the simplified version preserve the learning goal?", "단순화된 자료가 학습 목표를 유지하고 있나요?") },
+              { name: L("Braille & Label Alignment", "점자·라벨 정합성"), q: L("Are braille labels, audio guidance, and tactile regions consistent?", "점자 라벨, 음성 안내, 촉각 영역이 서로 일치하나요?") },
+              { name: L("Classroom Readiness", "수업 활용 준비도"), q: L("Is this material ready to use with students?", "학생과 함께 수업에 사용할 수 있는 상태인가요?") },
+            ].map((c, i) => (
               <li key={i} className="flex items-start gap-2.5 rounded-xl border border-line bg-surface-sunk px-4 py-3">
                 <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-accent-tint font-mono text-[12px] font-semibold text-accent">
                   {i + 1}
                 </span>
-                <span className="text-[13.5px] leading-snug text-ink">{q}</span>
+                <span>
+                  <span className="block text-[13.5px] font-semibold text-ink">{c.name}</span>
+                  <span className="mt-0.5 block text-[13px] leading-snug text-muted">{c.q}</span>
+                </span>
               </li>
             ))}
           </ul>

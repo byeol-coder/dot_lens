@@ -162,8 +162,15 @@ export function DotPadSimulator({ className }: { className?: string }) {
             <p className="font-mono text-[11px] uppercase tracking-eyebrow text-faint">
               Dot Pad · 60 × 40
             </p>
-            <p className="text-[13px] font-medium text-ink">
-              {connected ? L("Connected", "연결됨") : L("Not connected", "미연결")}
+            <p className="text-[13px] font-medium text-ink" role="status" aria-live="polite">
+              {connected
+                ? L("Keyboard demo mode is active", "키보드 데모 모드가 실행 중입니다")
+                : L("Dot Pad not connected", "Dot Pad가 연결되어 있지 않습니다")}
+            </p>
+            <p className="text-[11.5px] text-muted">
+              {connected
+                ? L("Simulates Dot Pad output for presentation and classroom preview.", "발표와 수업 미리보기를 위해 Dot Pad 출력을 시뮬레이션합니다.")
+                : L("You can still try the keyboard demo mode — no device needed.", "기기 없이도 키보드 데모 모드로 체험할 수 있습니다.")}
             </p>
           </div>
         </div>
@@ -178,7 +185,11 @@ export function DotPadSimulator({ className }: { className?: string }) {
               : "bg-accent text-white hover:bg-accent-soft"
           )}
         >
-          {connecting ? L("Connecting…", "연결 중…") : connected ? L("Disconnect", "연결 해제") : L("Connect Dot Pad", "Dot Pad 연결")}
+          {connecting
+            ? L("Starting…", "시작 중…")
+            : connected
+            ? L("Exit demo", "데모 종료")
+            : L("Try without device", "기기 없이 체험하기")}
         </button>
       </header>
 

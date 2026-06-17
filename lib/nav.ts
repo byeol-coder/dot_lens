@@ -61,6 +61,7 @@ export const MORE_NAV: NavItem[] = [
   { href: "/academy", label: "Trainer Academy", labelKo: "트레이너 아카데미", blurb: "Certify trainers and grow country partners.", role: "all" },
   { href: "/champion-kit", label: "Champion Kit", labelKo: "챔피언 패키지", blurb: "Quick-start, workshop agenda, and review checklist.", role: "all" },
   { href: "/builder", label: "Tactile Builder", labelKo: "촉각 빌더", blurb: "Author a custom tactile lesson, object by object.", role: "teacher" },
+  { href: "/dot-pad-manager", label: "Dot Pad Manager", labelKo: "Dot Pad 관리", blurb: "Connect and manage up to 5 Dot Pads at once.", role: "all" },
   { href: "/settings", label: "Settings", labelKo: "설정", blurb: "Accessibility, language, and localization.", role: "all" },
 ];
 

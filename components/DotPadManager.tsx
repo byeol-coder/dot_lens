@@ -19,6 +19,9 @@ import {
   resetAllDevices,
   disconnectAll,
   simulateError,
+  hasFleetSdk,
+  connectRealDotPad,
+  MAX_DEVICES,
   type DotPadDevice,
   type DotPadConnectionStatus,
 } from "@/lib/dotpadFleet";
@@ -77,7 +80,20 @@ export function DotPadManager() {
             {summaryText()}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2" role="group" aria-label={L("Simulate Dot Pads", "Dot Pad 시뮬레이션")}>
+        <div className="flex flex-wrap gap-2" role="group" aria-label={L("Dot Pad controls", "Dot Pad 제어")}>
+          {hasFleetSdk() && (
+            <button
+              type="button"
+              onClick={async () => {
+                const ok = await connectRealDotPad();
+                announce(ok ? L("Dot Pad connected.", "Dot Pad가 연결되었습니다.") : L("Could not connect a Dot Pad.", "Dot Pad를 연결하지 못했습니다."));
+              }}
+              disabled={devices.length >= MAX_DEVICES}
+              className="rounded-xl bg-accent px-3 py-2 text-[13px] font-semibold text-white hover:bg-accent-soft disabled:opacity-50"
+            >
+              + {L("Connect real Dot Pad", "실제 Dot Pad 연결")}
+            </button>
+          )}
           {[1, 3, 5].map((n) => (
             <button
               key={n}

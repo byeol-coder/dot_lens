@@ -2,14 +2,17 @@
 
 import { useEffect } from "react";
 import { exposeGlobalRegistrar } from "@/lib/dotpadDevice";
+import { exposeFleetRegistrar } from "@/lib/dotpadFleet";
 
 /**
- * Exposes window.registerDotPad so an external Dot Inc Web SDK bridge script can
- * register a real device. No-op until such a bridge calls it.
+ * Exposes window.registerDotPad (single device) and window.registerDotPadFleet
+ * (up to 5 devices) so the external Dot Inc Web SDK bridge can inject real
+ * devices. No-op until the bridge calls them.
  */
 export function DeviceInit() {
   useEffect(() => {
     exposeGlobalRegistrar();
+    exposeFleetRegistrar();
   }, []);
   return null;
 }

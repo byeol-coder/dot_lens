@@ -65,4 +65,49 @@ import {
     window.registerDotPad(binding);
     console.info("[dotpad] device bridge registered");
   })();
+
+  /* Multi-device fleet adapter (up to 5 Dot Pads) using the same SDK instance. */
+  const fleet = {};
+  let fleetSeq = 0;
+  const fleetAdapter = {
+    connectNew: async function () {
+      const bt = await scanner.startBleScan();
+      if (!bt) throw new Error("No device selected");
+      const dev = await sdk.connectBleDevice(bt);
+      if (!dev) throw new Error("Connection failed");
+      fleetSeq += 1;
+      const id = "dp-real-" + fleetSeq;
+      fleet[id] = dev;
+      return {
+        id: id,
+        name: (dev.connectDevice && dev.connectDevice.name) || "Dot Pad " + fleetSeq,
+        graphicCols: dev.numberCellColumns || 30,
+        graphicRows: dev.numberCellRows || 10,
+        brailleCells: dev.numberBrailleCellColumns || 20,
+      };
+    },
+    disconnect: async function (id) {
+      const d = fleet[id];
+      if (d) sdk.disconnect(d);
+      delete fleet[id];
+    },
+    showGraphicHex: function (id, hex) {
+      const d = fleet[id];
+      if (d) sdk.displayGraphicData(hex, d, DisplayMode.GraphicMode);
+    },
+    showTextHex: function (id, hex) {
+      const d = fleet[id];
+      if (d) sdk.displayTextData(hex, d, DisplayMode.TextMode);
+    },
+    testOutput: function (id) {
+      const d = fleet[id];
+      if (d) sdk.displayAllUp(d);
+    },
+  };
+
+  (function registerFleet() {
+    if (typeof window.registerDotPadFleet !== "function") return setTimeout(registerFleet, 300);
+    window.registerDotPadFleet(fleetAdapter);
+    console.info("[dotpad] fleet bridge registered");
+  })();
 })();

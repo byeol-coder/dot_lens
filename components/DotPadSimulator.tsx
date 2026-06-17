@@ -11,7 +11,7 @@ import {
 import { OBJECT_COUNT } from "@/lib/tactileMatrix";
 import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { PanningKeyControls } from "@/components/PanningKeyControls";
-import { DotPadDeviceBar } from "@/components/DotPadDeviceControl";
+import { DotPadDeviceBar, useDotPadDevice, useDotPadKeys } from "@/components/DotPadDeviceControl";
 import { cn } from "@/lib/cn";
 import { clientApi } from "@/lib/clientApi";
 import { useLang } from "@/lib/i18n";
@@ -57,6 +57,15 @@ export function DotPadSimulator({ className }: { className?: string }) {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [state.connected, handleKey]);
+
+  // Physical Dot Pad keys drive the same handler; connecting a device starts the
+  // session automatically so its keys + live pin output work right away.
+  const device = useDotPadDevice();
+  useDotPadKeys(handleKey);
+  useEffect(() => {
+    if (device.connected && !state.connected) connect();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [device.connected]);
 
   function buildProgress(): StudentProgress {
     const attempted = state.quizState.active || state.quizState.finished;

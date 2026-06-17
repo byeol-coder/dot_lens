@@ -7,7 +7,7 @@ import { playerApplyKey, playerConnected, playerInitial } from "@/lib/lessonPlay
 import { logEvent } from "@/lib/telemetry";
 import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { PanningKeyControls } from "@/components/PanningKeyControls";
-import { DotPadDeviceBar } from "@/components/DotPadDeviceControl";
+import { DotPadDeviceBar, useDotPadDevice, useDotPadKeys } from "@/components/DotPadDeviceControl";
 import { useLang } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 
@@ -87,6 +87,20 @@ export function LessonExplorer({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [state.connected, handleKey]);
+
+  // Physical Dot Pad keys (panning + F1–F4) drive the same handler.
+  const device = useDotPadDevice();
+  useDotPadKeys(handleKey);
+
+  // When a physical Dot Pad connects, begin exploring automatically so its keys
+  // and the live pin output work without a second on-screen "connect".
+  useEffect(() => {
+    if (device.connected && !state.connected) {
+      setState(playerConnected(lesson, lang));
+      loggedFinish.current = false;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [device.connected]);
 
   function connect() {
     setState(playerConnected(lesson, lang));

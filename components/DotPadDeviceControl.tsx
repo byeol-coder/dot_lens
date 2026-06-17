@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import type { TactileGridData } from "@/types";
+import type { DotPadKey, TactileGridData } from "@/types";
 import {
   hasRealDotPad,
   isDeviceConnected,
@@ -14,6 +14,37 @@ import {
 import { logEvent, logError } from "@/lib/telemetry";
 import { useLang } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
+
+/**
+ * Maps physical Dot Pad key codes (forwarded by the bridge as a `dotpad:key`
+ * event) to the app's six-key model.
+ *   ← / →   panning      → previous / next part
+ *   F1–F4   function keys → explain / hint / quiz / whole-picture+braille
+ */
+const KEYMAP: Record<string, DotPadKey> = {
+  PanningLeft: "leftPan",
+  PanningRight: "rightPan",
+  KeyFunction1: "f1",
+  KeyFunction2: "f2",
+  KeyFunction3: "f3",
+  KeyFunction4: "f4",
+  PanningAll: "f4", // both panning bars → show the whole picture
+  LPF1: "f1",
+  RPF4: "f4",
+};
+
+/** Subscribe to physical Dot Pad keys and drive the app's key handler. */
+export function useDotPadKeys(onKey: (k: DotPadKey) => void) {
+  useEffect(() => {
+    function handler(e: Event) {
+      const detail = (e as CustomEvent<{ key?: string }>).detail;
+      const mapped = detail?.key ? KEYMAP[detail.key] : undefined;
+      if (mapped) onKey(mapped);
+    }
+    window.addEventListener("dotpad:key", handler as EventListener);
+    return () => window.removeEventListener("dotpad:key", handler as EventListener);
+  }, [onKey]);
+}
 
 /** Reflects device availability + connection, exposing connect/disconnect. */
 export function useDotPadDevice() {
@@ -83,30 +114,40 @@ export function DotPadDeviceBar({
   return (
     <div
       className={cn(
-        "flex flex-wrap items-center justify-between gap-2 rounded-2xl border px-4 py-2.5",
+        "rounded-2xl border px-4 py-2.5",
         connected ? "border-verify/40 bg-verify-tint/40" : "border-line bg-surface-sunk",
         className
       )}
     >
-      <div className="flex items-center gap-2">
-        <span className={cn("h-2.5 w-2.5 rounded-full", connected ? "bg-verify shadow-[0_0_10px] shadow-verify" : "bg-faint")} aria-hidden />
-        <span className="text-[13px] font-medium text-ink">
-          {connected
-            ? L(`Live on ${name || "Dot Pad"}`, `${name || "Dot Pad"}에 실시간 출력`)
-            : L("Physical Dot Pad ready", "실물 Dot Pad 연결 가능")}
-        </span>
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <span className={cn("h-2.5 w-2.5 rounded-full", connected ? "bg-verify shadow-[0_0_10px] shadow-verify" : "bg-faint")} aria-hidden />
+          <span className="text-[13px] font-medium text-ink">
+            {connected
+              ? L(`Live on ${name || "Dot Pad"}`, `${name || "Dot Pad"}에 실시간 출력`)
+              : L("Physical Dot Pad ready", "실물 Dot Pad 연결 가능")}
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={connected ? disconnect : connect}
+          disabled={busy}
+          className={cn(
+            "rounded-lg px-3 py-1.5 text-[12.5px] font-semibold transition-colors disabled:opacity-50",
+            connected ? "border border-line bg-surface text-ink hover:bg-surface-sunk" : "bg-accent text-white hover:bg-accent-soft"
+          )}
+        >
+          {busy ? "…" : connected ? L("Disconnect device", "기기 연결 해제") : L("Connect Dot Pad", "Dot Pad 기기 연결")}
+        </button>
       </div>
-      <button
-        type="button"
-        onClick={connected ? disconnect : connect}
-        disabled={busy}
-        className={cn(
-          "rounded-lg px-3 py-1.5 text-[12.5px] font-semibold transition-colors disabled:opacity-50",
-          connected ? "border border-line bg-surface text-ink hover:bg-surface-sunk" : "bg-accent text-white hover:bg-accent-soft"
-        )}
-      >
-        {busy ? "…" : connected ? L("Disconnect device", "기기 연결 해제") : L("Connect Dot Pad", "Dot Pad 기기 연결")}
-      </button>
+      {connected && (
+        <p className="mt-2 font-mono text-[11px] leading-relaxed text-muted">
+          {L(
+            "Use the Dot Pad keys: ◀▶ move parts · F1 explain · F2 hint · F3 quiz · F4 whole picture + braille",
+            "닷패드 키 사용: ◀▶ 부분 이동 · F1 설명 · F2 힌트 · F3 퀴즈 · F4 전체 그림 + 점자"
+          )}
+        </p>
+      )}
     </div>
   );
 }

@@ -22,10 +22,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
         <AppShell>{children}</AppShell>
+        {/* Dot Pad Web SDK bridge — registers a real device when on Chrome/Edge. */}
+        <script type="module" src={`${basePath}/dotpad-sdk-bridge.js`} />
       </body>
     </html>
   );

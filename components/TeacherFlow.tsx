@@ -10,6 +10,15 @@ import { DotPadSimulator } from "@/components/DotPadSimulator";
 import { Braille } from "@/components/Braille";
 import { getMatrix } from "@/lib/tactileMatrix";
 import { fileToTactileGrid, type ConvertMode, type ImageTactileMeta } from "@/lib/imageToTactile";
+import {
+  getDevices,
+  subscribeFleet,
+  fleetSummary,
+  simulateFleet,
+  syncLessonToAllDevices,
+  syncLessonToDevice,
+  type DotPadDevice,
+} from "@/lib/dotpadFleet";
 import { clientApi } from "@/lib/clientApi";
 import { logError } from "@/lib/telemetry";
 import { useLang, type Lang } from "@/lib/i18n";
@@ -1005,6 +1014,9 @@ function PublishStep({
         </p>
       )}
 
+      {/* Distribution step — send to one / selected / all Dot Pads */}
+      <DistributePanel />
+
       <div className="mt-5 flex items-center justify-between border-t border-line pt-4">
         <button type="button" onClick={onBack} className="rounded-xl border border-line bg-surface px-4 py-2.5 text-[14px] font-semibold text-ink hover:bg-surface-sunk">
           ← {tr("Back", "이전")}
@@ -1020,5 +1032,103 @@ function PublishStep({
         </button>
       </div>
     </ScreenCard>
+  );
+}
+
+/* ============================ Distribution — send to Dot Pads ============================ */
+function DistributePanel() {
+  const { lang } = useLang();
+  const tr = (en: string, ko: string) => (lang === "ko" ? ko : en);
+  const [devices, setDevices] = useState<DotPadDevice[]>(getDevices());
+  const [selected, setSelected] = useState<Record<string, boolean>>({});
+  const [sentMsg, setSentMsg] = useState<string | null>(null);
+
+  useEffect(() => subscribeFleet(() => setDevices([...getDevices()])), []);
+
+  const connectable = devices.filter((d) => d.status !== "not_connected");
+  const sum = fleetSummary();
+
+  function sendAll() {
+    syncLessonToAllDevices("lesson");
+    setSentMsg(tr("Lesson synced to all connected Dot Pads.", "연결된 모든 Dot Pad에 수업이 동기화되었습니다."));
+  }
+  function sendSelected() {
+    const ids = Object.keys(selected).filter((id) => selected[id]);
+    ids.forEach((id) => syncLessonToDevice(id, "lesson"));
+    setSentMsg(tr(`Sent to ${ids.length} selected Dot Pad(s).`, `선택한 Dot Pad ${ids.length}대로 전송했습니다.`));
+  }
+  function previewOne() {
+    const first = connectable[0];
+    if (first) {
+      syncLessonToDevice(first.id, "lesson");
+      setSentMsg(tr(`Previewing on ${first.label}.`, `${first.label}에서 미리보기 중.`));
+    }
+  }
+
+  return (
+    <div className="mt-5 rounded-2xl border border-line bg-surface-sunk p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="eyebrow">{tr("Deliver to students · Dot Pads", "학생에게 배포 · Dot Pad")}</p>
+        <span className="font-mono text-[11px] text-faint" role="status" aria-live="polite">
+          {devices.length === 0
+            ? tr("No Dot Pads connected", "연결된 Dot Pad 없음")
+            : tr(`${sum.connected} of ${sum.total} connected`, `${sum.total}대 중 ${sum.connected}대 연결됨`)}
+        </span>
+      </div>
+
+      {devices.length === 0 ? (
+        <div className="mt-3">
+          <p className="text-[13px] text-muted">
+            {tr(
+              "No Dot Pads are connected. Simulate a classroom set, manage devices, or use keyboard demo mode.",
+              "연결된 Dot Pad가 없습니다. 교실 세트를 시뮬레이션하거나 기기를 관리하거나 키보드 데모 모드로 체험하세요."
+            )}
+          </p>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {[1, 3, 5].map((n) => (
+              <button key={n} type="button" onClick={() => simulateFleet(n as 1 | 3 | 5)} className="rounded-lg border border-accent bg-surface px-3 py-1.5 text-[12.5px] font-semibold text-accent hover:bg-accent-tint">
+                {tr(`Simulate ${n}`, `${n}대 시뮬레이션`)}
+              </button>
+            ))}
+            <Link href="/dot-pad-manager" className="rounded-lg border border-line bg-surface px-3 py-1.5 text-[12.5px] font-semibold text-ink hover:bg-surface-sunk">
+              {tr("Dot Pad Manager", "Dot Pad 관리")}
+            </Link>
+            <Link href="/student" className="rounded-lg border border-line bg-surface px-3 py-1.5 text-[12.5px] font-semibold text-ink hover:bg-surface-sunk">
+              {tr("Keyboard demo mode", "키보드 데모 모드")}
+            </Link>
+          </div>
+        </div>
+      ) : (
+        <div className="mt-3 space-y-3">
+          <ul className="flex flex-wrap gap-2">
+            {devices.map((d) => (
+              <li key={d.id}>
+                <label className={cn("flex items-center gap-2 rounded-lg border px-3 py-1.5 text-[12.5px]", selected[d.id] ? "border-accent bg-accent-tint text-accent" : "border-line text-ink")}>
+                  <input type="checkbox" checked={!!selected[d.id]} disabled={d.status === "not_connected"} onChange={(e) => setSelected((s) => ({ ...s, [d.id]: e.target.checked }))} />
+                  {d.label}{d.assignedStudent ? ` · ${d.assignedStudent}` : ""}
+                </label>
+              </li>
+            ))}
+          </ul>
+          <div className="flex flex-wrap gap-2">
+            <button type="button" onClick={sendAll} className="rounded-lg bg-accent px-3 py-2 text-[13px] font-semibold text-white hover:bg-accent-soft">
+              {tr("Send to all connected Dot Pads", "연결된 모든 Dot Pad로 보내기")}
+            </button>
+            <button type="button" onClick={sendSelected} className="rounded-lg border border-accent bg-surface px-3 py-2 text-[13px] font-semibold text-accent hover:bg-accent-tint">
+              {tr("Send to selected Dot Pads", "선택한 Dot Pad로 보내기")}
+            </button>
+            <button type="button" onClick={previewOne} className="rounded-lg border border-line bg-surface px-3 py-2 text-[13px] font-semibold text-ink hover:bg-surface-sunk">
+              {tr("Preview on one first", "먼저 1대에서 미리보기")}
+            </button>
+            <Link href="/student" className="rounded-lg border border-line bg-surface px-3 py-2 text-[13px] font-semibold text-ink hover:bg-surface-sunk">
+              {tr("Use keyboard demo mode", "키보드 데모 모드로 체험")}
+            </Link>
+          </div>
+          {sentMsg && (
+            <p className="text-[12.5px] text-verify" role="status" aria-live="polite">{sentMsg}</p>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

@@ -46,7 +46,7 @@ export function TopNavigation() {
               <span className="block font-display text-[15px] font-semibold text-ink">
                 {t("brand.name")}
               </span>
-              <span className="block font-mono text-[9.5px] uppercase tracking-eyebrow text-faint">
+              <span className="block font-mono text-[9.5px] uppercase tracking-eyebrow text-faint xl:hidden">
                 {t("brand.subtitle")}
               </span>
             </span>
@@ -54,8 +54,8 @@ export function TopNavigation() {
 
           <div className="flex-1" />
 
-          {/* Desktop nav */}
-          <ul className="hidden items-center gap-0.5 lg:flex">
+          {/* Desktop nav — only at xl (1280px+) to avoid overflow */}
+          <ul className="hidden items-center gap-0.5 xl:flex">
             {PRIMARY_NAV.map((item) => {
               const active = pathname === item.href || pathname.startsWith(item.href + "/");
               return (
@@ -64,7 +64,7 @@ export function TopNavigation() {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "block whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
+                      "block whitespace-nowrap rounded-lg px-2 py-2 text-[12px] font-medium transition-colors",
                       active
                         ? "bg-accent-tint text-accent"
                         : "text-muted hover:bg-surface-sunk hover:text-ink"
@@ -79,12 +79,12 @@ export function TopNavigation() {
 
           <LangToggle className="shrink-0" />
 
-          {/* Mobile menu button */}
+          {/* Mobile/tablet menu button — hidden at xl+ */}
           <button
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="rounded-lg p-2 text-muted hover:bg-surface-sunk hover:text-ink lg:hidden"
+            className="rounded-lg p-2 text-muted hover:bg-surface-sunk hover:text-ink xl:hidden"
           >
             {menuOpen ? (
               <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden>
@@ -100,7 +100,7 @@ export function TopNavigation() {
 
         {/* Mobile dropdown */}
         {menuOpen && (
-          <div className="border-t border-line/60 px-4 pb-4 pt-2 lg:hidden">
+          <div className="border-t border-line/60 px-4 pb-4 pt-2 xl:hidden">
             <ul className="flex flex-col gap-1">
               {PRIMARY_NAV.map((item) => {
                 const active = pathname === item.href;

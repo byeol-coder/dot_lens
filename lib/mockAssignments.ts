@@ -19,8 +19,8 @@ export const MOCK_ASSIGNMENTS: Assignment[] = [
     id: "wc-001",
     title: { en: "Explore the Water Cycle Diagram", ko: "물의 순환 다이어그램 탐색하기" },
     instructions: {
-      en: "Feel each part of the water cycle on your Dot Pad and follow Gemini's guidance.",
-      ko: "Dot Pad로 물의 순환의 각 부분을 만져 보고 Gemini의 안내를 따라가세요.",
+      en: "Feel each part of the water cycle on your Dot Pad and follow the audio guidance.",
+      ko: "Dot Pad로 물의 순환의 각 부분을 만져 보고 음성 안내를 따라가세요.",
     },
     courseId: "sci-5b",
     dueDate: "2026-06-20",
@@ -29,8 +29,8 @@ export const MOCK_ASSIGNMENTS: Assignment[] = [
     analysisId: "an-wc-001",
     defaultMode: "guided",
     difficulty: "core",
-    subject: "Science",
-    gradeLevel: "Elementary",
+    subject: { en: "Science", ko: "과학" },
+    gradeLevel: { en: "Elementary", ko: "초등" },
     learningObjective: {
       en: "Understand evaporation, condensation, precipitation, and collection through tactile exploration.",
       ko: "증발, 응결, 강수, 모임을 촉각 탐색을 통해 이해한다.",
@@ -50,8 +50,8 @@ export const MOCK_ASSIGNMENTS: Assignment[] = [
     tactileReady: false,
     defaultMode: "explore",
     difficulty: "intro",
-    subject: "Science",
-    gradeLevel: "Elementary",
+    subject: { en: "Science", ko: "과학" },
+    gradeLevel: { en: "Elementary", ko: "초등" },
     learningObjective: {
       en: "Recognize the main parts of a plant and their positions.",
       ko: "식물의 주요 부분과 위치를 인식한다.",
@@ -73,8 +73,8 @@ export const MOCK_ASSIGNMENTS: Assignment[] = [
     tactileReady: false,
     defaultMode: "compare",
     difficulty: "intro",
-    subject: "Math",
-    gradeLevel: "Elementary",
+    subject: { en: "Math", ko: "수학" },
+    gradeLevel: { en: "Elementary", ko: "초등" },
     learningObjective: {
       en: "Distinguish 2D shapes by their number of sides and corners.",
       ko: "변과 꼭짓점의 수로 2D 도형을 구별한다.",

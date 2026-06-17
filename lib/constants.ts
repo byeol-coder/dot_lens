@@ -75,9 +75,9 @@ export const VALUE_CARDS: ValueCard[] = [
   },
   {
     key: "gemini",
-    title: "Gemini-guided",
-    titleKo: "Gemini 안내",
-    body: "Gemini interprets the diagram, sequences it for learning, and tutors with Socratic hints — not just a summary.",
+    title: "AI-guided",
+    titleKo: "AI 안내",
+    body: "Dot Lens interprets the diagram, sequences it for learning, and tutors with Socratic hints — not just a summary.",
     brailleWord: "guide",
   },
   {
@@ -107,8 +107,8 @@ export const WATER_CYCLE_ASSIGNMENT: Assignment = {
     ko: "물의 순환 다이어그램 탐색하기",
   },
   instructions: {
-    en: "Feel each part of the water cycle on your Dot Pad and follow Gemini's guidance.",
-    ko: "Dot Pad로 물의 순환의 각 부분을 만져 보고 Gemini의 안내를 따라가세요.",
+    en: "Feel each part of the water cycle on your Dot Pad and follow the audio guidance.",
+    ko: "Dot Pad로 물의 순환의 각 부분을 만져 보고 음성 안내를 따라가세요.",
   },
   courseId: "sci-5b",
   dueDate: "2026-06-20",

@@ -290,10 +290,10 @@ export interface Assignment {
   defaultMode: TactileMode;
   difficulty: Difficulty;
   // --- Phase 1 additions (optional, additive) ---
-  /** e.g. "Science". */
-  subject?: string;
-  /** e.g. "Elementary". */
-  gradeLevel?: string;
+  /** e.g. { en: "Science", ko: "과학" }. */
+  subject?: LocalizedText;
+  /** e.g. { en: "Elementary", ko: "초등" }. */
+  gradeLevel?: LocalizedText;
   learningObjective?: LocalizedText;
   materials?: Material[];
 }

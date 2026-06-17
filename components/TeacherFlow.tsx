@@ -120,6 +120,8 @@ export function TeacherFlow() {
         setForm((f) => ({
           ...f,
           title: a.title[lang] ?? f.title,
+          subject: a.subject?.[lang] ?? f.subject,
+          gradeLevel: a.gradeLevel?.[lang] ?? f.gradeLevel,
           objective: a.learningObjective?.[lang] ?? f.objective,
           material: a.materials?.[0]?.name[lang] ?? f.material,
         }));

@@ -12,7 +12,7 @@ export default function FieldDataPage() {
       <KeyedPageHeader
         eyebrowKey="term.fieldImpact"
         titleKey="field.title"
-        descriptionKey="field.description"
+        descriptionKey="subtitle.field"
       />
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <FieldDataPanel />

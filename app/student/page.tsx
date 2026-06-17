@@ -5,12 +5,12 @@ export default function StudentPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Student · tactile explorer"
-        eyebrowKo="학생 · 촉각 탐색"
-        title="Explore the water cycle by touch"
-        titleKo="손끝으로 물의 순환 탐색하기"
-        description="Connect the Dot Pad and move through each part of the diagram. The tactile grid, braille line, and audio guide respond to every key — so the student follows the same lesson as the class, by touch."
-        descriptionKo="Dot Pad를 연결하고 다이어그램의 각 부분을 이동하며 탐색하세요. 촉각 그리드·점자 라인·음성 안내가 키 입력마다 반응해, 학생이 반 전체와 같은 수업을 손끝으로 따라갑니다."
+        eyebrow="Student Demo"
+        eyebrowKo="학생 체험"
+        title="Explore the lesson by touch"
+        titleKo="손끝으로 수업 탐색하기"
+        description="Experience the lesson as a blind or low-vision learner. Use ← → to move between parts and F1–F4 to explain, hint, quiz, and hear the braille summary — on the Dot Pad's 60×40 pins and 20-cell braille line."
+        descriptionKo="시각장애·저시력 학생의 입장에서 수업을 체험합니다. ← →로 부분을 이동하고 F1–F4로 설명·힌트·퀴즈·점자 요약을 들으며, Dot Pad의 60×40 핀과 20칸 점자 라인으로 탐색합니다."
       />
       <StudentExperienceShowcase />
       <div className="mx-auto max-w-6xl px-4 pb-12 sm:px-6">

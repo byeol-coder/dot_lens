@@ -31,6 +31,17 @@ const GRADE_LABEL: Record<string, { en: string; ko: string }> = {
   high:       { en: "High",       ko: "고등" },
 };
 
+/** English labels for the Korean-authored diagram types, so EN mode reads in EN. */
+const DIAGRAM_TYPE_EN: Record<string, string> = {
+  "구조도": "Structure diagram",
+  "흐름 다이어그램": "Flow diagram",
+  "함수 그래프": "Function graph",
+  "기하 도형": "Geometry figure",
+  "과학 다이어그램": "Science diagram",
+  "단면 다이어그램": "Cross-section diagram",
+  "순환 다이어그램": "Cycle diagram",
+};
+
 type ConvertStep = "idle" | "scanning" | "analyzing" | "ready";
 
 const SCAN_MSGS: Array<{ en: string; ko: string }> = [
@@ -200,7 +211,7 @@ export function LessonLibraryPage() {
 
                   <div className="flex flex-1 flex-col p-4">
                     <p className="font-mono text-[11px] uppercase tracking-eyebrow text-faint">
-                      {lesson.diagramType} · {L(`${lesson.objects.length} elements`, `${lesson.objects.length}개 요소`)}
+                      {lang === "ko" ? lesson.diagramType : DIAGRAM_TYPE_EN[lesson.diagramType] ?? lesson.diagramType} · {L(`${lesson.objects.length} elements`, `${lesson.objects.length}개 요소`)}
                     </p>
                     <h3 className="mt-1 text-[15px] font-semibold text-ink">
                       {L(lesson.title.en, lesson.title.ko)}

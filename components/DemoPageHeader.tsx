@@ -13,6 +13,10 @@ export function DemoPageHeader() {
       <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-muted">
         {t("brand.message.help")}
       </p>
+      <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-accent-tint px-3 py-1 text-[12.5px] font-medium text-accent" role="note">
+        <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
+        {t("demo.guided")}
+      </p>
     </div>
   );
 }

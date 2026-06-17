@@ -421,6 +421,103 @@ export const LESSON_CATALOG: LessonEntry[] = [
     brailleLabel: "횡단보도",
     audioGuide: { ko: "아래 선이 출발 연석, 위 선이 도착 연석입니다. 세로 줄무늬를 따라 위쪽 화살표 방향으로 건넙니다.", en: "The lower line is the start curb, the upper line the end curb. Cross upward along the vertical stripes following the arrow." },
   },
+
+  /* ─── 사회: 교실 자리 배치도 ───────────────────────────────── */
+  {
+    id: "soc-classroom-map",
+    subject: "social",
+    grade: "elementary",
+    title: { ko: "교실 자리 배치도", en: "Classroom seating map" },
+    description: { ko: "교탁과 책상의 위치를 촉각으로 익혀 교실 공간을 이해합니다.", en: "Understand the classroom layout by feeling the teacher's desk and the student seats." },
+    sourceUrl: "https://lessonlibrary.withgoogle.com/intl/ALL_kr/view/lesson/soc-classroom-map",
+    diagramType: "사물 구조도",
+    objects: ["교탁", "책상", "통로"],
+    steps: 3,
+    scene: {
+      id: "classroom-map",
+      title: { en: "Classroom seating", ko: "교실 자리" },
+      type: "map",
+      primitives: [
+        { kind: "rect", x: 24, y: 4, w: 12, h: 5, fill: true }, // 교탁
+        { kind: "rect", x: 8, y: 16, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 26, y: 16, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 44, y: 16, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 8, y: 28, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 26, y: 28, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 44, y: 28, w: 8, h: 6, fill: false },
+      ],
+      brailleKey: [
+        { mark: "t", label: { en: "teacher's desk", ko: "교탁" } },
+        { mark: "s", label: { en: "student seat", ko: "책상" } },
+      ],
+    },
+    brailleLabel: "자리 배치",
+    audioGuide: { ko: "맨 위 가운데 채워진 사각형이 교탁입니다. 아래로 두 줄, 세 칸씩 책상이 놓여 있습니다.", en: "The filled rectangle at the top center is the teacher's desk. Below are student seats in two rows of three." },
+  },
+
+  /* ─── 미술: 대칭 무늬 ───────────────────────────────────────── */
+  {
+    id: "art-symmetry",
+    subject: "art",
+    grade: "elementary",
+    title: { ko: "대칭 무늬 만들기", en: "Symmetry patterns" },
+    description: { ko: "가운데 선을 기준으로 좌우가 똑같은 대칭 무늬를 손끝으로 비교합니다.", en: "Compare a left-right symmetric pattern around a center line by touch." },
+    sourceUrl: "https://lessonlibrary.withgoogle.com/intl/ALL_kr/view/lesson/art-symmetry",
+    diagramType: "작품 감상",
+    objects: ["대칭축", "왼쪽 무늬", "오른쪽 무늬"],
+    steps: 3,
+    scene: {
+      id: "symmetry",
+      title: { en: "Symmetry", ko: "대칭" },
+      type: "geometry",
+      primitives: [
+        { kind: "line", x1: 30, y1: 4, x2: 30, y2: 36 },   // 대칭축
+        { kind: "disc", cx: 18, cy: 14, r: 4 },
+        { kind: "disc", cx: 42, cy: 14, r: 4 },
+        { kind: "line", x1: 10, y1: 32, x2: 22, y2: 22 },
+        { kind: "line", x1: 50, y1: 32, x2: 38, y2: 22 },
+      ],
+      brailleKey: [
+        { mark: "x", label: { en: "axis of symmetry", ko: "대칭축" } },
+        { mark: "l", label: { en: "left pattern", ko: "왼쪽 무늬" } },
+        { mark: "r", label: { en: "right pattern", ko: "오른쪽 무늬" } },
+      ],
+    },
+    brailleLabel: "대칭 무늬",
+    audioGuide: { ko: "가운데 세로선이 대칭축입니다. 왼쪽과 오른쪽의 원과 선이 거울처럼 똑같습니다.", en: "The vertical center line is the axis. The circles and lines on the left and right mirror each other." },
+  },
+
+  /* ─── 보행·이동: 복도와 출입문 ─────────────────────────────── */
+  {
+    id: "mob-hallway",
+    subject: "mobility",
+    grade: "elementary",
+    title: { ko: "복도와 출입문 찾기", en: "Hallway and doorways" },
+    description: { ko: "양쪽 벽과 출입문 위치를 익혀 복도를 따라 안전하게 이동합니다.", en: "Learn the walls and doorway positions to travel safely along a hallway." },
+    sourceUrl: "https://lessonlibrary.withgoogle.com/intl/ALL_kr/view/lesson/mob-hallway",
+    diagramType: "지도",
+    objects: ["왼쪽 벽", "오른쪽 벽", "출입문", "이동 방향"],
+    steps: 4,
+    scene: {
+      id: "hallway",
+      title: { en: "Hallway", ko: "복도" },
+      type: "map",
+      primitives: [
+        { kind: "line", x1: 18, y1: 4, x2: 18, y2: 36 },   // 왼쪽 벽
+        { kind: "line", x1: 42, y1: 4, x2: 42, y2: 36 },   // 오른쪽 벽
+        { kind: "rect", x: 14, y: 12, w: 4, h: 6, fill: true }, // 왼쪽 출입문
+        { kind: "rect", x: 42, y: 24, w: 4, h: 6, fill: true }, // 오른쪽 출입문
+        { kind: "arrow", x1: 30, y1: 36, x2: 30, y2: 6 },  // 이동 방향
+      ],
+      brailleKey: [
+        { mark: "l", label: { en: "left wall", ko: "왼쪽 벽" } },
+        { mark: "r", label: { en: "right wall", ko: "오른쪽 벽" } },
+        { mark: "d", label: { en: "doorway", ko: "출입문" } },
+      ],
+    },
+    brailleLabel: "복도 이동",
+    audioGuide: { ko: "양쪽 세로선이 복도 벽입니다. 가운데 위쪽 화살표 방향으로 이동하며, 왼쪽과 오른쪽에 출입문이 있습니다.", en: "The two vertical lines are the hallway walls. Travel upward along the center arrow; doorways are on the left and right." },
+  },
 ];
 
 export const SUBJECTS: Record<Subject, { ko: string; en: string; color: string }> = {

@@ -39,6 +39,31 @@ export interface NavGroup {
   items: NavItem[];
 }
 
+/* ---------------------------------------------------------------------------
+ * IA v2 — simple primary menu for first-time clarity, with secondary items
+ * tucked under "More". Teacher / student / expert surfaces stay primary;
+ * admin / scale / impact move into More.
+ * ------------------------------------------------------------------------- */
+
+/** Primary top-level menu (Home first, then the three core roles + library). */
+export const MAIN_NAV: NavItem[] = [
+  { href: "/", label: "Home", labelKo: "홈", blurb: "Start here." },
+  { href: "/teacher", label: "Teacher", labelKo: "교사용", blurb: "Create accessible lessons from visual materials.", role: "teacher" },
+  { href: "/student", label: "Student Demo", labelKo: "학생 체험", blurb: "Experience a lesson by touch, braille, and audio.", role: "student" },
+  { href: "/review", label: "Expert Review", labelKo: "전문가 검토", blurb: "Review tactile materials before classroom use.", role: "expert" },
+  { href: "/lesson-library", label: "Lesson Library", labelKo: "수업 자료실", blurb: "Browse and reuse approved lessons.", role: "all" },
+];
+
+/** Secondary menu under "More" — admin, scale, and impact surfaces. */
+export const MORE_NAV: NavItem[] = [
+  { href: "/field-data", label: "Field & Impact", labelKo: "현장 임팩트", blurb: "Adoption, training, and classroom impact across regions.", role: "activist" },
+  { href: "/champions", label: "Champion Teachers", labelKo: "챔피언 교사", blurb: "Recognize and grow local champion teachers.", role: "all" },
+  { href: "/academy", label: "Trainer Academy", labelKo: "트레이너 아카데미", blurb: "Certify trainers and grow country partners.", role: "all" },
+  { href: "/champion-kit", label: "Champion Kit", labelKo: "챔피언 패키지", blurb: "Quick-start, workshop agenda, and review checklist.", role: "all" },
+  { href: "/builder", label: "Tactile Builder", labelKo: "촉각 빌더", blurb: "Author a custom tactile lesson, object by object.", role: "teacher" },
+  { href: "/settings", label: "Settings", labelKo: "설정", blurb: "Accessibility, language, and localization.", role: "all" },
+];
+
 export const NAV_GROUPS: NavGroup[] = [
   {
     label: "Teacher",

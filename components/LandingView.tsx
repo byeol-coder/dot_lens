@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useLang } from "@/lib/i18n";
+import { useLang, useT } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 
 function useL() {
@@ -165,42 +165,83 @@ const VOICES = [
 
 export function LandingView() {
   const L = useL();
+  const { t } = useT();
+
+  const CTAS = [
+    { href: "/demo", icon: "▶", title: t("home.cta.demo"), desc: t("home.cta.demoDesc"), primary: true },
+    { href: "/teacher", icon: "✎", title: t("home.cta.create"), desc: t("home.cta.createDesc"), primary: false },
+    { href: "/student", icon: "✋", title: t("home.cta.student"), desc: t("home.cta.studentDesc"), primary: false },
+  ];
+  const ONBOARD = [
+    { href: "/teacher", label: t("onboard.teacher") },
+    { href: "/student", label: t("onboard.student") },
+    { href: "/review", label: t("onboard.expert") },
+    { href: "/demo", label: t("onboard.demo") },
+  ];
 
   return (
     <>
       {/* ── 1. HERO ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-line bg-surface">
         <div className="pin-texture absolute inset-0 opacity-[0.5]" aria-hidden />
-        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-          <p className="eyebrow">{L("AI Tactile Learning Platform", "AI 촉각 교육 플랫폼")}</p>
+        <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:py-16">
+          <p className="eyebrow">{t("home.hero.eyebrow")}</p>
 
-          <h1 className="mt-3 max-w-3xl text-balance text-[28px] font-semibold leading-[1.15] text-ink sm:text-[38px] lg:text-[48px] sm:leading-[1.12]">
-            {L(
-              "So every student can experience the same lesson.",
-              "모든 학생이 같은 수업을 경험할 수 있도록."
-            )}
+          <h1 className="mt-3 max-w-3xl text-balance text-[28px] font-semibold leading-[1.15] text-ink sm:text-[38px] lg:text-[46px] sm:leading-[1.12]">
+            {t("home.hero.title")}
           </h1>
 
-          <p className="mt-4 max-w-2xl text-[17px] leading-relaxed text-muted">
-            {L(
-              "Dot Lens transforms classroom diagrams and images into tactile learning materials — so blind and low-vision students can feel, navigate, and understand the same content as their class.",
-              "닷 렌즈는 수업 다이어그램과 이미지를 시각장애·저시력 학생이 손으로 탐색할 수 있는 촉각 자료로 바꿉니다. 반 친구들과 같은 수업을, 함께."
-            )}
+          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-muted">
+            {t("home.hero.subtitle")}
           </p>
 
-          <div className="mt-7 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-            <Link
-              href="/teacher"
-              className="rounded-xl bg-accent px-5 py-3 text-center text-[15px] font-semibold text-white shadow-glow transition-colors hover:bg-accent-soft sm:w-auto"
-            >
-              {L("Create a Lesson →", "수업 자료 만들기 →")}
-            </Link>
-            <Link
-              href="/demo"
-              className="rounded-xl border border-accent bg-surface px-5 py-3 text-center text-[15px] font-semibold text-accent transition-colors hover:bg-accent-tint sm:w-auto"
-            >
-              {L("See it in action", "데모 살펴보기")}
-            </Link>
+          {/* 3 primary CTAs */}
+          <div className="mt-8 grid gap-3 sm:grid-cols-3">
+            {CTAS.map((c) => (
+              <Link
+                key={c.href}
+                href={c.href}
+                className={cn(
+                  "group flex flex-col rounded-2xl border p-5 shadow-card transition-all hover:-translate-y-0.5 hover:shadow-lift focus-visible:outline-accent",
+                  c.primary ? "border-accent bg-accent text-white" : "border-line bg-surface"
+                )}
+              >
+                <span
+                  className={cn(
+                    "grid h-10 w-10 place-items-center rounded-xl text-[18px]",
+                    c.primary ? "bg-white/15 text-white" : "bg-accent-tint text-accent"
+                  )}
+                  aria-hidden
+                >
+                  {c.icon}
+                </span>
+                <span className={cn("mt-3 text-[16px] font-semibold", c.primary ? "text-white" : "text-ink")}>
+                  {c.title}
+                </span>
+                <span className={cn("mt-1 flex-1 text-[13px] leading-relaxed", c.primary ? "text-white/85" : "text-muted")}>
+                  {c.desc}
+                </span>
+                <span className={cn("mt-3 text-[13px] font-semibold", c.primary ? "text-white" : "text-accent group-hover:underline")}>
+                  {c.title} →
+                </span>
+              </Link>
+            ))}
+          </div>
+
+          {/* Onboarding role chooser */}
+          <div className="mt-5 rounded-2xl border border-line bg-surface-sunk p-4">
+            <p className="text-[13.5px] font-medium text-ink">{t("onboard.title")}</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {ONBOARD.map((o) => (
+                <Link
+                  key={o.label}
+                  href={o.href}
+                  className="rounded-xl border border-line bg-surface px-3.5 py-2 text-[13px] font-medium text-ink transition-colors hover:border-accent hover:bg-accent-tint hover:text-accent"
+                >
+                  {o.label}
+                </Link>
+              ))}
+            </div>
           </div>
 
           {/* Flow chip */}

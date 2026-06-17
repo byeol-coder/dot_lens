@@ -1,7 +1,7 @@
 "use client";
 
 import { useA11y, type FontScale } from "@/components/AccessibilityProvider";
-import { useLang } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 
 const SCALES: { key: FontScale; label: string }[] = [
@@ -13,29 +13,22 @@ const SCALES: { key: FontScale; label: string }[] = [
 
 function ToggleRow({
   label,
-  labelKo,
   on,
   onToggle,
 }: {
   label: string;
-  labelKo: string;
   on: boolean;
   onToggle: () => void;
 }) {
-  const { lang } = useLang();
-  const onOff = on ? (lang === "ko" ? "켬" : "On") : lang === "ko" ? "끔" : "Off";
+  const { t } = useT();
   return (
     <div className="flex items-center justify-between py-3">
-      <div>
-        <span className="text-[14px] text-ink">{lang === "ko" ? labelKo : label}</span>
-        <span className="ml-2 font-mono text-[11px] text-faint">
-          {lang === "ko" ? label : labelKo}
-        </span>
-      </div>
+      <span className="text-[14px] text-ink">{label}</span>
       <button
         type="button"
         role="switch"
         aria-checked={on}
+        aria-label={label}
         onClick={onToggle}
         className={cn(
           "inline-flex min-w-[60px] items-center justify-center gap-1 rounded-full border px-3 py-1.5 text-[12px] font-semibold transition-colors",
@@ -43,14 +36,14 @@ function ToggleRow({
         )}
       >
         {on && <span aria-hidden>✓</span>}
-        {onOff}
+        {on ? t("settings.on") : t("settings.off")}
       </button>
     </div>
   );
 }
 
 export function AccessibilitySettings() {
-  const { lang } = useLang();
+  const { t } = useT();
   const {
     highContrast,
     setHighContrast,
@@ -60,63 +53,43 @@ export function AccessibilitySettings() {
     setReduceMotion,
     announce,
   } = useA11y();
-  const tr = (en: string, ko: string) => (lang === "ko" ? ko : en);
 
   return (
     <div className="rounded-2xl border border-line bg-surface p-6 shadow-card">
-      <p className="font-mono text-[11px] uppercase tracking-eyebrow text-accent">
-        {tr("Display & accessibility", "화면·접근성")}
-      </p>
+      <p className="font-mono text-[11px] uppercase tracking-eyebrow text-accent">{t("settings.display")}</p>
       <h2 className="mt-1 text-[17px] font-semibold text-ink">
-        {tr("These controls work and are saved", "실제로 작동하며 저장됩니다")}
+        {t("settings.display")}
       </h2>
-      <p className="mt-1 text-[13px] text-muted">
-        {tr(
-          "Settings apply across every screen and persist on this device.",
-          "설정은 모든 화면에 적용되며 이 기기에 저장됩니다."
-        )}
-      </p>
 
       <div className="mt-4 divide-y divide-line">
         <ToggleRow
-          label="High contrast"
-          labelKo="고대비"
+          label={t("settings.highContrast")}
           on={highContrast}
           onToggle={() => {
             const v = !highContrast;
             setHighContrast(v);
-            announce(tr(`High contrast ${v ? "on" : "off"}`, `고대비 ${v ? "켬" : "끔"}`));
+            announce(`${t("settings.highContrast")} ${v ? t("settings.on") : t("settings.off")}`);
           }}
         />
 
         {/* Font size */}
         <div className="flex items-center justify-between py-3">
-          <div>
-            <span className="text-[14px] text-ink">{tr("Text size", "글자 크기")}</span>
-            <span className="ml-2 font-mono text-[11px] text-faint">
-              {tr("글자 크기", "Text size")}
-            </span>
-          </div>
-          <div
-            className="flex items-center gap-1"
-            role="radiogroup"
-            aria-label={tr("Text size", "글자 크기")}
-          >
+          <span className="text-[14px] text-ink">{t("settings.textSize")}</span>
+          <div className="flex items-center gap-1" role="radiogroup" aria-label={t("settings.textSize")}>
             {SCALES.map((s) => (
               <button
                 key={s.key}
                 type="button"
                 role="radio"
                 aria-checked={fontScale === s.key}
+                aria-label={`${t("settings.textSize")} ${s.label}`}
                 onClick={() => {
                   setFontScale(s.key);
-                  announce(tr(`Text size ${s.key}`, `글자 크기 ${s.key}`));
+                  announce(`${t("settings.textSize")} ${s.label}`);
                 }}
                 className={cn(
                   "min-w-[40px] rounded-lg border px-2 py-1.5 text-[12px] font-semibold transition-colors",
-                  fontScale === s.key
-                    ? "border-accent bg-accent text-white"
-                    : "border-line bg-surface-sunk text-muted"
+                  fontScale === s.key ? "border-accent bg-accent text-white" : "border-line bg-surface-sunk text-muted"
                 )}
               >
                 {s.label}
@@ -126,13 +99,12 @@ export function AccessibilitySettings() {
         </div>
 
         <ToggleRow
-          label="Reduce motion"
-          labelKo="모션 줄이기"
+          label={t("settings.reduceMotion")}
           on={reduceMotion}
           onToggle={() => {
             const v = !reduceMotion;
             setReduceMotion(v);
-            announce(tr(`Reduce motion ${v ? "on" : "off"}`, `모션 줄이기 ${v ? "켬" : "끔"}`));
+            announce(`${t("settings.reduceMotion")} ${v ? t("settings.on") : t("settings.off")}`);
           }}
         />
       </div>

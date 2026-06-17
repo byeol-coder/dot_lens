@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import type { Assignment, LocalizedText, VisualAnalysis } from "@/types";
 import { ScreenCard } from "@/components/ScreenCard";
@@ -333,6 +333,36 @@ function SetupStep({
 }) {
   const { lang } = useLang();
   const tr = (en: string, ko: string) => (lang === "ko" ? ko : en);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [fileTypeLabel, setFileTypeLabel] = useState<string>(tr("image", "이미지"));
+  const [isDragOver, setIsDragOver] = useState(false);
+
+  function handleFileChange(file: File) {
+    const ext = file.name.split(".").pop()?.toLowerCase() ?? "";
+    const typeLabel =
+      ext === "pdf" ? "PDF" :
+      ["png", "jpg", "jpeg", "gif", "webp", "svg"].includes(ext)
+        ? tr("image", "이미지") :
+      ext === "pptx" || ext === "ppt" ? "PPT" :
+      tr("file", "파일");
+    setFileTypeLabel(typeLabel);
+    setForm((f) => ({ ...f, material: file.name }));
+  }
+
+  function onInputChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (file) handleFileChange(file);
+  }
+
+  function onDrop(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    setIsDragOver(false);
+    const file = e.dataTransfer.files?.[0];
+    if (file) handleFileChange(file);
+  }
+
+  const hasFile = !!form.material;
+
   return (
     <ScreenCard
       eyebrow={tr("Step 1 · lesson setup", "1단계 · 수업 설정")}
@@ -370,18 +400,63 @@ function SetupStep({
           </Field>
         </div>
         <div className="sm:col-span-2">
-          <Field label={tr("Classroom material", "수업 자료")}>
-            <div className="flex items-center justify-between rounded-xl border border-line bg-surface-sunk px-3 py-2.5">
-              <span className="text-[14px] text-ink">{form.material}</span>
-              <StatusBadge variant="draft">{tr("image", "이미지")}</StatusBadge>
+          <span className="mb-1 block font-mono text-[11px] uppercase tracking-eyebrow text-faint">
+            {tr("Classroom material", "수업 자료")}
+          </span>
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*,.pdf,.ppt,.pptx"
+            className="sr-only"
+            aria-label={tr("Upload classroom material", "수업 자료 업로드")}
+            onChange={onInputChange}
+          />
+          {hasFile ? (
+            /* File selected — show name + change button */
+            <div className="flex items-center justify-between rounded-xl border border-verify/40 bg-verify-tint/30 px-3 py-2.5">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="text-verify text-[15px]" aria-hidden>✓</span>
+                <span className="truncate text-[14px] font-medium text-ink">{form.material}</span>
+              </div>
+              <div className="flex shrink-0 items-center gap-2 ml-2">
+                <StatusBadge variant="verified">{fileTypeLabel}</StatusBadge>
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="font-mono text-[11px] text-accent hover:underline"
+                >
+                  {tr("change", "변경")}
+                </button>
+              </div>
             </div>
-            <p className="mt-1.5 text-[12px] text-faint">
-              {tr(
-                "Upload a diagram, image, PDF, or classroom handout.",
-                "다이어그램, 이미지, PDF 또는 수업 자료를 업로드하세요."
+          ) : (
+            /* Drop zone — click or drag */
+            <div
+              role="button"
+              tabIndex={0}
+              aria-label={tr("Click or drag a file to upload", "클릭하거나 파일을 끌어다 놓아 업로드")}
+              onClick={() => fileInputRef.current?.click()}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && fileInputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+              onDragLeave={() => setIsDragOver(false)}
+              onDrop={onDrop}
+              className={cn(
+                "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-6 text-center transition-colors",
+                isDragOver
+                  ? "border-accent bg-accent-tint/40"
+                  : "border-line bg-surface-sunk hover:border-accent hover:bg-accent-tint/20"
               )}
-            </p>
-          </Field>
+            >
+              <span className="text-[22px]" aria-hidden>⬆</span>
+              <p className="text-[14px] font-medium text-ink">
+                {tr("Click to upload a file", "클릭하여 파일 업로드")}
+              </p>
+              <p className="text-[12px] text-faint">
+                {tr("or drag and drop · image, PDF, PPT", "또는 파일을 끌어다 놓으세요 · 이미지, PDF, PPT")}
+              </p>
+            </div>
+          )}
         </div>
       </div>
 

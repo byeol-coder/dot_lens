@@ -307,6 +307,63 @@ const ko: Record<keyof typeof en, string> = {
   "guided.nav.prev": "이전 단계",
   "guided.nav.next": "다음 단계",
   "status.demoData": "데모 진행을 위해 샘플 데이터를 보여드립니다.",
+
+  // ── IA v2 — 기본 메뉴 + 더보기 ─────────────────────────
+  "nav.teacher": "교사용",
+  "nav.studentDemo": "학생 체험",
+  "nav.lessonLibrary": "수업 자료실",
+  "nav.more": "더보기",
+  "nav.builder": "촉각 빌더",
+  "nav.championKit": "챔피언 패키지",
+  "nav.menu": "메뉴",
+
+  // ── 홈 히어로 + 3 CTA + 온보딩 ─────────────────────────
+  "home.hero.eyebrow": "AI 촉각 교육 플랫폼",
+  "home.hero.title": "모든 학생이, 같은 수업을 — 손끝으로.",
+  "home.hero.subtitle":
+    "교사가 시각 자료를 올리면, 닷 렌즈가 AI로 분석해 촉각 그래픽·점자·음성 안내가 담긴 수업 자료로 바꿉니다. 시각장애·저시력 학생도 같은 수업에 함께 참여합니다.",
+  "home.cta.demo": "1분 데모 시작",
+  "home.cta.demoDesc": "업로드 없이 샘플 자료로 Dot Lens 흐름을 바로 체험합니다.",
+  "home.cta.create": "수업 만들기",
+  "home.cta.createDesc": "이미지나 학습지를 업로드해 접근 가능한 수업 자료를 준비합니다.",
+  "home.cta.student": "학생 모드 체험",
+  "home.cta.studentDesc": "촉각 그래픽, 점자, 음성 안내로 수업을 따라가 봅니다.",
+  "onboard.title": "Dot Lens가 처음이신가요? 원하는 시작 방식을 선택하세요.",
+  "onboard.teacher": "교사입니다",
+  "onboard.student": "학생입니다",
+  "onboard.expert": "접근성 전문가입니다",
+  "onboard.demo": "데모를 보고 싶습니다",
+
+  // ── 화면 목적 한 줄 설명 ───────────────────────────────
+  "subtitle.teacher": "시각 자료를 촉각 그래픽, 점자, 음성 안내가 포함된 수업 자료로 변환합니다.",
+  "subtitle.student": "시각장애·저시력 학생의 입장에서 수업을 체험합니다.",
+  "subtitle.expert": "AI가 생성한 촉각 자료를 수업 전에 전문가 관점으로 검토합니다.",
+  "subtitle.field": "지역별 도입, 교사 연수, 수업 활용 현황을 확인합니다.",
+
+  // ── 전문가 검토 기준 ───────────────────────────────────
+  "review.criteriaTitle": "검토 기준",
+  "review.q.touch": "이 촉각 구조가 손으로 구별하기 쉬운가요?",
+  "review.q.goal": "단순화한 버전이 학습 목표를 그대로 담고 있나요?",
+  "review.q.align": "라벨·점자·음성 안내가 서로 일치하나요?",
+
+  // ── 데모 안내 배너 ─────────────────────────────────────
+  "demo.guided": "샘플 자료로 진행되는 안내형 데모입니다.",
+
+  // ── 설정 (단일 언어; 한영 병기 없음) ───────────────────
+  "settings.display": "화면·접근성",
+  "settings.highContrast": "고대비",
+  "settings.textSize": "글자 크기",
+  "settings.reduceMotion": "모션 줄이기",
+  "settings.audioGuidance": "음성 안내",
+  "settings.brailleDisplay": "점자 디스플레이",
+  "settings.dotpadPreview": "Dot Pad 미리보기",
+  "settings.learnerProfile": "학습자별 프로필",
+  "settings.brailleStandard": "점자 규격",
+  "settings.brailleLanguage": "점자 언어",
+  "settings.speechRate": "말 속도",
+  "settings.hintFrequency": "힌트 빈도",
+  "settings.on": "켬",
+  "settings.off": "끔",
 };
 
 export default ko;

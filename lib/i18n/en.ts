@@ -307,6 +307,63 @@ const en = {
   "guided.nav.prev": "Previous step",
   "guided.nav.next": "Next step",
   "status.demoData": "Showing sample data for this demo.",
+
+  // ── IA v2 — primary nav + More ─────────────────────────
+  "nav.teacher": "Teacher",
+  "nav.studentDemo": "Student Demo",
+  "nav.lessonLibrary": "Lesson Library",
+  "nav.more": "More",
+  "nav.builder": "Tactile Builder",
+  "nav.championKit": "Champion Kit",
+  "nav.menu": "Menu",
+
+  // ── Home hero + 3 CTAs + onboarding ────────────────────
+  "home.hero.eyebrow": "AI Tactile Learning Platform",
+  "home.hero.title": "Every student, the same lesson — by touch.",
+  "home.hero.subtitle":
+    "A teacher uploads a visual; Dot Lens analyzes it with AI and turns it into a lesson with tactile graphics, braille, and audio guidance — so blind and low-vision students join the very same class.",
+  "home.cta.demo": "Start 1-Minute Demo",
+  "home.cta.demoDesc": "No upload needed. See how a visual lesson becomes tactile.",
+  "home.cta.create": "Create a Lesson",
+  "home.cta.createDesc": "Upload an image or worksheet and prepare an accessible lesson.",
+  "home.cta.student": "Try Student Mode",
+  "home.cta.studentDesc": "Explore the lesson through tactile graphics, braille, and audio guidance.",
+  "onboard.title": "New to Dot Lens? Choose how you want to start.",
+  "onboard.teacher": "I am a teacher",
+  "onboard.student": "I am a student",
+  "onboard.expert": "I am an accessibility expert",
+  "onboard.demo": "I want to see the demo",
+
+  // ── Screen purpose subtitles ───────────────────────────
+  "subtitle.teacher": "Create tactile, braille, and audio-supported lessons from visual materials.",
+  "subtitle.student": "Experience the lesson as a blind or low-vision learner.",
+  "subtitle.expert": "Review AI-generated tactile materials before classroom use.",
+  "subtitle.field": "Track adoption, training, and classroom impact across regions.",
+
+  // ── Expert review criteria ─────────────────────────────
+  "review.criteriaTitle": "What to check",
+  "review.q.touch": "Is this tactile structure easy to distinguish by touch?",
+  "review.q.goal": "Does the simplified version preserve the learning goal?",
+  "review.q.align": "Are labels, braille, and audio guidance aligned?",
+
+  // ── Demo guided banner ─────────────────────────────────
+  "demo.guided": "This is a guided sample demo.",
+
+  // ── Settings (single language; no bilingual labels) ────
+  "settings.display": "Display & accessibility",
+  "settings.highContrast": "High contrast",
+  "settings.textSize": "Text size",
+  "settings.reduceMotion": "Reduce motion",
+  "settings.audioGuidance": "Audio guidance",
+  "settings.brailleDisplay": "Braille display",
+  "settings.dotpadPreview": "Dot Pad preview",
+  "settings.learnerProfile": "Per-learner profile",
+  "settings.brailleStandard": "Braille standard",
+  "settings.brailleLanguage": "Braille language",
+  "settings.speechRate": "Speech rate",
+  "settings.hintFrequency": "Hint frequency",
+  "settings.on": "On",
+  "settings.off": "Off",
 } as const;
 
 export default en;

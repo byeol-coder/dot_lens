@@ -1,6 +1,6 @@
 import type { TactileScene } from "@/lib/tactileScene";
 
-export type Subject = "korean" | "math" | "science";
+export type Subject = "korean" | "math" | "science" | "social" | "art" | "mobility";
 export type Grade = "elementary" | "middle" | "high";
 
 export interface LessonEntry {
@@ -322,10 +322,209 @@ export const LESSON_CATALOG: LessonEntry[] = [
     brailleLabel: "물의 순환",
     audioGuide: { ko: "태양에서 시작해 시계 방향으로 증발→구름→비→강 순서로 탐색하세요.", en: "Start at the sun and explore clockwise: evaporation, cloud, rain, river." },
   },
+
+  /* ─── 사회: 우리 지역 지도 ─────────────────────────────────── */
+  {
+    id: "soc-region-map",
+    subject: "social",
+    grade: "elementary",
+    title: { ko: "우리 지역 지도 읽기", en: "Reading a local map" },
+    description: { ko: "지역 경계, 강, 큰 길, 중심지를 촉각 지도로 탐색합니다.", en: "Explore the region boundary, river, main road, and town center on a tactile map." },
+    sourceUrl: "https://lessonlibrary.withgoogle.com/intl/ALL_kr/view/lesson/soc-region-map",
+    diagramType: "지도",
+    objects: ["지역 경계", "강", "큰 길", "중심지"],
+    steps: 4,
+    scene: {
+      id: "region-map",
+      title: { en: "Local map", ko: "우리 지역 지도" },
+      type: "map",
+      primitives: [
+        { kind: "rect", x: 8, y: 6, w: 44, h: 28, fill: false }, // 지역 경계
+        { kind: "line", x1: 12, y1: 10, x2: 26, y2: 20 },        // 강
+        { kind: "line", x1: 26, y1: 20, x2: 22, y2: 32 },
+        { kind: "line", x1: 8, y1: 24, x2: 52, y2: 24 },         // 큰 길
+        { kind: "disc", cx: 36, cy: 16, r: 2 },                  // 중심지
+      ],
+      brailleKey: [
+        { mark: "b", label: { en: "boundary", ko: "지역 경계" } },
+        { mark: "r", label: { en: "river", ko: "강" } },
+        { mark: "d", label: { en: "main road", ko: "큰 길" } },
+        { mark: "c", label: { en: "town center", ko: "중심지" } },
+      ],
+    },
+    brailleLabel: "지역 지도",
+    audioGuide: { ko: "바깥 사각형이 지역 경계입니다. 가운데를 가로지르는 긴 선이 큰 길, 점이 중심지입니다.", en: "The outer rectangle is the boundary. The long line across the middle is the main road; the dot is the town center." },
+  },
+
+  /* ─── 미술: 점·선·면 구성 감상 ─────────────────────────────── */
+  {
+    id: "art-composition",
+    subject: "art",
+    grade: "elementary",
+    title: { ko: "점·선·면으로 보는 구성", en: "Dots, lines, and planes" },
+    description: { ko: "작품의 기본 조형 요소인 점, 선, 면을 손끝으로 비교하며 감상합니다.", en: "Compare the basic art elements — a dot, a line, and a plane — by touch." },
+    sourceUrl: "https://lessonlibrary.withgoogle.com/intl/ALL_kr/view/lesson/art-dot-line-plane",
+    diagramType: "작품 감상",
+    objects: ["점", "선", "면"],
+    steps: 3,
+    scene: {
+      id: "art-comp",
+      title: { en: "Composition", ko: "구성" },
+      type: "geometry",
+      primitives: [
+        { kind: "disc", cx: 15, cy: 13, r: 4 },                  // 점
+        { kind: "line", x1: 8, y1: 32, x2: 52, y2: 10 },         // 선
+        { kind: "rect", x: 36, y: 22, w: 16, h: 12, fill: false }, // 면
+      ],
+      brailleKey: [
+        { mark: "p", label: { en: "dot", ko: "점" } },
+        { mark: "l", label: { en: "line", ko: "선" } },
+        { mark: "f", label: { en: "plane", ko: "면" } },
+      ],
+    },
+    brailleLabel: "점 선 면",
+    audioGuide: { ko: "왼쪽 위의 둥근 것이 점, 비스듬히 가로지르는 것이 선, 오른쪽 아래 사각형이 면입니다.", en: "The round shape upper-left is a dot, the diagonal is a line, the rectangle lower-right is a plane." },
+  },
+
+  /* ─── 보행·이동: 횡단보도 건너기 ───────────────────────────── */
+  {
+    id: "mob-crosswalk",
+    subject: "mobility",
+    grade: "elementary",
+    title: { ko: "횡단보도 건너기", en: "Crossing at a crosswalk" },
+    description: { ko: "양쪽 연석, 횡단보도 줄무늬, 건너는 방향을 촉각으로 익혀 안전하게 보행합니다.", en: "Learn the curbs, crosswalk stripes, and crossing direction by touch for safe travel." },
+    sourceUrl: "https://lessonlibrary.withgoogle.com/intl/ALL_kr/view/lesson/mob-crosswalk",
+    diagramType: "흐름도",
+    objects: ["출발 연석", "줄무늬", "건너는 방향", "도착 연석"],
+    steps: 4,
+    scene: {
+      id: "crosswalk",
+      title: { en: "Crosswalk", ko: "횡단보도" },
+      type: "process",
+      primitives: [
+        { kind: "line", x1: 4, y1: 32, x2: 56, y2: 32 },  // 출발 연석 (아래)
+        { kind: "line", x1: 4, y1: 8, x2: 56, y2: 8 },    // 도착 연석 (위)
+        { kind: "rect", x: 14, y: 10, w: 4, h: 20 },      // 줄무늬
+        { kind: "rect", x: 22, y: 10, w: 4, h: 20 },
+        { kind: "rect", x: 30, y: 10, w: 4, h: 20 },
+        { kind: "rect", x: 38, y: 10, w: 4, h: 20 },
+        { kind: "rect", x: 46, y: 10, w: 4, h: 20 },
+        { kind: "arrow", x1: 30, y1: 30, x2: 30, y2: 10 }, // 건너는 방향
+      ],
+      brailleKey: [
+        { mark: "s", label: { en: "start curb", ko: "출발 연석" } },
+        { mark: "z", label: { en: "stripes", ko: "줄무늬" } },
+        { mark: "a", label: { en: "cross direction", ko: "건너는 방향" } },
+        { mark: "e", label: { en: "end curb", ko: "도착 연석" } },
+      ],
+    },
+    brailleLabel: "횡단보도",
+    audioGuide: { ko: "아래 선이 출발 연석, 위 선이 도착 연석입니다. 세로 줄무늬를 따라 위쪽 화살표 방향으로 건넙니다.", en: "The lower line is the start curb, the upper line the end curb. Cross upward along the vertical stripes following the arrow." },
+  },
+
+  /* ─── 사회: 교실 자리 배치도 ───────────────────────────────── */
+  {
+    id: "soc-classroom-map",
+    subject: "social",
+    grade: "elementary",
+    title: { ko: "교실 자리 배치도", en: "Classroom seating map" },
+    description: { ko: "교탁과 책상의 위치를 촉각으로 익혀 교실 공간을 이해합니다.", en: "Understand the classroom layout by feeling the teacher's desk and the student seats." },
+    sourceUrl: "https://lessonlibrary.withgoogle.com/intl/ALL_kr/view/lesson/soc-classroom-map",
+    diagramType: "사물 구조도",
+    objects: ["교탁", "책상", "통로"],
+    steps: 3,
+    scene: {
+      id: "classroom-map",
+      title: { en: "Classroom seating", ko: "교실 자리" },
+      type: "map",
+      primitives: [
+        { kind: "rect", x: 24, y: 4, w: 12, h: 5, fill: true }, // 교탁
+        { kind: "rect", x: 8, y: 16, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 26, y: 16, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 44, y: 16, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 8, y: 28, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 26, y: 28, w: 8, h: 6, fill: false },
+        { kind: "rect", x: 44, y: 28, w: 8, h: 6, fill: false },
+      ],
+      brailleKey: [
+        { mark: "t", label: { en: "teacher's desk", ko: "교탁" } },
+        { mark: "s", label: { en: "student seat", ko: "책상" } },
+      ],
+    },
+    brailleLabel: "자리 배치",
+    audioGuide: { ko: "맨 위 가운데 채워진 사각형이 교탁입니다. 아래로 두 줄, 세 칸씩 책상이 놓여 있습니다.", en: "The filled rectangle at the top center is the teacher's desk. Below are student seats in two rows of three." },
+  },
+
+  /* ─── 미술: 대칭 무늬 ───────────────────────────────────────── */
+  {
+    id: "art-symmetry",
+    subject: "art",
+    grade: "elementary",
+    title: { ko: "대칭 무늬 만들기", en: "Symmetry patterns" },
+    description: { ko: "가운데 선을 기준으로 좌우가 똑같은 대칭 무늬를 손끝으로 비교합니다.", en: "Compare a left-right symmetric pattern around a center line by touch." },
+    sourceUrl: "https://lessonlibrary.withgoogle.com/intl/ALL_kr/view/lesson/art-symmetry",
+    diagramType: "작품 감상",
+    objects: ["대칭축", "왼쪽 무늬", "오른쪽 무늬"],
+    steps: 3,
+    scene: {
+      id: "symmetry",
+      title: { en: "Symmetry", ko: "대칭" },
+      type: "geometry",
+      primitives: [
+        { kind: "line", x1: 30, y1: 4, x2: 30, y2: 36 },   // 대칭축
+        { kind: "disc", cx: 18, cy: 14, r: 4 },
+        { kind: "disc", cx: 42, cy: 14, r: 4 },
+        { kind: "line", x1: 10, y1: 32, x2: 22, y2: 22 },
+        { kind: "line", x1: 50, y1: 32, x2: 38, y2: 22 },
+      ],
+      brailleKey: [
+        { mark: "x", label: { en: "axis of symmetry", ko: "대칭축" } },
+        { mark: "l", label: { en: "left pattern", ko: "왼쪽 무늬" } },
+        { mark: "r", label: { en: "right pattern", ko: "오른쪽 무늬" } },
+      ],
+    },
+    brailleLabel: "대칭 무늬",
+    audioGuide: { ko: "가운데 세로선이 대칭축입니다. 왼쪽과 오른쪽의 원과 선이 거울처럼 똑같습니다.", en: "The vertical center line is the axis. The circles and lines on the left and right mirror each other." },
+  },
+
+  /* ─── 보행·이동: 복도와 출입문 ─────────────────────────────── */
+  {
+    id: "mob-hallway",
+    subject: "mobility",
+    grade: "elementary",
+    title: { ko: "복도와 출입문 찾기", en: "Hallway and doorways" },
+    description: { ko: "양쪽 벽과 출입문 위치를 익혀 복도를 따라 안전하게 이동합니다.", en: "Learn the walls and doorway positions to travel safely along a hallway." },
+    sourceUrl: "https://lessonlibrary.withgoogle.com/intl/ALL_kr/view/lesson/mob-hallway",
+    diagramType: "지도",
+    objects: ["왼쪽 벽", "오른쪽 벽", "출입문", "이동 방향"],
+    steps: 4,
+    scene: {
+      id: "hallway",
+      title: { en: "Hallway", ko: "복도" },
+      type: "map",
+      primitives: [
+        { kind: "line", x1: 18, y1: 4, x2: 18, y2: 36 },   // 왼쪽 벽
+        { kind: "line", x1: 42, y1: 4, x2: 42, y2: 36 },   // 오른쪽 벽
+        { kind: "rect", x: 14, y: 12, w: 4, h: 6, fill: true }, // 왼쪽 출입문
+        { kind: "rect", x: 42, y: 24, w: 4, h: 6, fill: true }, // 오른쪽 출입문
+        { kind: "arrow", x1: 30, y1: 36, x2: 30, y2: 6 },  // 이동 방향
+      ],
+      brailleKey: [
+        { mark: "l", label: { en: "left wall", ko: "왼쪽 벽" } },
+        { mark: "r", label: { en: "right wall", ko: "오른쪽 벽" } },
+        { mark: "d", label: { en: "doorway", ko: "출입문" } },
+      ],
+    },
+    brailleLabel: "복도 이동",
+    audioGuide: { ko: "양쪽 세로선이 복도 벽입니다. 가운데 위쪽 화살표 방향으로 이동하며, 왼쪽과 오른쪽에 출입문이 있습니다.", en: "The two vertical lines are the hallway walls. Travel upward along the center arrow; doorways are on the left and right." },
+  },
 ];
 
 export const SUBJECTS: Record<Subject, { ko: string; en: string; color: string }> = {
-  korean: { ko: "국어", en: "Korean Language", color: "#E9F0FE" },
-  math:   { ko: "수학", en: "Mathematics",      color: "#E4F4EC" },
-  science:{ ko: "과학", en: "Science",           color: "#FBF3E2" },
+  korean:  { ko: "국어", en: "Korean",          color: "#E9F0FE" },
+  math:    { ko: "수학", en: "Math",             color: "#E4F4EC" },
+  science: { ko: "과학", en: "Science",          color: "#FBF3E2" },
+  social:  { ko: "사회", en: "Social Studies",   color: "#F3ECFB" },
+  art:     { ko: "미술", en: "Art",              color: "#FDECEF" },
+  mobility:{ ko: "보행·이동", en: "Orientation & Mobility", color: "#EAF6F6" },
 };

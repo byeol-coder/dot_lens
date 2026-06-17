@@ -77,11 +77,6 @@ export function FeatureHighlightCard({
         </span>
       )}
       <h3 className="text-[16px] font-semibold text-ink">{title}</h3>
-      {titleKo && (
-        <p className="mt-0.5 font-mono text-[11px] tracking-wide text-accent-soft">
-          {titleKo}
-        </p>
-      )}
       <p className="mt-2 flex-1 text-[13.5px] leading-relaxed text-muted">{body}</p>
       {footer && <div className="mt-4">{footer}</div>}
     </article>

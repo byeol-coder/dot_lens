@@ -14,20 +14,39 @@ import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { ChromebookMockup } from "@/components/premium/ChromebookMockup";
 import { GeminiInsightPanel } from "@/components/premium/cards";
 import { StatusBadge } from "@/components/StatusBadge";
+import { MyLessonsSection } from "@/components/MyLessonsSection";
 import { cn } from "@/lib/cn";
 import { useLang } from "@/lib/i18n";
 
 const SUBJECT_TABS: Array<{ key: Subject | "all"; en: string; ko: string }> = [
-  { key: "all",     en: "All",     ko: "전체" },
-  { key: "korean",  en: "Korean",  ko: "국어" },
-  { key: "math",    en: "Math",    ko: "수학" },
-  { key: "science", en: "Science", ko: "과학" },
+  { key: "all",      en: "All",                    ko: "전체" },
+  { key: "korean",   en: "Korean",                 ko: "국어" },
+  { key: "math",     en: "Math",                   ko: "수학" },
+  { key: "science",  en: "Science",                ko: "과학" },
+  { key: "social",   en: "Social Studies",         ko: "사회" },
+  { key: "art",      en: "Art",                    ko: "미술" },
+  { key: "mobility", en: "Orientation & Mobility", ko: "보행·이동" },
 ];
 
 const GRADE_LABEL: Record<string, { en: string; ko: string }> = {
   elementary: { en: "Elementary", ko: "초등" },
   middle:     { en: "Middle",     ko: "중등" },
   high:       { en: "High",       ko: "고등" },
+};
+
+/** English labels for the Korean-authored diagram types, so EN mode reads in EN. */
+const DIAGRAM_TYPE_EN: Record<string, string> = {
+  "구조도": "Structure Diagram",
+  "흐름 다이어그램": "Flow Diagram",
+  "흐름도": "Flow Diagram",
+  "함수 그래프": "Function Graph",
+  "기하 도형": "Geometric Shape",
+  "과학 다이어그램": "Science Diagram",
+  "단면 다이어그램": "Cross-section Diagram",
+  "순환 다이어그램": "Cycle Diagram",
+  "지도": "Map",
+  "작품 감상": "Artwork",
+  "사물 구조도": "Object Diagram",
 };
 
 type ConvertStep = "idle" | "scanning" | "analyzing" | "ready";
@@ -128,6 +147,9 @@ export function LessonLibraryPage() {
         </div>
       </div>
 
+      {/* Teacher-authored custom lessons (localStorage) */}
+      <MyLessonsSection />
+
       <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
 
         {/* 레슨 카탈로그 */}
@@ -156,6 +178,16 @@ export function LessonLibraryPage() {
           </div>
 
           {/* 레슨 그리드 */}
+          {filtered.length === 0 && (
+            <div className="rounded-2xl border border-dashed border-line bg-surface-sunk p-8 text-center">
+              <p className="text-[14px] font-medium text-ink">
+                {L("No lessons in this category yet", "이 카테고리에는 아직 자료가 없습니다")}
+              </p>
+              <p className="mt-1 text-[13px] text-muted">
+                {L("Lessons for this subject are coming soon — or build your own in the Tactile Builder.", "이 과목 자료는 곧 추가됩니다 — 또는 촉각 빌더에서 직접 만들 수 있습니다.")}
+              </p>
+            </div>
+          )}
           <div className="grid gap-3 sm:grid-cols-2">
             {filtered.map((lesson) => {
               const subject = SUBJECTS[lesson.subject];
@@ -196,7 +228,7 @@ export function LessonLibraryPage() {
 
                   <div className="flex flex-1 flex-col p-4">
                     <p className="font-mono text-[11px] uppercase tracking-eyebrow text-faint">
-                      {lesson.diagramType} · {L(`${lesson.objects.length} elements`, `${lesson.objects.length}개 요소`)}
+                      {lang === "ko" ? lesson.diagramType : DIAGRAM_TYPE_EN[lesson.diagramType] ?? lesson.diagramType} · {L(`${lesson.objects.length} elements`, `${lesson.objects.length}개 요소`)}
                     </p>
                     <h3 className="mt-1 text-[15px] font-semibold text-ink">
                       {L(lesson.title.en, lesson.title.ko)}

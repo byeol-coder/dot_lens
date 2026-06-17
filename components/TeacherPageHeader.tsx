@@ -13,15 +13,12 @@ export function TeacherPageHeader() {
   return (
     <div className="border-b border-line bg-surface">
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <p className="eyebrow">{t("brand.name")} · {t("nav.createLesson")}</p>
+        <p className="eyebrow">{t("brand.name")} · {t("nav.teacher")}</p>
         <h1 className="mt-2 text-balance text-3xl font-semibold text-ink sm:text-4xl">
           {t("create.title")}
         </h1>
         <p className="mt-2 max-w-2xl text-[15px] leading-relaxed text-muted">
-          {t("create.description")}
-        </p>
-        <p className="mt-1 max-w-2xl text-[13px] leading-relaxed text-accent-soft">
-          {t("create.brandHelper")}
+          {t("subtitle.teacher")}
         </p>
 
         <div className="mt-5 flex flex-wrap gap-2">

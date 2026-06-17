@@ -1,54 +1,107 @@
+"use client";
+
 import { PageHeader, ComingNext } from "@/components/PageScaffold";
 import { BrailleReviewConsole } from "@/components/BrailleReviewConsole";
 import { ExpertReviewQueue } from "@/components/ExpertReviewQueue";
+import { CustomReviewConsole } from "@/components/CustomReviewConsole";
+import { useT } from "@/lib/i18n";
 import Link from "next/link";
 
 export default function ReviewPage() {
+  const { t, lang } = useT();
+  const L = (en: string, ko: string) => (lang === "ko" ? ko : en);
+
   return (
     <>
       <PageHeader
-        eyebrow="Expert · Braille QA"
-        eyebrowKo="전문가 · 점자 검수"
+        eyebrow="Expert Review"
+        eyebrowKo="전문가 검토"
         title="Verify and approve tactile materials"
         titleKo="촉각 자료를 검토하고 승인하기"
-        description="AI-generated tactile materials go through expert review before reaching students. Check tactile quality, then approve or request revisions."
-        descriptionKo="AI가 생성한 촉각 자료는 학생에게 닿기 전 전문가 검수를 거칩니다. 촉각 품질을 확인하고 승인하거나 보완을 요청하세요."
+        description={L(
+          "Review AI-generated tactile materials before classroom use.",
+          "AI가 생성한 촉각 자료를 수업 전에 전문가 관점으로 검토합니다."
+        )}
+        descriptionKo="AI가 생성한 촉각 자료를 수업 전에 전문가 관점으로 검토합니다."
       />
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 space-y-12">
+      <div className="mx-auto max-w-6xl space-y-12 px-4 py-10 sm:px-6">
+        {/* What to check — review criteria */}
+        <section aria-labelledby="criteria-heading" className="rounded-2xl border border-line bg-surface p-6 shadow-card">
+          <h2 id="criteria-heading" className="eyebrow">{t("review.criteriaTitle")}</h2>
+          <ul className="mt-3 grid gap-3 sm:grid-cols-2">
+            {[
+              { name: L("Tactile Readability", "촉각 판독성"), q: L("Can this structure be understood by touch?", "손으로 만졌을 때 구조를 이해할 수 있나요?") },
+              { name: L("Educational Accuracy", "교육적 정확성"), q: L("Does the simplified version preserve the learning goal?", "단순화된 자료가 학습 목표를 유지하고 있나요?") },
+              { name: L("Braille & Label Alignment", "점자·라벨 정합성"), q: L("Are braille labels, audio guidance, and tactile regions consistent?", "점자 라벨, 음성 안내, 촉각 영역이 서로 일치하나요?") },
+              { name: L("Classroom Readiness", "수업 활용 준비도"), q: L("Is this material ready to use with students?", "학생과 함께 수업에 사용할 수 있는 상태인가요?") },
+            ].map((c, i) => (
+              <li key={i} className="flex items-start gap-2.5 rounded-xl border border-line bg-surface-sunk px-4 py-3">
+                <span className="grid h-6 w-6 shrink-0 place-items-center rounded-lg bg-accent-tint font-mono text-[12px] font-semibold text-accent">
+                  {i + 1}
+                </span>
+                <span>
+                  <span className="block text-[13.5px] font-semibold text-ink">{c.name}</span>
+                  <span className="mt-0.5 block text-[13px] leading-snug text-muted">{c.q}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+
+        {/* Teacher-built lessons review console (real, localStorage-backed) */}
+        <section aria-labelledby="custom-review-heading">
+          <div className="mb-6">
+            <h2 id="custom-review-heading" className="text-[17px] font-semibold text-ink">
+              {L("Field review · teacher-built lessons", "현장 검토 · 교사 제작 수업")}
+            </h2>
+            <p className="mt-1 text-[13px] text-muted">
+              {L(
+                "Field staff review, edit, and approve teacher-built tactile lessons and leave feedback.",
+                "현장 담당자가 교사 제작 촉각 수업을 검토·수정·승인하고 피드백을 남깁니다."
+              )}
+            </p>
+          </div>
+          <CustomReviewConsole />
+        </section>
 
         {/* Tactile Materials Review Queue */}
         <section aria-labelledby="tactile-review-heading">
-          <div className="mb-6 flex items-center justify-between">
+          <div className="mb-6 flex items-center justify-between gap-3">
             <div>
               <h2 id="tactile-review-heading" className="text-[17px] font-semibold text-ink">
-                Tactile Material Review Queue
+                {L("Tactile material review queue", "촉각 자료 검수 대기열")}
               </h2>
               <p className="mt-1 text-[13px] text-muted">
-                AI가 생성한 촉각 그래픽의 품질을 검수합니다.
+                {L("Review the quality of AI-generated tactile graphics.", "AI가 생성한 촉각 그래픽의 품질을 검수합니다.")}
               </p>
             </div>
             <Link
               href="/expert-review"
-              className="rounded-xl border border-accent bg-accent-tint px-4 py-2 text-[13px] font-semibold text-accent hover:bg-accent hover:text-white transition-colors"
+              className="shrink-0 rounded-xl border border-accent bg-accent-tint px-4 py-2 text-[13px] font-semibold text-accent transition-colors hover:bg-accent hover:text-white"
             >
-              Full Review Mode →
+              {L("Full review mode →", "전체 검수 모드 →")}
             </Link>
           </div>
           <ExpertReviewQueue />
         </section>
 
-        {/* Original Braille QA */}
+        {/* Braille QA */}
         <section aria-labelledby="braille-qa-heading">
           <h2 id="braille-qa-heading" className="mb-4 text-[17px] font-semibold text-ink">
-            Braille QA Console
+            {L("Braille QA console", "점자 검수 콘솔")}
           </h2>
           <BrailleReviewConsole />
           <div className="mt-6">
             <ComingNext
               points={[
-                "UEB Grade 2 contractions and Korean 약자 (abbreviations).",
+                "UEB Grade 2 contractions and Korean abbreviations (약자).",
                 "Nemeth and Korean math braille for equations.",
-                "Reviewer roles, audit trail, and certified TVI queue.",
+                "Reviewer roles, audit trail, and a certified TVI queue.",
+              ]}
+              pointsKo={[
+                "UEB 2종(축약)과 한국어 약자 지원",
+                "수식용 Nemeth·한국어 수학 점자",
+                "검수자 역할, 변경 이력, 인증 TVI 대기열",
               ]}
             />
           </div>

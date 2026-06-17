@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useLang } from "@/lib/i18n";
+import { useLang, useT } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 
 function useL() {
@@ -165,14 +165,15 @@ const VOICES = [
 
 export function LandingView() {
   const L = useL();
+  const { t } = useT();
 
   return (
     <>
       {/* ── 1. HERO ─────────────────────────────────────────── */}
       <section className="relative overflow-hidden border-b border-line bg-surface">
         <div className="pin-texture absolute inset-0 opacity-[0.5]" aria-hidden />
-        <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
-          <p className="eyebrow">{L("AI Tactile Learning Platform", "AI 촉각 교육 플랫폼")}</p>
+        <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:py-16">
+          <p className="eyebrow">{t("home.hero.eyebrow")}</p>
 
           <h1 className="mt-3 max-w-3xl text-balance text-[28px] font-semibold leading-[1.15] text-ink sm:text-[38px] lg:text-[48px] sm:leading-[1.12]">
             {L(

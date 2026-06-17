@@ -513,6 +513,44 @@ export const SAMPLE_AI_ANALYSES: Record<string, AIAnalysisResult> = {
     ],
     dotPadLayout: "60x40: Roots at rows 30-40 (center). Stem at cols 28-32, rows 10-30. Leaves at cols 15-27 and 33-45, rows 15-25. Flower at cols 22-38, rows 2-10.",
   },
+  shapes: {
+    summary: {
+      en: "This material compares three basic shapes — a circle, a triangle, and a square — so students can tell them apart by their edges and corners.",
+      ko: "이 자료는 원, 삼각형, 사각형 세 가지 기본 도형을 비교해, 학생이 변과 모서리로 도형을 구분할 수 있도록 합니다.",
+    },
+    mainObjects: ["Circle (원)", "Triangle (삼각형)", "Square (사각형)"],
+    relationships: [
+      "Circle → no corners (모서리 없음)",
+      "Triangle → 3 corners, 3 edges (모서리 3·변 3)",
+      "Square → 4 corners, 4 equal edges (모서리 4·같은 변 4)",
+    ],
+    tactileScore: 0.93,
+    simplificationNeeded: [
+      "Use one clear outline per shape — no fill texture",
+      "Keep all three the same overall size so the difference is the form, not the scale",
+    ],
+    explorationStart: {
+      en: "Start with the circle on the left. Trace its outline all the way around and notice there are no corners.",
+      ko: "왼쪽 원부터 시작하세요. 둘레를 한 바퀴 따라가며 모서리가 없다는 점을 느껴보세요.",
+    },
+    explorationOrder: [
+      "1. Circle (left) — one smooth, continuous edge",
+      "2. Triangle (center) — count 3 corners and 3 edges",
+      "3. Square (right) — count 4 corners and 4 equal edges",
+      "4. Compare the corners of all three",
+    ],
+    confusionPoints: [
+      "Triangle vs. square — guide students to count the corners",
+      "Circle's edge — a single continuous line, not a corner anywhere",
+    ],
+    classroomQuestions: [
+      "Which shape has no corners at all?",
+      "How many corners does the triangle have? And the square?",
+      "Which two shapes feel most alike, and what tells them apart?",
+    ],
+    dotPadLayout:
+      "60x40: Circle at cols 6-20, rows 14-28. Triangle at cols 24-38, rows 12-30. Square at cols 42-56, rows 14-28. Equal size, generous spacing between shapes.",
+  },
 };
 
 /* ─── Field Activist Data ────────────────────────────────────── */

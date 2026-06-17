@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { dataSource } from "@/lib/dataSource";
+import { useState } from "react";
 import { WorldPartnerMap } from "@/components/WorldPartnerMap";
 import {
   CREDENTIAL_TIERS,
   TRAINER_PIPELINE,
   PARTNER_STATUS_META,
   PARTNER_TYPE_LABEL,
+  COUNTRY_PARTNERS,
+  buildTrainerProfiles,
+  programRollup,
   type TierKey,
   type CountryPartner,
   type TrainerProfile,
@@ -275,30 +277,13 @@ function PartnerNetwork({ partners }: { partners: CountryPartner[] }) {
 export function TrainerAcademyPanel() {
   const { lang } = useLang();
   const tr = (en: string, ko: string) => (lang === "ko" ? ko : en);
-  const [partners, setPartners] = useState<CountryPartner[] | null>(null);
-  const [trainers, setTrainers] = useState<TrainerProfile[] | null>(null);
-  const [rollup, setRollup] = useState<ProgramRollup | null>(null);
-
-  useEffect(() => {
-    let alive = true;
-    Promise.all([
-      dataSource.getCountryPartners(),
-      dataSource.getTrainerProfiles(),
-      dataSource.getProgramRollup(),
-    ]).then(([p, t, r]) => {
-      if (!alive) return;
-      setPartners(p);
-      setTrainers(t);
-      setRollup(r);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const [partners] = useState<CountryPartner[]>(COUNTRY_PARTNERS);
+  const [trainers] = useState<TrainerProfile[]>(() => buildTrainerProfiles());
+  const [rollup] = useState<ProgramRollup>(() => programRollup());
 
   return (
     <div className="space-y-12">
-      {rollup && <Rollup r={rollup} />}
+      <Rollup r={rollup} />
 
       <section aria-labelledby="ladder-heading">
         <header className="mb-4">
@@ -341,13 +326,7 @@ export function TrainerAcademyPanel() {
             </h2>
           </div>
         </header>
-        {trainers ? (
-          <TrainerDirectory trainers={trainers} />
-        ) : (
-          <p className="text-[14px] text-muted" role="status">
-            {tr("Loading directory…", "디렉터리 불러오는 중…")}
-          </p>
-        )}
+        <TrainerDirectory trainers={trainers} />
       </section>
 
       <section aria-labelledby="partners-heading">
@@ -363,16 +342,10 @@ export function TrainerAcademyPanel() {
             )}
           </p>
         </header>
-        {partners ? (
-          <div className="space-y-6">
-            <WorldPartnerMap partners={partners} />
-            <PartnerNetwork partners={partners} />
-          </div>
-        ) : (
-          <p className="text-[14px] text-muted" role="status">
-            {tr("Loading partners…", "파트너 불러오는 중…")}
-          </p>
-        )}
+        <div className="space-y-6">
+          <WorldPartnerMap partners={partners} />
+          <PartnerNetwork partners={partners} />
+        </div>
       </section>
     </div>
   );

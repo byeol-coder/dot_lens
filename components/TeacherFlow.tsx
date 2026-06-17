@@ -468,15 +468,7 @@ function SetupStep({
           onClick={onScan}
           className="rounded-xl bg-accent px-4 py-2.5 text-[14px] font-semibold text-white transition-colors hover:bg-accent-soft"
         >
-          {tr("Analyze with Dot Lens", "닷 렌즈로 분석하기")}
-        </button>
-        <button
-          type="button"
-          disabled={!scanned}
-          title={scanned ? undefined : tr("Analyze the material first", "먼저 자료를 분석하세요")}
-          className="rounded-xl border border-line bg-surface px-4 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-surface-sunk disabled:opacity-50"
-        >
-          {tr("Generate Tactile Lesson", "촉각 자료 생성")}
+          {tr("Analyze with Dot Lens", "닷 렌즈로 자료 분석하기")}
         </button>
         <button
           type="button"
@@ -484,14 +476,6 @@ function SetupStep({
           className="rounded-xl border border-line bg-surface px-4 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-surface-sunk"
         >
           {tr("Save Draft", "임시 저장")}
-        </button>
-        <button
-          type="button"
-          disabled={!canPublish}
-          title={canPublish ? undefined : tr("Expert review must pass first", "전문가 검수를 먼저 통과해야 합니다")}
-          className="rounded-xl border border-line bg-surface px-4 py-2.5 text-[14px] font-semibold text-ink transition-colors hover:bg-surface-sunk disabled:opacity-50"
-        >
-          {tr("Add to Class", "학급에 추가")}
         </button>
         {draftSaved && (
           <span className="font-mono text-[12px] text-verify" role="status">
@@ -596,7 +580,7 @@ function ScannerStep({
 
           <div className="flex justify-end border-t border-line pt-4">
             <button type="button" onClick={onNext} className="rounded-xl bg-accent px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-accent-soft">
-              {tr("View Lens Insight →", "렌즈 인사이트 보기 →")}
+              {tr("Review Lens Insight →", "렌즈 인사이트 확인하기 →")}
             </button>
           </div>
         </div>
@@ -674,7 +658,7 @@ function AnalysisStep({
           ← {tr("Back", "이전")}
         </button>
         <button type="button" onClick={onGenerate} disabled={generating} className="rounded-xl bg-accent px-4 py-2.5 text-[14px] font-semibold text-white hover:bg-accent-soft disabled:opacity-50">
-          {generating ? tr("Generating…", "생성 중…") : tr("Generate Tactile Lesson →", "촉각 자료 생성 →")}
+          {generating ? tr("Generating…", "생성 중…") : tr("Generate Tactile View →", "촉각 보기 생성하기 →")}
         </button>
       </div>
     </ScreenCard>

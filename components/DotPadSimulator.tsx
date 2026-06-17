@@ -153,23 +153,42 @@ export function DotPadSimulator({ className }: { className?: string }) {
               Dot Pad · 60 × 40
             </p>
             <p className="text-[13px] font-medium text-ink">
-              {connected ? L("Connected", "연결됨") : L("Not connected", "미연결")}
+              {connected
+                ? L("Connected", "연결됨")
+                : L("Simulated Dot Pad Ready", "시뮬레이션 Dot Pad 준비됨")}
             </p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={connected ? disconnect : connect}
-          disabled={connecting}
-          className={cn(
-            "rounded-xl px-4 py-2 text-[13.5px] font-semibold transition-colors disabled:opacity-50",
-            connected
-              ? "border border-line bg-surface text-ink hover:bg-surface-sunk"
-              : "bg-accent text-white hover:bg-accent-soft"
-          )}
-        >
-          {connecting ? L("Connecting…", "연결 중…") : connected ? L("Disconnect", "연결 해제") : L("Connect Dot Pad", "Dot Pad 연결")}
-        </button>
+        {connected ? (
+          <button
+            type="button"
+            onClick={disconnect}
+            className="rounded-xl border border-line bg-surface px-4 py-2 text-[13.5px] font-semibold text-ink transition-colors hover:bg-surface-sunk"
+          >
+            {L("Disconnect", "연결 해제")}
+          </button>
+        ) : (
+          <div className="flex flex-col items-end gap-1.5">
+            <button
+              type="button"
+              onClick={connect}
+              disabled={connecting}
+              aria-label={L("Start Tactile Demo — uses simulated Dot Pad", "촉각 탐색 데모 시작 — 시뮬레이션 Dot Pad 사용")}
+              className="rounded-xl bg-accent px-4 py-2 text-[13.5px] font-semibold text-white transition-colors hover:bg-accent-soft disabled:opacity-50"
+            >
+              {connecting ? L("Connecting…", "연결 중…") : L("Start Tactile Demo", "촉각 탐색 데모 시작")}
+            </button>
+            <button
+              type="button"
+              onClick={connect}
+              disabled={connecting}
+              aria-label={L("Connect a physical Dot Pad device", "실제 Dot Pad 기기 연결")}
+              className="text-[11px] text-faint hover:text-muted disabled:opacity-40"
+            >
+              {L("Connect Real Dot Pad", "실제 Dot Pad 연결하기")}
+            </button>
+          </div>
+        )}
       </header>
 
       <div className="grid gap-5 p-5 lg:grid-cols-[1.4fr_1fr]">
@@ -202,7 +221,7 @@ export function DotPadSimulator({ className }: { className?: string }) {
             <p className="font-mono text-[11px] text-faint">
               {connected
                 ? L(`Object ${state.currentObjectIndex + 1} of ${OBJECT_COUNT}`, `${state.currentObjectIndex + 1} / ${OBJECT_COUNT} 탐색`)
-                : L("Connect to begin", "연결 후 시작")}
+                : L("Press Start Tactile Demo to begin", "촉각 탐색 데모 시작을 눌러주세요")}
             </p>
           </div>
 

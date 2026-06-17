@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { dataSource } from "@/lib/dataSource";
-import type { ChampionTeacherRecord } from "@/lib/mockPlatformData";
+import { CHAMPION_TEACHERS, type ChampionTeacherRecord } from "@/lib/mockPlatformData";
 import { useLang } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 
@@ -123,18 +121,7 @@ function ChampionCard({ t }: { t: ChampionTeacherRecord }) {
 
 export function ChampionsPanel() {
   const { lang } = useLang();
-  const [teachers, setTeachers] = useState<ChampionTeacherRecord[] | null>(null);
-
-  // Reads through the data-source abstraction (mock today, backend later).
-  useEffect(() => {
-    let alive = true;
-    dataSource.getChampions().then((data) => {
-      if (alive) setTeachers(data);
-    });
-    return () => {
-      alive = false;
-    };
-  }, []);
+  const teachers = CHAMPION_TEACHERS;
 
   const tr = (en: string, ko: string) => (lang === "ko" ? ko : en);
 
@@ -183,14 +170,7 @@ export function ChampionsPanel() {
         </ol>
       </section>
 
-      {!teachers && (
-        <p className="text-[14px] text-muted" role="status">
-          {tr("Loading champion data…", "챔피언 데이터를 불러오는 중…")}
-        </p>
-      )}
-
-      {teachers && (
-        <>
+      <>
           {/* Recommended next champions */}
           <section aria-labelledby="rec-heading">
             <div className="mb-3 flex items-baseline justify-between">
@@ -244,8 +224,7 @@ export function ChampionsPanel() {
               </div>
             </section>
           )}
-        </>
-      )}
+      </>
     </div>
   );
 }

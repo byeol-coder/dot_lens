@@ -103,7 +103,7 @@ const PERSONAS = [
     },
   },
   {
-    href: "/field-data",
+    href: "/impact",
     icon: "🌍",
     accent: "bg-surface-sunk text-muted",
     en: {
@@ -176,30 +176,30 @@ export function LandingView() {
 
           <h1 className="mt-3 max-w-3xl text-balance text-[28px] font-semibold leading-[1.15] text-ink sm:text-[38px] lg:text-[48px] sm:leading-[1.12]">
             {L(
-              "So every student can experience the same lesson.",
-              "모든 학생이 같은 수업을 경험할 수 있도록."
+              "See classroom visuals through a tactile lens.",
+              "보이지 않던 수업 자료를, 촉각으로 이해할 수 있게."
             )}
           </h1>
 
           <p className="mt-4 max-w-2xl text-[17px] leading-relaxed text-muted">
             {L(
-              "Dot Lens transforms classroom diagrams and images into tactile learning materials — so blind and low-vision students can feel, navigate, and understand the same content as their class.",
-              "닷 렌즈는 수업 다이어그램과 이미지를 시각장애·저시력 학생이 손으로 탐색할 수 있는 촉각 자료로 바꿉니다. 반 친구들과 같은 수업을, 함께."
+              "Dot Lens turns diagrams and images into tactile lessons that blind and low-vision students can explore with their classmates.",
+              "닷 렌즈는 교실 속 다이어그램과 이미지를 시각장애 및 저시력 학생이 함께 탐색할 수 있는 촉각 수업 자료로 바꿉니다."
             )}
           </p>
 
           <div className="mt-7 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
             <Link
-              href="/teacher"
+              href="/guided-demo"
               className="rounded-xl bg-accent px-5 py-3 text-center text-[15px] font-semibold text-white shadow-glow transition-colors hover:bg-accent-soft sm:w-auto"
             >
-              {L("Create a Lesson →", "수업 자료 만들기 →")}
+              {L("Start Guided Demo →", "시연 시작하기 →")}
             </Link>
             <Link
-              href="/demo"
+              href="/teacher"
               className="rounded-xl border border-accent bg-surface px-5 py-3 text-center text-[15px] font-semibold text-accent transition-colors hover:bg-accent-tint sm:w-auto"
             >
-              {L("See it in action", "데모 살펴보기")}
+              {L("Create a Lesson", "수업 자료 만들기")}
             </Link>
           </div>
 
@@ -376,22 +376,16 @@ export function LandingView() {
             </div>
             <div className="flex flex-col gap-2">
               <Link
-                href="/demo"
+                href="/guided-demo"
                 className="rounded-xl bg-accent px-5 py-3 text-center text-[15px] font-semibold text-white shadow-glow transition-colors hover:bg-accent-soft"
               >
-                {L("View Demo →", "데모 보기 →")}
+                {L("Start Guided Demo →", "시연 시작하기 →")}
               </Link>
               <Link
                 href="/teacher"
                 className="rounded-xl border border-line bg-surface px-5 py-3 text-center text-[15px] font-semibold text-ink transition-colors hover:bg-surface-sunk"
               >
                 {L("Create a Lesson", "수업 자료 만들기")}
-              </Link>
-              <Link
-                href="/dashboard"
-                className="text-center text-[13px] text-muted hover:text-ink hover:underline"
-              >
-                {L("Go to Dashboard", "대시보드로 이동")}
               </Link>
             </div>
           </div>

@@ -19,6 +19,7 @@ export const NAV_ITEMS: NavItem[] = [
   { href: "/field-data", label: "Field & Impact", labelKo: "현장·임팩트", blurb: "Monitor teacher usage and field impact.", stage: "improve", role: "activist" },
   { href: "/champions", label: "Champion Teachers", labelKo: "챔피언 교사", blurb: "Recommend and grow local champion teachers.", stage: "empower", role: "all" },
   { href: "/academy", label: "Trainer Academy", labelKo: "트레이너 아카데미", blurb: "Certify trainers and grow country partners.", stage: "empower", role: "all" },
+  { href: "/champion-kit", label: "Champion Kit", labelKo: "챔피언 패키지", blurb: "Quick-start, workshop agenda, and review checklist.", stage: "empower", role: "all" },
   { href: "/lesson-library", label: "Lessons", labelKo: "수업 자료", blurb: "Browse and reuse approved lesson materials.", stage: "build", role: "all" },
   { href: "/settings", label: "Settings", labelKo: "설정", blurb: "Accessibility, language, and display options.", role: "all" },
 ];

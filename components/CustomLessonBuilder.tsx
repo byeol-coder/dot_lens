@@ -18,6 +18,7 @@ import {
   type BuilderObject,
   type CustomLesson,
 } from "@/lib/customLessons";
+import { logEvent } from "@/lib/telemetry";
 import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { LessonExplorer } from "@/components/LessonExplorer";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -91,6 +92,7 @@ export function CustomLessonBuilder() {
     setLesson(l);
     setSelectedObjectId(l.objects[0]?.id ?? null);
     setSaved(false);
+    logEvent("lesson_created", { template: templateId });
   }
 
   function update(patch: Partial<CustomLesson>) {
@@ -180,6 +182,7 @@ export function CustomLessonBuilder() {
     const stored = saveCustomLesson({ ...lesson, status });
     setLesson(stored);
     setSaved(true);
+    if (markReady) logEvent("lesson_published", { lesson: stored.id, objects: stored.objects.length });
     announce(markReady ? L("Lesson published", "수업이 게시되었습니다") : L("Draft saved", "임시 저장되었습니다"));
   }
 

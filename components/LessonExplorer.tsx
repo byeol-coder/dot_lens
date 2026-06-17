@@ -1,9 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { DotPadKey, DotPadState } from "@/types";
 import type { PlayableLesson } from "@/lib/lessonPlayer";
 import { playerApplyKey, playerConnected, playerInitial } from "@/lib/lessonPlayer";
+import { logEvent } from "@/lib/telemetry";
 import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { PanningKeyControls } from "@/components/PanningKeyControls";
 import { useLang } from "@/lib/i18n";
@@ -32,13 +33,28 @@ export function LessonExplorer({
   const [state, setState] = useState<DotPadState>(() =>
     autoConnect ? playerConnected(lesson, lang) : playerInitial(lesson, lang)
   );
+  const loggedFinish = useRef(false);
 
   // Reset when the lesson identity changes (e.g. builder edits, library switch).
   const total = lesson.objects.length;
   useEffect(() => {
     setState(autoConnect ? playerConnected(lesson, lang) : playerInitial(lesson, lang));
+    loggedFinish.current = false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lesson.id, autoConnect]);
+
+  // Log a completed quiz once per session.
+  useEffect(() => {
+    if (state.quizState.finished && !loggedFinish.current) {
+      loggedFinish.current = true;
+      logEvent("quiz_completed", {
+        lesson: lesson.id,
+        score: state.quizState.score,
+        total: state.quizState.total,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.quizState.finished]);
 
   const handleKey = useCallback(
     (key: DotPadKey) => {
@@ -73,6 +89,8 @@ export function LessonExplorer({
 
   function connect() {
     setState(playerConnected(lesson, lang));
+    loggedFinish.current = false;
+    logEvent("lesson_explored", { lesson: lesson.id });
   }
   function disconnect() {
     setState(playerInitial(lesson, lang));

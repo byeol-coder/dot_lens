@@ -1,6 +1,7 @@
 import { PageHeader, ComingNext } from "@/components/PageScaffold";
 import { BrailleReviewConsole } from "@/components/BrailleReviewConsole";
 import { ExpertReviewQueue } from "@/components/ExpertReviewQueue";
+import { CustomReviewConsole } from "@/components/CustomReviewConsole";
 import Link from "next/link";
 
 export default function ReviewPage() {
@@ -15,6 +16,19 @@ export default function ReviewPage() {
         descriptionKo="AI가 생성한 촉각 자료는 학생에게 닿기 전 전문가 검수를 거칩니다. 촉각 품질을 확인하고 승인하거나 보완을 요청하세요."
       />
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 space-y-12">
+
+        {/* Teacher-built lessons review console (real, localStorage-backed) */}
+        <section aria-labelledby="custom-review-heading">
+          <div className="mb-6">
+            <h2 id="custom-review-heading" className="text-[17px] font-semibold text-ink">
+              Field review · teacher-built lessons
+            </h2>
+            <p className="mt-1 text-[13px] text-muted">
+              현장 담당자가 교사 제작 촉각 수업을 검토·수정·승인하고 피드백을 남깁니다.
+            </p>
+          </div>
+          <CustomReviewConsole />
+        </section>
 
         {/* Tactile Materials Review Queue */}
         <section aria-labelledby="tactile-review-heading">

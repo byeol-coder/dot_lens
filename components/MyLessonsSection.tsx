@@ -154,9 +154,15 @@ function LessonCard({
           <p className="font-mono text-[11px] uppercase tracking-eyebrow text-faint">
             {L(lesson.subject.en, lesson.subject.ko)} · {L(lesson.gradeLevel.en, lesson.gradeLevel.ko)}
           </p>
-          <StatusBadge variant={lesson.status === "ready" ? "verified" : "draft"}>
-            {lesson.status === "ready" ? L("ready", "준비됨") : L("draft", "초안")}
-          </StatusBadge>
+          {(() => {
+            const meta = {
+              draft: { v: "draft" as const, en: "draft", ko: "초안" },
+              ready: { v: "review" as const, en: "in review", ko: "검수 중" },
+              approved: { v: "verified" as const, en: "approved", ko: "승인됨" },
+              changes_requested: { v: "pending" as const, en: "changes", ko: "수정요청" },
+            }[lesson.status];
+            return <StatusBadge variant={meta.v}>{L(meta.en, meta.ko)}</StatusBadge>;
+          })()}
         </div>
         <h3 className="mt-1 text-[15px] font-semibold text-ink">{L(lesson.title.en, lesson.title.ko)}</h3>
         <p className="mt-0.5 font-mono text-[11px] text-faint">

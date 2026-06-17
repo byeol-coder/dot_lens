@@ -38,7 +38,25 @@ export interface CustomQuizQuestion {
   hint: LocalizedText;
 }
 
-export type LessonStatus = "draft" | "ready";
+export type LessonStatus = "draft" | "ready" | "approved" | "changes_requested";
+
+export interface LessonReview {
+  decision: "approved" | "changes_requested";
+  reviewer: string;
+  notes: LocalizedText;
+  /** ISO 8601 timestamp. */
+  reviewedAt: string;
+}
+
+export interface FeedbackEntry {
+  id: string;
+  author: string;
+  /** e.g. "teacher", "field staff", "reviewer". */
+  role: string;
+  message: string;
+  /** ISO 8601 timestamp. */
+  createdAt: string;
+}
 
 export interface CustomLesson {
   id: string;
@@ -56,6 +74,10 @@ export interface CustomLesson {
   brailleSummary: string;
   quiz: CustomQuizQuestion[];
   status: LessonStatus;
+  /** Field-reviewer decision, once reviewed. */
+  review?: LessonReview;
+  /** Collected feedback from teachers / field staff / reviewers. */
+  feedback?: FeedbackEntry[];
   createdAt: string;
   updatedAt: string;
 }
@@ -121,6 +143,39 @@ export function saveCustomLesson(lesson: CustomLesson): CustomLesson {
 
 export function deleteCustomLesson(id: string): void {
   writeAll(listCustomLessons().filter((l) => l.id !== id));
+}
+
+/** Record a field-reviewer decision and move the lesson's status accordingly. */
+export function reviewCustomLesson(
+  id: string,
+  decision: "approved" | "changes_requested",
+  reviewer: string,
+  notes: LocalizedText
+): CustomLesson | undefined {
+  const lesson = getCustomLesson(id);
+  if (!lesson) return undefined;
+  const review: LessonReview = {
+    decision,
+    reviewer: reviewer || "Reviewer",
+    notes,
+    reviewedAt: new Date().toISOString(),
+  };
+  return saveCustomLesson({ ...lesson, status: decision, review });
+}
+
+/** Append a feedback entry to a lesson. */
+export function addFeedback(
+  id: string,
+  entry: Omit<FeedbackEntry, "id" | "createdAt">
+): CustomLesson | undefined {
+  const lesson = getCustomLesson(id);
+  if (!lesson) return undefined;
+  const full: FeedbackEntry = {
+    ...entry,
+    id: newId("fb"),
+    createdAt: new Date().toISOString(),
+  };
+  return saveCustomLesson({ ...lesson, feedback: [...(lesson.feedback ?? []), full] });
 }
 
 /** Subscribe to store changes (same-tab via CustomEvent, cross-tab via storage). */

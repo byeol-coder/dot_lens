@@ -11,6 +11,7 @@ import {
 import { OBJECT_COUNT } from "@/lib/tactileMatrix";
 import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { PanningKeyControls } from "@/components/PanningKeyControls";
+import { DotPadDeviceBar } from "@/components/DotPadDeviceControl";
 import { cn } from "@/lib/cn";
 import { clientApi } from "@/lib/clientApi";
 import { useLang } from "@/lib/i18n";
@@ -233,6 +234,8 @@ export function DotPadSimulator({ className }: { className?: string }) {
             lastKey={state.lastKeyPressed}
             disabled={!connected}
           />
+
+          <DotPadDeviceBar matrix={state.currentMatrix} brailleText={state.currentBrailleText} />
 
           {/* Session + save */}
           {connected && (

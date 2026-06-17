@@ -83,6 +83,12 @@ export function clearEvents(): void {
   write([]);
 }
 
+/** Append a batch of pre-built events (used by the demo seeder). */
+export function seedEvents(events: TelemetryEvent[]): void {
+  if (!canStore()) return;
+  write([...getEvents(), ...events]);
+}
+
 export function subscribeTelemetry(cb: () => void): () => void {
   if (typeof window === "undefined") return () => {};
   const onChange = () => cb();

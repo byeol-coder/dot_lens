@@ -171,8 +171,8 @@ export function VoiceSearchHero() {
           style={{ fontFamily: "var(--font-display, inherit)", letterSpacing: "-0.01em" }}
         >
           {L(
-            "What would you like to learn today, Saetbyeol?",
-            "샛별님, 무엇을 하고 싶으신가요?"
+            "What would you like to learn today?",
+            "오늘 무엇을 배워볼까요?"
           )}
         </h2>
 

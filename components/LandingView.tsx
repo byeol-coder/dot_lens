@@ -174,7 +174,7 @@ export function LandingView() {
         <div className="relative mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:py-20">
           <p className="eyebrow">{L("AI Tactile Learning Platform", "AI 촉각 교육 플랫폼")}</p>
 
-          <h1 className="mt-3 max-w-3xl text-balance text-[38px] font-semibold leading-[1.12] text-ink sm:text-[48px]">
+          <h1 className="mt-3 max-w-3xl text-balance text-[28px] font-semibold leading-[1.15] text-ink sm:text-[38px] lg:text-[48px] sm:leading-[1.12]">
             {L(
               "So every student can experience the same lesson.",
               "모든 학생이 같은 수업을 경험할 수 있도록."
@@ -188,16 +188,16 @@ export function LandingView() {
             )}
           </p>
 
-          <div className="mt-7 flex flex-wrap items-center gap-3">
+          <div className="mt-7 flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
             <Link
               href="/teacher"
-              className="rounded-xl bg-accent px-5 py-3 text-[15px] font-semibold text-white shadow-glow transition-colors hover:bg-accent-soft"
+              className="rounded-xl bg-accent px-5 py-3 text-center text-[15px] font-semibold text-white shadow-glow transition-colors hover:bg-accent-soft sm:w-auto"
             >
               {L("Create a Lesson →", "수업 자료 만들기 →")}
             </Link>
             <Link
               href="/demo"
-              className="rounded-xl border border-accent bg-surface px-5 py-3 text-[15px] font-semibold text-accent transition-colors hover:bg-accent-tint"
+              className="rounded-xl border border-accent bg-surface px-5 py-3 text-center text-[15px] font-semibold text-accent transition-colors hover:bg-accent-tint sm:w-auto"
             >
               {L("See it in action", "데모 살펴보기")}
             </Link>

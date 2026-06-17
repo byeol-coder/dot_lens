@@ -267,20 +267,20 @@ function Stepper({
   const { lang } = useLang();
   return (
     <nav aria-label={lang === "ko" ? "수업 만들기 단계" : "Lesson creation steps"}>
-      <ol className="flex flex-wrap items-center gap-2">
+      <ol className="flex flex-wrap items-center gap-1 sm:gap-2">
         {STEPS.map((s, i) => {
           const active = s.n === step;
           const done = s.n < step;
           const reachable = canGoTo(s.n);
           return (
-            <li key={s.n} className="flex items-center gap-2">
+            <li key={s.n} className="flex items-center gap-1 sm:gap-2">
               <button
                 type="button"
                 onClick={() => onGo(s.n)}
                 disabled={!reachable}
                 aria-current={active ? "step" : undefined}
                 className={cn(
-                  "flex items-center gap-2 rounded-full border px-3 py-1.5 text-[13px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50",
+                  "flex items-center gap-1.5 rounded-full border px-2 py-1 text-[11px] font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-50 sm:px-3 sm:py-1.5 sm:text-[13px]",
                   active
                     ? "border-accent bg-accent text-white"
                     : done
@@ -291,7 +291,7 @@ function Stepper({
                 <span className="grid h-5 w-5 place-items-center rounded-full bg-black/10 font-mono text-[11px]">
                   {done ? "✓" : s.n}
                 </span>
-                {s.label[lang]}
+                <span className="hidden sm:inline">{s.label[lang]}</span>
               </button>
               {i < STEPS.length - 1 && <span className="text-faint" aria-hidden>›</span>}
             </li>

@@ -102,7 +102,7 @@ export function PlatformDashboard() {
         <h2 id="stats-heading" className="sr-only">
           {lang === "ko" ? "플랫폼 현황" : "Platform Overview"}
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-6">
           <StatCard
             label="Lessons Created"
             labelKo="생성된 수업 자료"

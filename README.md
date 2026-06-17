@@ -96,13 +96,14 @@ styles/                 # reserved
 
 ## Connecting a real Dot Pad
 
-By default the Dot Pad is **simulated on screen** (no hardware output). To drive a
-physical device, the app exposes a single SDK seam:
+The app drives a **physical Dot Pad** via the Dot Inc Web SDK (v3.0.0):
 
-- `lib/dotpadDevice.ts` — `registerDotPad({ connect, disconnect, showGraphic, showText })`. The explorer and student simulator mirror their 60×40 grid + braille line to whatever binding is registered (`components/DotPadDeviceControl.tsx`). Until one is registered, nothing changes — it stays a simulation (no false "connected" state).
-- `public/dotpad-sdk-bridge.example.js` — a template that maps the **Dot Inc Web SDK** to this binding via `window.registerDotPad(...)`. Fill in the three SDK calls + the bitmap mapping, host it as `dotpad-sdk-bridge.js`, and load it after the app (e.g. a `<script defer>` in `app/layout.tsx`).
+- `public/DotPadSDK-3.0.0.js` — the vendored Dot Inc Web SDK.
+- `public/dotpad-sdk-bridge.js` — loads the SDK and registers a device binding through `window.registerDotPad(...)`. It opens the BLE picker (`DotPadScanner`), connects (`DotPadSDK.connectBleDevice`), and forwards graphic/braille hex (`displayGraphicData` / `displayTextData`). Loaded as a module `<script>` in `app/layout.tsx`.
+- `lib/dotpadEncode.ts` — converts the 60×40 grid → 300-cell graphic hex and text → braille-line hex. The graphic bit reorder mirrors the SDK's `brailleToGraphic` exactly (verified byte-for-byte over all 256 values; all-pins-up encodes to `"FF"×300`, matching `displayAllUp`).
+- `lib/dotpadDevice.ts` + `components/DotPadDeviceControl.tsx` — own the connection state and mirror each on-screen frame to the device. The "Connect Dot Pad" control appears only where a device is available; otherwise it stays an on-screen simulation.
 
-Web SDK / Web Bluetooth note: browser device access works in **Chrome/Edge over HTTPS** (GitHub Pages is HTTPS); **Safari/iOS do not support Web Bluetooth**. Plan field demos on Chrome (laptop or Android).
+Browser note: Web Bluetooth works in **Chrome/Edge over HTTPS** (GitHub Pages is HTTPS); **Safari/iOS are unsupported**. Run field demos on Chrome (laptop or Android). Final pin output should be verified on real hardware (no device in CI).
 
 ## Not in this phase (by design)
 

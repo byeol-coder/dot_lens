@@ -3,16 +3,19 @@
 import { useEffect, useState } from "react";
 import type { TactileGridData } from "@/types";
 import {
-  getDotPad,
   hasRealDotPad,
+  isDeviceConnected,
+  deviceName,
   subscribeDotPad,
+  connectDevice,
+  disconnectDevice,
   deviceShow,
 } from "@/lib/dotpadDevice";
 import { logEvent, logError } from "@/lib/telemetry";
 import { useLang } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 
-/** Tracks whether a real Dot Pad SDK binding is registered + its connection. */
+/** Reflects device availability + connection, exposing connect/disconnect. */
 export function useDotPadDevice() {
   const [available, setAvailable] = useState(false);
   const [connected, setConnected] = useState(false);
@@ -20,19 +23,20 @@ export function useDotPadDevice() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    setAvailable(hasRealDotPad());
-    return subscribeDotPad(() => setAvailable(hasRealDotPad()));
+    const sync = () => {
+      setAvailable(hasRealDotPad());
+      setConnected(isDeviceConnected());
+      setName(deviceName());
+    };
+    sync();
+    return subscribeDotPad(sync);
   }, []);
 
   async function connect() {
-    const b = getDotPad();
-    if (!b) return;
     setBusy(true);
     try {
-      const r = await b.connect();
-      setName(r.name);
-      setConnected(true);
-      logEvent("lesson_explored", { device: r.name }); // device session started
+      const ok = await connectDevice();
+      if (ok) logEvent("lesson_explored", { device: deviceName() });
     } catch (e) {
       logError("dotpad.connect", e instanceof Error ? e.message : "connect failed");
     } finally {
@@ -41,14 +45,10 @@ export function useDotPadDevice() {
   }
 
   async function disconnect() {
-    const b = getDotPad();
     setBusy(true);
     try {
-      await b?.disconnect();
-    } catch {
-      /* ignore */
+      await disconnectDevice();
     } finally {
-      setConnected(false);
       setBusy(false);
     }
   }
@@ -57,9 +57,9 @@ export function useDotPadDevice() {
 }
 
 /**
- * Device bar — mirrors the current on-screen frame to a real Dot Pad when one is
- * connected. Renders nothing unless a device SDK binding is registered, so the
- * pure-simulator demo is visually unchanged.
+ * Mirrors the current on-screen frame to a connected Dot Pad. Renders nothing
+ * unless a device SDK bridge is registered, so the pure-simulator demo is
+ * unchanged.
  */
 export function DotPadDeviceBar({
   matrix,
@@ -74,10 +74,9 @@ export function DotPadDeviceBar({
   const L = (en: string, ko: string) => (lang === "ko" ? ko : en);
   const { available, connected, name, busy, connect, disconnect } = useDotPadDevice();
 
-  // Push every frame to the device while connected.
   useEffect(() => {
-    if (connected) deviceShow(matrix, brailleText);
-  }, [matrix, brailleText, connected]);
+    if (connected) deviceShow(matrix, brailleText, lang);
+  }, [matrix, brailleText, connected, lang]);
 
   if (!available) return null;
 
@@ -92,7 +91,9 @@ export function DotPadDeviceBar({
       <div className="flex items-center gap-2">
         <span className={cn("h-2.5 w-2.5 rounded-full", connected ? "bg-verify shadow-[0_0_10px] shadow-verify" : "bg-faint")} aria-hidden />
         <span className="text-[13px] font-medium text-ink">
-          {connected ? L(`Live on ${name || "Dot Pad"}`, `${name || "Dot Pad"}에 실시간 출력`) : L("Physical Dot Pad detected", "실물 Dot Pad 감지됨")}
+          {connected
+            ? L(`Live on ${name || "Dot Pad"}`, `${name || "Dot Pad"}에 실시간 출력`)
+            : L("Physical Dot Pad ready", "실물 Dot Pad 연결 가능")}
         </span>
       </div>
       <button
@@ -104,7 +105,7 @@ export function DotPadDeviceBar({
           connected ? "border border-line bg-surface text-ink hover:bg-surface-sunk" : "bg-accent text-white hover:bg-accent-soft"
         )}
       >
-        {busy ? L("…", "…") : connected ? L("Disconnect device", "기기 연결 해제") : L("Connect device", "기기 연결")}
+        {busy ? "…" : connected ? L("Disconnect device", "기기 연결 해제") : L("Connect Dot Pad", "Dot Pad 기기 연결")}
       </button>
     </div>
   );

@@ -15,30 +15,34 @@ import { ChromebookMockup } from "@/components/premium/ChromebookMockup";
 import { GeminiInsightPanel } from "@/components/premium/cards";
 import { StatusBadge } from "@/components/StatusBadge";
 import { cn } from "@/lib/cn";
+import { useLang } from "@/lib/i18n";
 
-const SUBJECT_TABS: Array<{ key: Subject | "all"; label: string }> = [
-  { key: "all",     label: "전체" },
-  { key: "korean",  label: "국어" },
-  { key: "math",    label: "수학" },
-  { key: "science", label: "과학" },
+const SUBJECT_TABS: Array<{ key: Subject | "all"; en: string; ko: string }> = [
+  { key: "all",     en: "All",     ko: "전체" },
+  { key: "korean",  en: "Korean",  ko: "국어" },
+  { key: "math",    en: "Math",    ko: "수학" },
+  { key: "science", en: "Science", ko: "과학" },
 ];
 
-const GRADE_LABEL: Record<string, string> = {
-  elementary: "초등",
-  middle: "중등",
-  high: "고등",
+const GRADE_LABEL: Record<string, { en: string; ko: string }> = {
+  elementary: { en: "Elementary", ko: "초등" },
+  middle:     { en: "Middle",     ko: "중등" },
+  high:       { en: "High",       ko: "고등" },
 };
 
 type ConvertStep = "idle" | "scanning" | "analyzing" | "ready";
 
-const SCAN_MSGS = [
-  "Google for Education 레슨 읽는 중…",
-  "다이어그램 요소 감지 중…",
-  "촉각 레이어 계획 중…",
-  "점자 & 퀴즈 초안 생성 중…",
+const SCAN_MSGS: Array<{ en: string; ko: string }> = [
+  { en: "Reading Google for Education lesson…",  ko: "Google for Education 레슨 읽는 중…" },
+  { en: "Detecting diagram elements…",           ko: "다이어그램 요소 감지 중…" },
+  { en: "Planning tactile layers…",              ko: "촉각 레이어 계획 중…" },
+  { en: "Drafting braille & quiz…",              ko: "점자 & 퀴즈 초안 생성 중…" },
 ];
 
 export function LessonLibraryPage() {
+  const { lang } = useLang();
+  const L = (en: string, ko: string) => lang === "ko" ? ko : en;
+
   const [activeSubject, setActiveSubject] = useState<Subject | "all">("all");
   const [urlInput, setUrlInput] = useState("");
   const [selectedLesson, setSelectedLesson] = useState<LessonEntry | null>(null);
@@ -100,7 +104,7 @@ export function LessonLibraryPage() {
               <span className="font-mono text-[11px] uppercase tracking-eyebrow text-accent">
                 Google for Education
               </span>
-              <StatusBadge variant="review">Lesson Library 연동</StatusBadge>
+              <StatusBadge variant="review">{L("Lesson Library", "Lesson Library 연동")}</StatusBadge>
             </div>
             <div className="flex flex-1 gap-2">
               <input
@@ -108,7 +112,7 @@ export function LessonLibraryPage() {
                 value={urlInput}
                 onChange={(e) => setUrlInput(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && urlInput && handleUrlSubmit()}
-                placeholder="https://lessonlibrary.withgoogle.com/… URL 붙여넣기"
+                placeholder={L("Paste https://lessonlibrary.withgoogle.com/… URL", "https://lessonlibrary.withgoogle.com/… URL 붙여넣기")}
                 className="flex-1 rounded-xl border border-line bg-surface-sunk px-3 py-2.5 font-mono text-[13px] text-ink placeholder:text-faint"
               />
               <button
@@ -117,7 +121,7 @@ export function LessonLibraryPage() {
                 disabled={!urlInput || isConverting}
                 className="rounded-xl bg-accent px-4 py-2.5 text-[13.5px] font-semibold text-white transition-colors hover:bg-accent-soft disabled:opacity-50"
               >
-                촉각 변환
+                {L("Convert →", "촉각 변환")}
               </button>
             </div>
           </div>
@@ -143,11 +147,11 @@ export function LessonLibraryPage() {
                     : "border-line bg-surface text-muted hover:bg-surface-sunk"
                 )}
               >
-                {tab.label}
+                {L(tab.en, tab.ko)}
               </button>
             ))}
             <span className="ml-auto self-center font-mono text-[12px] text-faint">
-              {filtered.length}개 레슨
+              {L(`${filtered.length} lessons`, `${filtered.length}개 레슨`)}
             </span>
           </div>
 
@@ -182,27 +186,27 @@ export function LessonLibraryPage() {
                         className="rounded-full px-2.5 py-1 font-mono text-[10px] font-semibold text-ink"
                         style={{ background: subject.color }}
                       >
-                        {subject.ko}
+                        {L(subject.en, subject.ko)}
                       </span>
                       <span className="rounded-full bg-black/60 px-2 py-0.5 font-mono text-[10px] text-white/80">
-                        {GRADE_LABEL[lesson.grade]}
+                        {L(GRADE_LABEL[lesson.grade].en, GRADE_LABEL[lesson.grade].ko)}
                       </span>
                     </div>
                   </div>
 
                   <div className="flex flex-1 flex-col p-4">
                     <p className="font-mono text-[11px] uppercase tracking-eyebrow text-faint">
-                      {lesson.diagramType} · {lesson.objects.length}개 요소
+                      {lesson.diagramType} · {L(`${lesson.objects.length} elements`, `${lesson.objects.length}개 요소`)}
                     </p>
                     <h3 className="mt-1 text-[15px] font-semibold text-ink">
-                      {lesson.title.ko}
+                      {L(lesson.title.en, lesson.title.ko)}
                     </h3>
                     <p className="mt-1 flex-1 text-[13px] leading-relaxed text-muted line-clamp-2">
-                      {lesson.description.ko}
+                      {L(lesson.description.en, lesson.description.ko)}
                     </p>
                     <div className="mt-3 flex items-center justify-between">
                       <span className="font-mono text-[11px] text-faint">
-                        {lesson.steps}단계 탐색
+                        {L(`${lesson.steps}-step explore`, `${lesson.steps}단계 탐색`)}
                       </span>
                       <span
                         className={cn(
@@ -212,7 +216,7 @@ export function LessonLibraryPage() {
                             : "bg-accent-tint text-accent group-hover:bg-accent group-hover:text-white"
                         )}
                       >
-                        {active && convertStep !== "idle" ? "변환 중…" : "촉각 변환 →"}
+                        {active && convertStep !== "idle" ? L("Converting…", "변환 중…") : L("Convert →", "촉각 변환 →")}
                       </span>
                     </div>
                   </div>
@@ -229,10 +233,12 @@ export function LessonLibraryPage() {
               <div className="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-surface shadow-card">
                 <span className="font-mono text-[20px]">⠿</span>
               </div>
-              <p className="text-[14px] font-medium text-ink">레슨을 선택하세요</p>
+              <p className="text-[14px] font-medium text-ink">{L("Select a lesson", "레슨을 선택하세요")}</p>
               <p className="mt-1 text-[13px] text-muted">
-                레슨 카드를 클릭하면 닷 렌즈가 다이어그램을 분석하고<br />
-                촉각 출력을 즉시 생성합니다.
+                {L(
+                  "Click a lesson card and Dot Lens will analyse the diagram and generate tactile output instantly.",
+                  "레슨 카드를 클릭하면 닷 렌즈가 다이어그램을 분석하고 촉각 출력을 즉시 생성합니다."
+                )}
               </p>
             </div>
           ) : (
@@ -241,13 +247,15 @@ export function LessonLibraryPage() {
               <ChromebookMockup barLabel="lessonlibrary.withgoogle.com · Dot Lens">
                 <div className="space-y-3 p-3">
                   <div className="flex items-center justify-between">
-                    <p className="eyebrow">{SUBJECTS[selectedLesson.subject].ko} · {GRADE_LABEL[selectedLesson.grade]}</p>
+                    <p className="eyebrow">
+                      {L(SUBJECTS[selectedLesson.subject].en, SUBJECTS[selectedLesson.subject].ko)} · {L(GRADE_LABEL[selectedLesson.grade].en, GRADE_LABEL[selectedLesson.grade].ko)}
+                    </p>
                     <StatusBadge variant={convertStep === "ready" ? "verified" : "pending"}>
-                      {convertStep === "ready" ? "tactile-ready" : "변환 중…"}
+                      {convertStep === "ready" ? "tactile-ready" : L("Converting…", "변환 중…")}
                     </StatusBadge>
                   </div>
                   <p className="font-display text-[15px] font-semibold text-ink">
-                    {selectedLesson.title.ko}
+                    {L(selectedLesson.title.en, selectedLesson.title.ko)}
                   </p>
 
                   {isConverting && (
@@ -259,15 +267,17 @@ export function LessonLibraryPage() {
                         />
                       </div>
                       <p className="font-mono text-[11px] text-accent" aria-live="polite">
-                        {SCAN_MSGS[scanMsg]}
+                        {L(SCAN_MSGS[scanMsg].en, SCAN_MSGS[scanMsg].ko)}
                       </p>
                     </div>
                   )}
 
                   {convertStep === "ready" && (
                     <GeminiInsightPanel>
-                      {selectedLesson.objects.length}개 요소 감지 · {selectedLesson.diagramType} ·{" "}
-                      {selectedLesson.steps}단계 촉각 시퀀스 생성됨
+                      {L(
+                        `${selectedLesson.objects.length} elements detected · ${selectedLesson.diagramType} · ${selectedLesson.steps}-step tactile sequence generated`,
+                        `${selectedLesson.objects.length}개 요소 감지 · ${selectedLesson.diagramType} · ${selectedLesson.steps}단계 촉각 시퀀스 생성됨`
+                      )}
                     </GeminiInsightPanel>
                   )}
                 </div>
@@ -278,25 +288,25 @@ export function LessonLibraryPage() {
                 <DotPadScreen
                   matrix={getMatrix4Lesson(selectedLesson)}
                   brailleText={selectedLesson.brailleLabel}
-                  demoLabel={selectedLesson.title.ko}
-                  objectName={selectedLesson.title.ko}
+                  demoLabel={L(selectedLesson.title.en, selectedLesson.title.ko)}
+                  objectName={L(selectedLesson.title.en, selectedLesson.title.ko)}
                 />
               )}
 
               {/* 상세 정보 */}
               {convertStep === "ready" && (
                 <div className="rounded-2xl border border-line bg-surface p-4 shadow-card">
-                  <p className="eyebrow">음성 안내 (F1)</p>
+                  <p className="eyebrow">{L("Audio guidance (F1)", "음성 안내 (F1)")}</p>
                   <p className="mt-2 text-[13.5px] leading-relaxed text-ink">
-                    {selectedLesson.audioGuide.ko}
+                    {L(selectedLesson.audioGuide.en, selectedLesson.audioGuide.ko)}
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
-                  {selectedLesson.scene.brailleKey?.map((k) => (
+                    {selectedLesson.scene.brailleKey?.map((k) => (
                       <span
                         key={k.mark}
                         className="rounded-lg border border-line bg-surface-sunk px-2.5 py-1 font-mono text-[11px] text-ink"
                       >
-                        <span className="text-pin">{k.mark}</span> = {k.label.ko}
+                        <span className="text-pin">{k.mark}</span> = {L(k.label.en, k.label.ko)}
                       </span>
                     ))}
                   </div>
@@ -305,13 +315,13 @@ export function LessonLibraryPage() {
                       href="/teacher"
                       className="flex-1 rounded-xl bg-accent px-3 py-2.5 text-center text-[13.5px] font-semibold text-white transition-colors hover:bg-accent-soft"
                     >
-                      교사 플로우로 이동 →
+                      {L("Go to Teacher Flow →", "교사 플로우로 이동 →")}
                     </Link>
                     <Link
                       href="/student"
                       className="flex-1 rounded-xl border border-line bg-surface px-3 py-2.5 text-center text-[13.5px] font-semibold text-ink transition-colors hover:bg-surface-sunk"
                     >
-                      학생 체험
+                      {L("Student Experience", "학생 체험")}
                     </Link>
                   </div>
                 </div>

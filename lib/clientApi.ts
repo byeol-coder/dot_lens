@@ -62,6 +62,13 @@ export const clientApi = {
     const standard = result.accessibilityProfile.brailleStandard;
     const language = result.accessibilityProfile.language;
     const job = createJob(assignmentId, "water cycle", standard, language);
+    // Demo: English braille is pre-approved so the teacher flow can publish.
+    if (language === "en") {
+      reviewJob(job.id, "approved", "J. Han (TVI)", {
+        en: "Reads cleanly for elementary. Approved.",
+        ko: "초등 수준에서 자연스럽게 읽힘. 승인.",
+      });
+    }
     result.brailleSummaries = [job.summary];
     result.brailleJobId = job.id;
     return { result };

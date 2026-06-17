@@ -67,8 +67,7 @@ export function StudentExperienceShowcase() {
         <div className="mt-6 grid gap-4 md:grid-cols-3">
           <FeatureHighlightCard
             accent="pin"
-            title="60 × 40 tactile output"
-            titleKo="60×40 촉각 출력"
+            title={L("60×40 tactile output", "60×40 촉각 출력")}
             body={L(
               "A real pin grid raises the shape, position, and flow of each object — the only surface that conveys layout by touch.",
               "실제 핀 그리드가 각 객체의 형태·위치·흐름을 올립니다 — 손끝으로 레이아웃을 전달하는 유일한 표면."
@@ -77,8 +76,7 @@ export function StudentExperienceShowcase() {
           />
           <FeatureHighlightCard
             accent="blue"
-            title="20-cell braille line"
-            titleKo="20칸 점자 라인"
+            title={L("20-cell braille line", "20칸 점자 라인")}
             body={L(
               "Expert-reviewed braille labels appear on the refreshable line, gated by the Global Braille QA layer (F4).",
               "전문가 검수를 거친 점자 레이블이 갱신 가능 라인에 표시됩니다 — 글로벌 점자 QA 레이어(F4)를 통과한 것만."
@@ -87,8 +85,7 @@ export function StudentExperienceShowcase() {
           />
           <FeatureHighlightCard
             accent="cyan"
-            title="F1–F4 key interaction"
-            titleKo="F1–F4 키 상호작용"
+            title={L("F1–F4 key interaction", "F1–F4 키 상호작용")}
             body={L(
               "Explain, hint, quiz, and repeat — a small, learnable key model that works without sight or a mouse.",
               "설명·힌트·퀴즈·반복 — 시각이나 마우스 없이 동작하는 간단하고 배우기 쉬운 키 모델."

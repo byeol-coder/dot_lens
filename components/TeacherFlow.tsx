@@ -9,6 +9,7 @@ import { TactileGrid } from "@/components/TactileGrid";
 import { DotPadSimulator } from "@/components/DotPadSimulator";
 import { Braille } from "@/components/Braille";
 import { getMatrix } from "@/lib/tactileMatrix";
+import { clientApi } from "@/lib/clientApi";
 import { cn } from "@/lib/cn";
 
 const ASSIGNMENT_ID = "wc-001";
@@ -75,8 +76,8 @@ export function TeacherFlow() {
 
   // Prefill from the existing assignment API (best-effort).
   useEffect(() => {
-    fetch(`/api/assignments/${ASSIGNMENT_ID}`)
-      .then((r) => r.json())
+    clientApi
+      .getAssignment(ASSIGNMENT_ID)
       .then((d: { assignment?: Assignment }) => {
         const a = d.assignment;
         if (!a) return;
@@ -102,13 +103,7 @@ export function TeacherFlow() {
       350
     );
     try {
-      const res = await fetch("/api/scan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assignmentId: ASSIGNMENT_ID, materialId: "mat-wc-1" }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? "Scan failed");
+      const data = await clientApi.scan(ASSIGNMENT_ID, "mat-wc-1");
       // keep the animation visible for a moment
       await new Promise((r) => setTimeout(r, Math.max(0, 1300 - (Date.now() - started))));
       setAnalysis(data.analysis as VisualAnalysis);
@@ -123,8 +118,7 @@ export function TeacherFlow() {
 
   async function refreshBraille(jobId: string) {
     try {
-      const r = await fetch(`/api/braille/jobs/${jobId}`, { cache: "no-store" });
-      const d = await r.json();
+      const d = await clientApi.getBrailleJob(jobId);
       setBrailleStatus(d.job?.status ?? "qa_pending");
     } catch {
       /* ignore */
@@ -135,12 +129,7 @@ export function TeacherFlow() {
     if (!analysis) return;
     setGenerating(true);
     try {
-      const res = await fetch("/api/convert", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ analysisId: analysis.id, difficulty: "core" }),
-      });
-      const data = await res.json();
+      const data = await clientApi.convert(analysis.id, "core");
       const jobId: string | undefined = data?.result?.brailleJobId;
       if (jobId) {
         setBrailleJobId(jobId);

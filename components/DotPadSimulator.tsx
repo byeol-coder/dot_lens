@@ -12,6 +12,7 @@ import { OBJECT_COUNT } from "@/lib/tactileMatrix";
 import { DotPadScreen } from "@/components/premium/DotPadScreen";
 import { PanningKeyControls } from "@/components/PanningKeyControls";
 import { cn } from "@/lib/cn";
+import { clientApi } from "@/lib/clientApi";
 
 const STUDENT = { id: "s-self", name: "You (demo)" };
 const ASSIGNMENT_ID = "wc-001";
@@ -80,12 +81,7 @@ export function DotPadSimulator({ className }: { className?: string }) {
   const saveSession = useCallback(async (progress: StudentProgress) => {
     setSaveStatus("saving");
     try {
-      const r = await fetch("/api/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(progress),
-      });
-      if (!r.ok) throw new Error(`Save failed (${r.status})`);
+      await clientApi.saveProgress(progress);
       setSaveStatus("saved");
     } catch {
       setSaveStatus("error");
@@ -104,11 +100,10 @@ export function DotPadSimulator({ className }: { className?: string }) {
   async function connect() {
     setConnecting(true);
     try {
-      await fetch("/api/dotpad/connect", { method: "POST" }).catch(() => null);
+      await clientApi.dotpadConnect().catch(() => null);
       let approved: string | undefined;
       try {
-        const r = await fetch("/api/braille/approved/wc-001");
-        const d = (await r.json()) as { approvedText: string | null };
+        const d = await clientApi.approvedBraille("wc-001", "en");
         approved = d?.approvedText ?? undefined;
       } catch {
         /* fall back to "pending review" */

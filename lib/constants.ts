@@ -12,15 +12,30 @@ import type {
  * ------------------------------------------------------------------------- */
 
 export const PRODUCT = {
-  name: "Dot Lens with Gemini for Chromebook",
+  name: "Dot Lens",
   shortName: "Dot Lens",
+  /** Top-line category. */
+  positioning: {
+    en: "Self-sustaining tactile education operations platform",
+    ko: "자립형 촉각 교육 운영 플랫폼",
+  },
+  /** Who it is built for. */
+  audience: {
+    en: "for mission fields & low-resource classrooms",
+    ko: "선교지·저자원 교육 현장을 위한",
+  },
   subtitle: {
-    en: "AI-powered tactile learning for Google Classroom",
-    ko: "Google Classroom을 위한 AI 촉각 학습",
+    en: "Self-sustaining tactile education operations for mission fields & low-resource classrooms",
+    ko: "선교지·저자원 교육 현장을 위한 자립형 촉각 교육 운영 플랫폼",
+  },
+  /** The shift this product makes. */
+  thesis: {
+    en: "Not just delivering tactile content — building the methodology, review, and support loop that lets local teachers run tactile lessons on their own.",
+    ko: "촉각 콘텐츠를 전달하는 데 그치지 않고, 현지 교사가 스스로 촉각 수업을 운영할 수 있도록 방법론·검수·지원의 선순환을 만듭니다.",
   },
   value: {
-    en: "Gemini understands the lesson. Global Braille Layer verifies the braille. Dot Pad makes learning touchable.",
-    ko: "Gemini가 수업 자료를 이해하고, Global Braille Layer가 점자를 검수하며, Dot Pad가 손끝으로 학습하게 합니다.",
+    en: "Teachers build the material, experts review it, classrooms teach with it, field data improves it — and local champions carry it forward.",
+    ko: "교사가 자료를 만들고, 전문가가 검수하고, 교실에서 가르치고, 현장 데이터로 개선하며, 현지 챔피언 교사가 이어갑니다.",
   },
 } as const;
 

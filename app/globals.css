@@ -5,6 +5,72 @@
 @layer base {
   :root {
     color-scheme: light;
+    /* Self-hosted font stacks (bundled via @fontsource) */
+    --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
+    --font-sans: "Figtree Variable", "Figtree", "Apple SD Gothic Neo",
+      "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+    /* Accessibility: user-controllable base size (px). Scaled by data-font-scale. */
+    --base-font-size: 16px;
+  }
+
+  /* ── Accessibility: font-size scaling (Settings + floating bar) ───────── */
+  html[data-font-scale="sm"] { --base-font-size: 14px; }
+  html[data-font-scale="base"] { --base-font-size: 16px; }
+  html[data-font-scale="lg"] { --base-font-size: 18px; }
+  html[data-font-scale="xl"] { --base-font-size: 20px; }
+  html { font-size: var(--base-font-size); }
+
+  /* ── Accessibility: high-contrast theme ──────────────────────────────── */
+  /* Overrides the cool near-white tokens with maximum-contrast values.
+     State is never signalled by color alone — paired with text + icons. */
+  html[data-contrast="high"] {
+    --hc-bg: #ffffff;
+    --hc-ink: #000000;
+  }
+  html[data-contrast="high"] body {
+    background: var(--hc-bg) !important;
+    color: var(--hc-ink);
+  }
+  html[data-contrast="high"] .text-muted,
+  html[data-contrast="high"] .text-faint {
+    color: #1a1a1a !important;
+  }
+  html[data-contrast="high"] .border-line,
+  html[data-contrast="high"] [class*="border-line"] {
+    border-color: #000000 !important;
+  }
+  html[data-contrast="high"] .shadow-card,
+  html[data-contrast="high"] .shadow-lift,
+  html[data-contrast="high"] .glass {
+    box-shadow: none !important;
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    border: 2px solid #000000 !important;
+  }
+  html[data-contrast="high"] .bg-accent { background: #00339c !important; }
+  html[data-contrast="high"] .text-accent,
+  html[data-contrast="high"] .text-accent-soft { color: #00339c !important; }
+  html[data-contrast="high"] a:focus-visible,
+  html[data-contrast="high"] button:focus-visible {
+    outline: 3px solid #00339c !important;
+  }
+
+  /* ── Accessibility: respect reduced-motion (system + manual toggle) ───── */
+  html[data-reduce-motion="true"] *,
+  html[data-reduce-motion="true"] *::before,
+  html[data-reduce-motion="true"] *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
   }
 
   html {

@@ -48,7 +48,7 @@ export function TopNavigation() {
                 Dot Lens
               </span>
               <span className="block font-mono text-[9.5px] uppercase tracking-eyebrow text-faint">
-                {lang === "ko" ? "AI 촉각 교육 플랫폼" : "AI Tactile Platform"}
+                {lang === "ko" ? "자립형 촉각 교육 운영 플랫폼" : "Tactile Education Operations"}
               </span>
             </span>
           </Link>

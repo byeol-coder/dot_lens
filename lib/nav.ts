@@ -3,20 +3,23 @@ export interface NavItem {
   label: string;
   labelKo: string;
   blurb: string;
-  phase: number;
+  /** Stage in the operating loop this surface belongs to. */
+  stage?: "build" | "review" | "teach" | "improve" | "empower" | "overview";
   role?: "teacher" | "expert" | "activist" | "student" | "all";
 }
 
+/** Ordered to mirror the operating loop: overview → build → review → teach → improve → empower. */
 export const NAV_ITEMS: NavItem[] = [
-  { href: "/", label: "Home", labelKo: "홈", blurb: "Platform overview and role entry points.", phase: 0, role: "all" },
-  { href: "/dashboard", label: "Dashboard", labelKo: "대시보드", blurb: "Platform-wide stats — lessons, teachers, impact.", phase: 1, role: "all" },
-  { href: "/teacher", label: "Teacher", labelKo: "교사 모드", blurb: "Build a tactile-ready lesson in minutes.", phase: 1, role: "teacher" },
-  { href: "/student", label: "Student", labelKo: "학생 모드", blurb: "Explore diagrams on Dot Pad with audio guidance.", phase: 2, role: "student" },
-  { href: "/expert-review", label: "Expert Review", labelKo: "전문가 검수", blurb: "Review and approve AI-generated tactile materials.", phase: 1, role: "expert" },
-  { href: "/field-data", label: "Field Data", labelKo: "현장 데이터", blurb: "Monitor teacher usage and field impact.", phase: 1, role: "activist" },
-  { href: "/lesson-library", label: "Lessons", labelKo: "수업 자료", blurb: "Browse and reuse approved lesson materials.", phase: 1, role: "all" },
-  { href: "/settings", label: "Settings", labelKo: "설정", blurb: "Accessibility, language, and display options.", phase: 2, role: "all" },
-  { href: "/pitch", label: "Partner Pitch", labelKo: "파트너 피치", blurb: "The case for partnership.", phase: 5, role: "all" },
+  { href: "/", label: "Home", labelKo: "홈", blurb: "Platform overview and role entry points.", stage: "overview", role: "all" },
+  { href: "/dashboard", label: "Dashboard", labelKo: "대시보드", blurb: "Platform-wide stats — lessons, teachers, impact.", stage: "overview", role: "all" },
+  { href: "/teacher", label: "Create Lesson", labelKo: "수업 만들기", blurb: "Build a tactile-ready lesson in minutes.", stage: "build", role: "teacher" },
+  { href: "/expert-review", label: "Expert Review", labelKo: "전문가 검수", blurb: "Review and approve tactile materials.", stage: "review", role: "expert" },
+  { href: "/student", label: "Student Learning", labelKo: "학생 학습", blurb: "Explore diagrams on Dot Pad with audio guidance.", stage: "teach", role: "student" },
+  { href: "/field-data", label: "Field & Impact", labelKo: "현장·임팩트", blurb: "Monitor teacher usage and field impact.", stage: "improve", role: "activist" },
+  { href: "/champions", label: "Champion Teachers", labelKo: "챔피언 교사", blurb: "Recommend and grow local champion teachers.", stage: "empower", role: "all" },
+  { href: "/academy", label: "Trainer Academy", labelKo: "트레이너 아카데미", blurb: "Certify trainers and grow country partners.", stage: "empower", role: "all" },
+  { href: "/lesson-library", label: "Lessons", labelKo: "수업 자료", blurb: "Browse and reuse approved lesson materials.", stage: "build", role: "all" },
+  { href: "/settings", label: "Settings", labelKo: "설정", blurb: "Accessibility, language, and display options.", role: "all" },
 ];
 
 /** Items shown in the top navigation bar (excludes Home). */

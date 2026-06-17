@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import type { Assignment, VisualAnalysis } from "@/types";
 import { ScreenCard } from "@/components/ScreenCard";
+import { clientApi } from "@/lib/clientApi";
 import { StatusBadge } from "@/components/StatusBadge";
 import { DotLensSidePanel } from "@/components/DotLensSidePanel";
 import { cn } from "@/lib/cn";
@@ -22,11 +23,8 @@ export function TeacherWorkbench() {
   // Fetch the assignment list on mount.
   useEffect(() => {
     let active = true;
-    fetch("/api/assignments")
-      .then((r) => {
-        if (!r.ok) throw new Error(`Request failed (${r.status})`);
-        return r.json();
-      })
+    clientApi
+      .listAssignments()
       .then((data: { assignments: Assignment[] }) => {
         if (!active) return;
         setAssignments(data.assignments);
@@ -49,13 +47,7 @@ export function TeacherWorkbench() {
     const materialId = selected.materials?.[0]?.id ?? selected.source.ref;
     setScan({ phase: "loading" });
     try {
-      const res = await fetch("/api/scan", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ assignmentId: selected.id, materialId }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error ?? `Scan failed (${res.status})`);
+      const data = await clientApi.scan(selected.id, materialId);
       setScan({ phase: "done", analysis: data.analysis as VisualAnalysis });
     } catch (e) {
       setScan({

@@ -5,6 +5,7 @@ import type { BrailleQAIssue, BrailleTranslationJob } from "@/types";
 import { ScreenCard } from "@/components/ScreenCard";
 import { StatusBadge, type StatusVariant } from "@/components/StatusBadge";
 import { BrailleCellsView } from "@/components/BrailleCellsView";
+import { clientApi } from "@/lib/clientApi";
 import { cn } from "@/lib/cn";
 
 const STATUS_VARIANT: Record<BrailleTranslationJob["status"], StatusVariant> = {
@@ -31,8 +32,7 @@ export function BrailleReviewConsole() {
 
   async function load(selectFirst = false) {
     try {
-      const r = await fetch("/api/braille/jobs");
-      const data = (await r.json()) as { jobs: BrailleTranslationJob[] };
+      const data = (await clientApi.listBrailleJobs()) as { jobs: BrailleTranslationJob[] };
       setJobs(data.jobs);
       if (selectFirst && data.jobs.length) {
         const pending = data.jobs.find((j) => j.status === "qa_pending");
@@ -54,17 +54,11 @@ export function BrailleReviewConsole() {
     if (!selected) return;
     setBusy(true);
     try {
-      const r = await fetch("/api/braille/review", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          jobId: selected.id,
-          decision,
-          reviewerName: reviewer.trim() || "Reviewer",
-        }),
-      });
-      const data = await r.json();
-      if (!r.ok) throw new Error(data?.error ?? "Review failed");
+      await clientApi.reviewBrailleJob(
+        selected.id,
+        decision,
+        reviewer.trim() || "Reviewer"
+      );
       await load();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Review failed");

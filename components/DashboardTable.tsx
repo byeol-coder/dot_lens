@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { StudentProgress } from "@/types";
 import { ScreenCard } from "@/components/ScreenCard";
+import { clientApi } from "@/lib/clientApi";
 import { StatusBadge, type StatusVariant } from "@/components/StatusBadge";
 
 const ASSIGNMENT_ID = "wc-001";
@@ -29,8 +30,7 @@ export function DashboardTable() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const r = await fetch(`/api/progress/${ASSIGNMENT_ID}`, { cache: "no-store" });
-      const data = (await r.json()) as { progress: StudentProgress[] };
+      const data = (await clientApi.getProgress(ASSIGNMENT_ID)) as { progress: StudentProgress[] };
       setRows(data.progress);
       setError(null);
     } catch (e) {

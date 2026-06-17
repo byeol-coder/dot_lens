@@ -11,7 +11,7 @@ export function PageHeader({
   title: string;
   titleKo?: string;
   description: string;
-  phase: number;
+  phase?: number;
 }) {
   return (
     <div className="relative overflow-hidden border-b border-line bg-surface">
@@ -25,9 +25,11 @@ export function PageHeader({
       <div className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6">
         <div className="flex items-center gap-3">
           <p className="eyebrow">{eyebrow}</p>
-          <StatusBadge variant={phase === 0 ? "live" : "review"}>
-            {phase === 0 ? "ready" : `Phase ${phase}`}
-          </StatusBadge>
+          {phase !== undefined && (
+            <StatusBadge variant={phase === 0 ? "live" : "review"}>
+              {phase === 0 ? "ready" : `Phase ${phase}`}
+            </StatusBadge>
+          )}
         </div>
         <h1 className="mt-2.5 text-balance text-3xl font-semibold leading-tight text-ink sm:text-[40px]">
           {title}

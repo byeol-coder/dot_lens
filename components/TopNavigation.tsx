@@ -4,14 +4,13 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { PRIMARY_NAV } from "@/lib/nav";
-import { PRODUCT } from "@/lib/constants";
 import { cn } from "@/lib/cn";
 import { LangToggle } from "@/components/LangToggle";
-import { useLang } from "@/lib/i18n";
+import { useT } from "@/lib/i18n";
 
 export function TopNavigation() {
   const pathname = usePathname();
-  const { lang } = useLang();
+  const { t, lang } = useT();
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -25,7 +24,7 @@ export function TopNavigation() {
           <Link
             href="/"
             className="flex shrink-0 items-center gap-2.5"
-            aria-label={`${PRODUCT.shortName} — home`}
+            aria-label={`${t("brand.name")} — ${t("common.home")}`}
           >
             <span
               className="grid h-9 w-9 place-items-center rounded-xl bg-accent text-white shadow-glow"
@@ -45,10 +44,10 @@ export function TopNavigation() {
             </span>
             <span className="hidden leading-tight sm:block">
               <span className="block font-display text-[15px] font-semibold text-ink">
-                Dot Lens
+                {t("brand.name")}
               </span>
               <span className="block font-mono text-[9.5px] uppercase tracking-eyebrow text-faint">
-                {lang === "ko" ? "자립형 촉각 교육 운영 플랫폼" : "Tactile Education Operations"}
+                {t("brand.subtitle")}
               </span>
             </span>
           </Link>

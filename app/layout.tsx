@@ -10,11 +10,11 @@ import "@fontsource-variable/figtree";
 import "@fontsource/ibm-plex-mono/400.css";
 import "@fontsource/ibm-plex-mono/500.css";
 import { AppShell } from "@/components/AppShell";
-import { PRODUCT } from "@/lib/constants";
 
 export const metadata: Metadata = {
-  title: `${PRODUCT.name} — ${PRODUCT.positioning.en}`,
-  description: PRODUCT.subtitle.en,
+  title: "Dot Lens | AI Tactile Learning Platform",
+  description:
+    "Dot Lens transforms classroom diagrams and images into tactile learning materials that blind and low-vision students can explore by touch.",
 };
 
 export default function RootLayout({

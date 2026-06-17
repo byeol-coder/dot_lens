@@ -1,0 +1,253 @@
+/**
+ * 한국어 UX 문구 — 닷 렌즈.
+ * 영어를 직역하지 않고, 한국어 사용자에게 자연스러운 서비스 문장으로 작성.
+ * key 는 en.ts 와 동일하게 유지.
+ */
+import type en from "./en";
+
+const ko: Record<keyof typeof en, string> = {
+  // ── 브랜드 ──────────────────────────────────────────────
+  "brand.name": "닷 렌즈",
+  "brand.subtitle": "AI 촉각 교육 플랫폼",
+  "brand.browserTitle": "Dot Lens | AI 촉각 교육 플랫폼",
+  "brand.tagline": "시각 자료를 촉각 학습 경험으로 바꾸는 교육용 렌즈.",
+  "brand.message.see": "보이지 않던 수업 자료를, 촉각으로 이해할 수 있게.",
+  "brand.message.turn": "시각 자료를 촉각 학습 경험으로 바꾸는 교육용 렌즈.",
+  "brand.message.help":
+    "교사의 수업 자료를 분석하고, 학생이 만져볼 수 있는 학습 콘텐츠로 변환합니다.",
+  "brand.flow.visual": "수업 자료",
+  "brand.flow.analysis": "렌즈 분석",
+  "brand.flow.tactile": "촉각 수업",
+
+  // ── 공통 용어 ──────────────────────────────────────────
+  "term.lensInsight": "렌즈 인사이트",
+  "term.tactileView": "촉각 보기",
+  "term.focusArea": "핵심 탐색 영역",
+  "term.teachingGuide": "교사용 수업 가이드",
+  "term.expertReview": "전문가 검수",
+  "term.fieldImpact": "현장 활용 효과",
+  "term.championTeacher": "챔피언 교사",
+  "term.sampleLesson": "샘플 수업",
+  "term.demoMode": "데모 모드",
+  "term.lessonUsage": "수업 활용 기록",
+  "common.home": "홈",
+  "common.dashboard": "대시보드",
+  "common.back": "이전",
+  "common.next": "다음",
+  "common.cancel": "취소",
+  "common.close": "닫기",
+  "common.viewReport": "리포트 보기",
+  "common.learnMore": "자세히 보기",
+  "common.beforeAfter.before": "원본 시각 자료",
+  "common.beforeAfter.after": "촉각 보기",
+
+  // ── 내비게이션 ─────────────────────────────────────────
+  "nav.home": "홈",
+  "nav.dashboard": "대시보드",
+  "nav.createLesson": "수업 만들기",
+  "nav.expertReview": "전문가 검수",
+  "nav.student": "학생 학습",
+  "nav.fieldData": "현장·임팩트",
+  "nav.champions": "챔피언 교사",
+  "nav.academy": "트레이너 아카데미",
+  "nav.lessons": "수업 자료",
+  "nav.settings": "설정",
+
+  // ── 랜딩 ───────────────────────────────────────────────
+  "landing.title": "보이지 않던 수업 자료를, 촉각으로 이해할 수 있게.",
+  "landing.description":
+    "닷 렌즈는 교사가 업로드한 다이어그램과 이미지를 분석해 시각장애 및 저시력 학생이 촉각으로 탐색할 수 있는 수업 자료로 바꿉니다.",
+  "landing.supporting": "시각 자료를 촉각 학습 경험으로 바꾸는 교육용 렌즈.",
+  "landing.primaryCta": "수업 자료 만들기",
+  "landing.secondaryCta": "닷 렌즈 데모 보기",
+  "landing.flowHint": "한 장의 다이어그램이 학생이 만져보며 배우는 수업으로.",
+
+  // ── 왜 닷 렌즈인가요 ───────────────────────────────────
+  "why.title": "왜 닷 렌즈인가요?",
+  "why.description":
+    "교실의 많은 지식은 이미지, 도표, 그래프, 다이어그램으로 전달됩니다. 하지만 시각장애 학생에게 이러한 자료는 쉽게 접근하기 어렵습니다. 닷 렌즈는 시각 중심의 자료를 AI로 분석하고, 촉각 그래픽과 수업 가이드로 바꾸어 모든 학생이 같은 개념을 함께 배울 수 있도록 돕습니다.",
+  "why.point.see.title": "다르게 바라보기",
+  "why.point.see.body":
+    "닷 렌즈는 교사가 보듯 다이어그램을 읽어, 핵심 객체와 그 관계를 찾아냅니다.",
+  "why.point.touch.title": "촉각으로 탐색하기",
+  "why.point.touch.body":
+    "각 개념을 Dot Pad에서 탐색 순서가 분명한 촉각 그래픽으로 바꿉니다.",
+  "why.point.together.title": "함께 배우기",
+  "why.point.together.body":
+    "학생이 반 전체와 같은 수업을 따라갑니다. 따로 떼어 둔 별도 자료가 아닙니다.",
+
+  // ── 대시보드 ───────────────────────────────────────────
+  "dashboard.title": "오늘의 수업 운영 현황",
+  "dashboard.description":
+    "생성된 수업 자료, 검수 상태, 실제 수업 활용 기록을 한눈에 확인하세요.",
+  "dashboard.brandHelper":
+    "닷 렌즈가 수업 자료를 어떻게 촉각 학습으로 바꾸고 있는지 확인하세요.",
+  "dashboard.empty": "아직 생성된 수업 자료가 없습니다. 샘플 자료로 먼저 흐름을 확인해보세요.",
+  "dashboard.sampleButton": "샘플 수업 실행",
+  "dashboard.stat.created": "생성된 수업 자료",
+  "dashboard.stat.review": "검수 대기",
+  "dashboard.stat.used": "실제 수업 활용",
+  "dashboard.stat.teachers": "참여 교사",
+  "dashboard.stat.sessions": "학생 학습 세션",
+  "dashboard.stat.countries": "활동 국가",
+  "dashboard.section.subjects": "과목별 수업 자료",
+  "dashboard.section.feedback": "교사들의 최근 기록",
+  "dashboard.section.improve": "개선이 필요한 수업",
+  "dashboard.section.champions": "챔피언 교사",
+  "dashboard.section.recent": "최근 수업 자료",
+
+  // ── 수업 만들기 ────────────────────────────────────────
+  "create.title": "새 수업 자료 만들기",
+  "create.description":
+    "과목과 학년을 선택하고 수업 자료를 업로드하면 AI가 촉각 그래픽과 설명 가이드를 생성합니다.",
+  "create.brandHelper": "수업 자료를 업로드하면 닷 렌즈가 핵심 개념을 분석합니다.",
+  "create.uploadGuide": "다이어그램, 이미지, PDF 또는 수업 자료를 업로드하세요.",
+  "create.uploadDrop": "파일을 끌어다 놓거나, 선택하세요",
+  "create.generateButton": "AI로 촉각 자료 생성하기",
+  "create.reassure":
+    "완벽한 자료를 만들 필요는 없습니다. 먼저 초안을 생성한 뒤 전문가 검수를 통해 개선할 수 있습니다.",
+  "create.field.subject": "과목",
+  "create.field.grade": "학년",
+  "create.field.title": "수업 제목",
+  "create.field.objective": "학습 목표",
+  "create.useSample": "대신 샘플 자료 사용",
+
+  // ── 렌즈 인사이트 ──────────────────────────────────────
+  "lens.title": "닷 렌즈가 찾은 핵심 개념",
+  "lens.description":
+    "AI가 자료 속 주요 객체와 관계를 분석해 촉각 학습에 필요한 정보를 정리했습니다.",
+  "lens.item.objects": "주요 객체",
+  "lens.item.relationships": "객체 간 관계",
+  "lens.item.simplify": "단순화 필요 요소",
+  "lens.item.confusion": "예상 혼동 포인트",
+  "lens.item.order": "추천 탐색 순서",
+  "lens.scanning": "닷 렌즈가 자료를 살펴보고 있습니다…",
+
+  // ── 촉각 그래픽 미리보기 ───────────────────────────────
+  "preview.title": "촉각 그래픽 미리보기",
+  "preview.description":
+    "AI가 단순화한 촉각 그래픽과 Dot Pad 출력 구조를 확인하세요.",
+  "preview.helper": "학생이 먼저 탐색할 영역과 설명 순서를 함께 제공합니다.",
+  "preview.brandHelper": "AI가 분석한 자료를 촉각으로 탐색할 수 있는 형태로 확인하세요.",
+  "preview.sendReview": "전문가 검수 요청",
+  "preview.regenerate": "다시 생성하기",
+  "preview.dotpadLabel": "Dot Pad 출력 구조",
+  "preview.altHeading": "촉각 프리뷰 설명",
+
+  // ── 교사용 수업 가이드 ─────────────────────────────────
+  "guide.title": "교사용 수업 가이드",
+  "guide.description":
+    "학생이 촉각 자료를 어떤 순서로 탐색하면 좋을지 단계별로 안내합니다.",
+  "guide.section.goal": "수업 목표",
+  "guide.section.order": "탐색 순서",
+  "guide.section.concepts": "핵심 개념",
+  "guide.section.questions": "확인 질문",
+  "guide.section.confusion": "주의할 혼동 요소",
+  "guide.section.notes": "수업 후 기록",
+  "guide.recordButton": "수업 활용 기록 남기기",
+  "guide.tip.startArea":
+    "이 자료는 학생이 왼쪽 아래에서 시작해 위쪽 방향으로 탐색하도록 설계되었습니다.",
+  "guide.tip.describe":
+    "학생이 촉각 자료를 충분히 탐색한 뒤, 어떤 순서로 이해했는지 말해볼 수 있도록 안내하세요.",
+  "guide.tip.notes":
+    "수업 중 어려웠던 부분을 남겨주시면 다음 자료 개선에 반영할 수 있습니다.",
+
+  // ── 전문가 검수 ────────────────────────────────────────
+  "review.title": "전문가 검수 대기 목록",
+  "review.description":
+    "AI가 생성한 촉각 자료의 정확도, 선명도, 촉각 인지성을 검토하세요.",
+  "review.status.pending": "검수 대기",
+  "review.status.revision": "보완 필요",
+  "review.status.approved": "승인 완료",
+  "review.start": "검수 시작",
+  "review.requestRevision": "보완 요청",
+  "review.approve": "승인하기",
+  "review.metric.ai": "AI 신뢰도",
+  "review.metric.clarity": "선명도",
+  "review.metric.tactile": "촉각 인지성",
+  "review.metric.accuracy": "교육 정확도",
+  "review.commentLabel": "검수 의견",
+  "review.commentPlaceholder":
+    "촉각 인지성, 난이도, 수업 전 보완할 점 등을 자유롭게 적어주세요…",
+  "review.filter.all": "전체",
+
+  // ── 현장 활용 및 교육 효과 ─────────────────────────────
+  "field.title": "현장 활용 및 교육 효과",
+  "field.description":
+    "지역, 학교, 교사별 수업 활용 현황과 개선이 필요한 항목을 확인하세요.",
+  "field.metric.created": "생성된 수업 자료",
+  "field.metric.used": "실제 수업 활용",
+  "field.metric.sessions": "학생 세션",
+  "field.metric.review": "검수 완료율",
+  "field.metric.champions": "챔피언 교사 후보",
+  "field.viewReport": "리포트 보기",
+  "field.byCountry": "국가별 생성 수업 자료",
+  "field.reports": "현장 활동 보고서",
+
+  // ── 챔피언 교사 ────────────────────────────────────────
+  "champion.title": "챔피언 교사 후보",
+  "champion.description":
+    "닷 렌즈를 꾸준히 활용하고 다른 교사에게 수업 적용 방법을 전수할 수 있는 현장 리더를 확인하세요.",
+  "champion.helper":
+    "현지 교사가 스스로 촉각 교육 자료를 만들고 확산할 수 있도록 지원합니다.",
+  "champion.viewCandidates": "후보 자세히 보기",
+  "champion.criteria": "챔피언 교사 선정 기준",
+
+  // ── 상태 메시지 (aria-live) ────────────────────────────
+  "status.loadingAnalysis": "AI가 수업 자료를 분석하고 있습니다. 잠시만 기다려주세요.",
+  "status.successReady": "촉각 수업 자료가 준비되었습니다.",
+  "status.reviewRequested": "전문가 검수 요청이 전송되었습니다.",
+  "status.errorFallback":
+    "자료를 처리하는 중 문제가 발생했습니다. 다시 시도하거나 샘플 자료로 계속 진행할 수 있습니다.",
+  "status.empty": "아직 표시할 데이터가 없습니다. 샘플 데모로 전체 흐름을 먼저 확인해보세요.",
+  "status.noInternetFallback":
+    "현재 실시간 분석을 사용할 수 없어 데모 데이터로 화면을 보여드립니다.",
+  "status.uploadError":
+    "업로드한 자료를 읽는 중 문제가 발생했습니다. 다른 파일을 선택하거나 샘플 수업으로 계속 진행할 수 있습니다.",
+  "status.resetDemo": "데모 화면을 처음 상태로 되돌렸습니다.",
+  "status.saving": "수업 활용 기록을 저장하고 있습니다.",
+  "status.saved": "수업 활용 기록이 저장되었습니다.",
+  "status.retry": "다시 시도",
+  "status.continueSample": "샘플 수업으로 계속하기",
+
+  // ── 데모 모드 ──────────────────────────────────────────
+  "demo.badge": "데모 모드",
+  "demo.banner":
+    "지금은 데모 모드입니다. 모든 단계가 샘플 데이터로 진행되어 시연 중에도 흐름이 끊기지 않습니다.",
+  "demo.reset": "데모 초기화",
+  "demo.pickScenario": "둘러볼 데모 수업을 선택하세요",
+  "demo.science.title": "과학 · 식물의 성장 과정",
+  "demo.science.audience": "초등 3학년 · 시각장애 및 저시력 학생",
+  "demo.science.line1": "식물의 성장 과정을 촉각으로 탐색하는 수업입니다.",
+  "demo.science.line2": "학생은 씨앗에서 시작해 뿌리, 줄기, 잎의 순서로 성장 단계를 만져보며 학습합니다.",
+  "demo.science.line3": "교사는 각 단계의 차이를 설명하고, 학생이 성장 순서를 직접 말해볼 수 있도록 안내합니다.",
+  "demo.math.title": "수학 · 기본 도형",
+  "demo.math.audience": "초등 2학년",
+  "demo.math.line1": "기본 도형의 차이를 촉각으로 비교하는 수업입니다.",
+  "demo.math.line2": "학생은 원, 삼각형, 사각형의 모서리와 변의 차이를 만져보며 이해합니다.",
+  "demo.math.line3": "교사는 각 도형의 특징을 질문으로 확인할 수 있습니다.",
+  "demo.fieldImpact.title": "현장 활용 · 인도 미션 스쿨",
+  "demo.fieldImpact.line1": "인도 현장 학교에서 닷 렌즈가 어떻게 활용되고 있는지 확인하세요.",
+  "demo.fieldImpact.line2": "생성된 수업 자료, 실제 수업 활용 기록, 전문가 검수 현황을 한눈에 볼 수 있습니다.",
+  "demo.fieldImpact.line3": "챔피언 교사 후보를 통해 현지 자립형 교육 확산 가능성을 확인할 수 있습니다.",
+
+  // ── 접근성 ─────────────────────────────────────────────
+  "a11y.highContrast": "고대비 모드 켜기",
+  "a11y.highContrastOff": "고대비 모드 끄기",
+  "a11y.textSize": "글자 크게 보기",
+  "a11y.screenReader": "스크린리더 안내 최적화",
+  "a11y.keyboard": "키보드 탐색 사용 가능",
+  "a11y.listenPreview": "촉각 프리뷰 설명 듣기",
+  "a11y.viewDotpad": "Dot Pad 출력 구조 설명 보기",
+  "a11y.replayStatus": "상태 안내 다시 듣기",
+  "a11y.langToggleTo": "English로 전환 (Dot Lens)",
+  "a11y.langCurrent": "현재 언어: 한국어",
+
+  // ── Dot Pad 대체 설명 ──────────────────────────────────
+  "altdesc.plant":
+    "이 촉각 프리뷰는 식물의 성장 단계를 왼쪽에서 오른쪽으로 보여줍니다. 첫 번째 영역은 씨앗, 두 번째 영역은 뿌리, 세 번째 영역은 줄기와 잎입니다.",
+  "altdesc.shapes":
+    "이 촉각 프리뷰는 세 가지 기본 도형을 비교합니다. 왼쪽은 원, 가운데는 삼각형, 오른쪽은 사각형입니다. 학생은 각 도형의 변과 모서리를 차례로 탐색할 수 있습니다.",
+};
+
+export default ko;

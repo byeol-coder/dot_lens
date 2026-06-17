@@ -12,30 +12,40 @@ import type {
  * ------------------------------------------------------------------------- */
 
 export const PRODUCT = {
+  // EN: "Dot Lens" · KR: "닷 렌즈" (localized label lives in i18n: brand.name)
   name: "Dot Lens",
   shortName: "Dot Lens",
-  /** Top-line category. */
+  nameKo: "닷 렌즈",
+  /** Top-line category — the new positioning. */
   positioning: {
-    en: "Self-sustaining tactile education operations platform",
-    ko: "자립형 촉각 교육 운영 플랫폼",
+    en: "AI Tactile Learning Platform",
+    ko: "AI 촉각 교육 플랫폼",
   },
   /** Who it is built for. */
   audience: {
-    en: "for mission fields & low-resource classrooms",
-    ko: "선교지·저자원 교육 현장을 위한",
+    en: "for inclusive classrooms in mission fields & low-resource schools",
+    ko: "선교지·저자원 교육 현장의 모두를 위한",
   },
   subtitle: {
-    en: "Self-sustaining tactile education operations for mission fields & low-resource classrooms",
-    ko: "선교지·저자원 교육 현장을 위한 자립형 촉각 교육 운영 플랫폼",
+    en: "AI Tactile Learning Platform",
+    ko: "AI 촉각 교육 플랫폼",
+  },
+  /**
+   * The meaning behind the name — Dot (braille / tactile point / accessible
+   * unit of information) + Lens (a new way to see learning material).
+   */
+  meaning: {
+    en: "A tactile lens that helps teachers and students see, touch, and understand classroom material together.",
+    ko: "교사와 학생이 수업 자료를 함께 보고, 만지고, 이해할 수 있도록 돕는 교육용 렌즈입니다.",
   },
   /** The shift this product makes. */
   thesis: {
-    en: "Not just delivering tactile content — building the methodology, review, and support loop that lets local teachers run tactile lessons on their own.",
-    ko: "촉각 콘텐츠를 전달하는 데 그치지 않고, 현지 교사가 스스로 촉각 수업을 운영할 수 있도록 방법론·검수·지원의 선순환을 만듭니다.",
+    en: "Dot Lens reads a visual lesson the way a teacher would, then turns it into something students can explore by touch.",
+    ko: "닷 렌즈는 교사가 보듯 시각 자료를 읽고, 학생이 손으로 탐색할 수 있는 수업으로 바꿉니다.",
   },
   value: {
-    en: "Teachers build the material, experts review it, classrooms teach with it, field data improves it — and local champions carry it forward.",
-    ko: "교사가 자료를 만들고, 전문가가 검수하고, 교실에서 가르치고, 현장 데이터로 개선하며, 현지 챔피언 교사가 이어갑니다.",
+    en: "Turn visual lessons into tactile learning experiences students can explore.",
+    ko: "수업 자료를 학생이 직접 만져볼 수 있는 촉각 학습 콘텐츠로 바꿉니다.",
   },
 } as const;
 

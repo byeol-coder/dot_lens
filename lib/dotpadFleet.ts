@@ -7,6 +7,9 @@
  * changing the UI.
  */
 
+import { gridToGraphicHex, textToTextHex } from "@/lib/dotpadEncode";
+import { getMatrix } from "@/lib/tactileMatrix";
+
 export const MAX_DEVICES = 5;
 
 export type DotPadConnectionStatus =
@@ -102,6 +105,61 @@ export function setFleetAdapter(a: DotPadAdapter) {
   adapter = a;
 }
 
+/* ── real SDK fleet adapter (injected by the bridge) ──────────────────────── */
+
+/**
+ * Multi-device transport backed by the Dot Inc Web SDK. The bridge registers
+ * this (via window.registerDotPadFleet) so up to 5 real Dot Pads can be added,
+ * each tracked by an id the bridge maps to an SDK DotDevice handle.
+ */
+export interface FleetSdkAdapter {
+  connectNew(): Promise<{ id: string; name: string; graphicCols: number; graphicRows: number; brailleCells: number }>;
+  disconnect(id: string): Promise<void>;
+  showGraphicHex(id: string, hex: string): void;
+  showTextHex(id: string, hex: string): void;
+  testOutput(id: string): void;
+}
+
+let sdk: FleetSdkAdapter | null = null;
+const dims = new Map<string, { cols: number; rows: number; cells: number }>();
+
+export function registerFleetSdk(a: FleetSdkAdapter | null): void {
+  sdk = a;
+  emit();
+}
+export function hasFleetSdk(): boolean {
+  return sdk !== null;
+}
+/** Expose the registrar so the external bridge can inject the real SDK adapter. */
+export function exposeFleetRegistrar(): void {
+  if (typeof window === "undefined") return;
+  (window as unknown as { registerDotPadFleet?: typeof registerFleetSdk }).registerDotPadFleet = registerFleetSdk;
+}
+
+/** Connect a real Dot Pad (opens the BLE picker) and add it to the fleet. */
+export async function connectRealDotPad(): Promise<boolean> {
+  if (!sdk || devices.length >= MAX_DEVICES) return false;
+  try {
+    const meta = await sdk.connectNew();
+    dims.set(meta.id, { cols: meta.graphicCols || 30, rows: meta.graphicRows || 10, cells: meta.brailleCells || 20 });
+    devices = [
+      ...devices,
+      {
+        id: meta.id,
+        label: meta.name || `Dot Pad ${devices.length + 1}`,
+        assignedStudent: STUDENTS[devices.length],
+        status: "ready",
+        currentStep: 1,
+        totalSteps: 4,
+      },
+    ];
+    emit();
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 function wait(ms: number) {
   return new Promise<void>((r) => setTimeout(r, ms));
 }
@@ -141,6 +199,16 @@ export async function connectDotPad(id: string): Promise<void> {
   await adapter.connect(id);
 }
 export async function disconnectDotPad(id: string): Promise<void> {
+  if (sdk && dims.has(id)) {
+    try {
+      await sdk.disconnect(id);
+    } catch {
+      /* ignore */
+    }
+    dims.delete(id);
+    patch(id, { status: "not_connected", currentStep: undefined });
+    return;
+  }
   await adapter.disconnect(id);
 }
 export async function reconnectDotPad(id: string): Promise<void> {
@@ -148,6 +216,12 @@ export async function reconnectDotPad(id: string): Promise<void> {
   await adapter.connect(id);
 }
 export async function testTactileOutput(id: string): Promise<void> {
+  const dim = dims.get(id);
+  if (sdk && dim) {
+    sdk.testOutput(id);
+    patch(id, { lastSyncedAt: nowIso() });
+    return;
+  }
   await adapter.testOutput(id);
 }
 export function setDeviceDemoMode(id: string): void {
@@ -160,6 +234,15 @@ export function removeDevice(id: string): void {
 
 export async function syncLessonToDevice(id: string, lessonId: string): Promise<void> {
   patch(id, { currentLessonId: lessonId });
+  const dim = dims.get(id);
+  if (sdk && dim) {
+    patch(id, { status: "syncing" });
+    const grid = getMatrix("cycle");
+    sdk.showGraphicHex(id, gridToGraphicHex(grid, dim.cols, dim.rows));
+    sdk.showTextHex(id, textToTextHex("lesson", "en", dim.cells));
+    patch(id, { status: "ready", lastSyncedAt: nowIso() });
+    return;
+  }
   await adapter.sendTactileFrame(id, { cols: 60, rows: 40, cells: [] });
 }
 export async function syncLessonToAllDevices(lessonId: string): Promise<void> {

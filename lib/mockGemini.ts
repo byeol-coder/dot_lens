@@ -88,8 +88,8 @@ export function analyzeVisual(
     needsTeacherReview: false,
     createdAt: new Date().toISOString(),
     summary: {
-      en: "Gemini detected a science process diagram. The recommended tactile format is guided step-by-step exploration.",
-      ko: "Gemini가 과학 과정 다이어그램을 감지했습니다. 권장 촉각 형식은 단계별 안내 탐색입니다.",
+      en: "Dot Lens recognized a science process diagram. The clearest way to explore it by touch is a guided, step-by-step path.",
+      ko: "닷 렌즈가 과학 과정 다이어그램을 인식했습니다. 손으로 탐색하기에는 단계별 안내 경로가 가장 명확합니다.",
     },
     tactilePriority: TACTILE_PRIORITY,
     learningSteps: LEARNING_STEPS,

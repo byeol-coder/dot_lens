@@ -1,6 +1,7 @@
 "use client";
 
 import { DotPadSimulator } from "@/components/DotPadSimulator";
+import { StudentDevicePicker } from "@/components/StudentDevicePicker";
 import {
   FeatureHighlightCard,
   GeminiInsightPanel,
@@ -50,6 +51,9 @@ export function StudentExperienceShowcase() {
           tactile-ready
         </span>
       </div>
+
+      {/* Pick which student / Dot Pad this demo represents */}
+      <StudentDevicePicker />
 
       {/* The interactive device — the heart of the prototype */}
       <DotPadSimulator />

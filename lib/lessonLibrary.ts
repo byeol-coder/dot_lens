@@ -1,6 +1,6 @@
 import type { TactileScene } from "@/lib/tactileScene";
 
-export type Subject = "korean" | "math" | "science";
+export type Subject = "korean" | "math" | "science" | "social" | "art" | "mobility";
 export type Grade = "elementary" | "middle" | "high";
 
 export interface LessonEntry {
@@ -325,7 +325,10 @@ export const LESSON_CATALOG: LessonEntry[] = [
 ];
 
 export const SUBJECTS: Record<Subject, { ko: string; en: string; color: string }> = {
-  korean: { ko: "국어", en: "Korean Language", color: "#E9F0FE" },
-  math:   { ko: "수학", en: "Mathematics",      color: "#E4F4EC" },
-  science:{ ko: "과학", en: "Science",           color: "#FBF3E2" },
+  korean:  { ko: "국어", en: "Korean",          color: "#E9F0FE" },
+  math:    { ko: "수학", en: "Math",             color: "#E4F4EC" },
+  science: { ko: "과학", en: "Science",          color: "#FBF3E2" },
+  social:  { ko: "사회", en: "Social Studies",   color: "#F3ECFB" },
+  art:     { ko: "미술", en: "Art",              color: "#FDECEF" },
+  mobility:{ ko: "보행·이동", en: "Orientation & Mobility", color: "#EAF6F6" },
 };

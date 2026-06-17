@@ -14,7 +14,7 @@ export function DotLensSidePanel({ className }: { className?: string }) {
       )}
     >
       <header className="flex items-center justify-between border-b border-line px-4 py-3">
-        <p className="eyebrow">Dot Lens · Gemini</p>
+        <p className="eyebrow">Dot Lens</p>
         <StatusBadge variant="verified">connected</StatusBadge>
       </header>
 

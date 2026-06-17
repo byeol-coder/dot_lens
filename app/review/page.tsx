@@ -8,10 +8,11 @@ export default function ReviewPage() {
     <>
       <PageHeader
         eyebrow="Expert · Braille QA"
+        eyebrowKo="전문가 · 점자 검수"
         title="Verify and approve tactile materials"
         titleKo="촉각 자료를 검토하고 승인하기"
-        description="AI-generated tactile materials go through expert review before reaching students. Review tactile quality, approve or request revisions."
-        phase={3}
+        description="AI-generated tactile materials go through expert review before reaching students. Check tactile quality, then approve or request revisions."
+        descriptionKo="AI가 생성한 촉각 자료는 학생에게 닿기 전 전문가 검수를 거칩니다. 촉각 품질을 확인하고 승인하거나 보완을 요청하세요."
       />
       <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 space-y-12">
 

@@ -213,7 +213,7 @@ export function DotPadSimulator({ className }: { className?: string }) {
                 G
               </span>
               <p className="font-mono text-[11px] uppercase tracking-eyebrow text-accent">
-                Gemini tutor
+                Dot Lens tutor
               </p>
             </div>
             <p

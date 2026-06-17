@@ -231,7 +231,7 @@ export function LessonLibraryPage() {
               </div>
               <p className="text-[14px] font-medium text-ink">레슨을 선택하세요</p>
               <p className="mt-1 text-[13px] text-muted">
-                레슨 카드를 클릭하면 Gemini가 다이어그램을 분석하고<br />
+                레슨 카드를 클릭하면 닷 렌즈가 다이어그램을 분석하고<br />
                 촉각 출력을 즉시 생성합니다.
               </p>
             </div>

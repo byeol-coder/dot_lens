@@ -2,14 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import type { Assignment, LocalizedText, VisualAnalysis } from "@/types";
+import type { Assignment, LocalizedText, TactileGridData, VisualAnalysis } from "@/types";
 import { ScreenCard } from "@/components/ScreenCard";
 import { StatusBadge, type StatusVariant } from "@/components/StatusBadge";
 import { TactileGrid } from "@/components/TactileGrid";
 import { DotPadSimulator } from "@/components/DotPadSimulator";
 import { Braille } from "@/components/Braille";
 import { getMatrix } from "@/lib/tactileMatrix";
+import { fileToTactileGrid, type ConvertMode, type ImageTactileMeta } from "@/lib/imageToTactile";
 import { clientApi } from "@/lib/clientApi";
+import { logError } from "@/lib/telemetry";
 import { useLang, type Lang } from "@/lib/i18n";
 import { cn } from "@/lib/cn";
 
@@ -95,6 +97,12 @@ export function TeacherFlow() {
   });
   const [draftSaved, setDraftSaved] = useState(false);
 
+  // Uploaded image → real client-side tactile conversion
+  const [file, setFile] = useState<File | null>(null);
+  const [imgGrid, setImgGrid] = useState<TactileGridData | null>(null);
+  const [imgMeta, setImgMeta] = useState<ImageTactileMeta | null>(null);
+  const [convertMode, setConvertMode] = useState<ConvertMode>("contrast");
+
   // Step 2/3 — scan + analysis
   const [scanPhase, setScanPhase] = useState<ScanPhase>("idle");
   const [scanStage, setScanStage] = useState(0);
@@ -140,7 +148,22 @@ export function TeacherFlow() {
     );
     try {
       const data = await clientApi.scan(ASSIGNMENT_ID, "mat-wc-1");
-      await new Promise((r) => setTimeout(r, 900));
+      // Real, offline image → tactile conversion of the uploaded file.
+      if (file) {
+        try {
+          const { grid, meta } = await fileToTactileGrid(file, { mode: convertMode });
+          setImgGrid(grid);
+          setImgMeta(meta);
+        } catch (err) {
+          setImgGrid(null);
+          setImgMeta(null);
+          logError("teacherflow.convert", err instanceof Error ? err.message : "convert failed");
+        }
+      } else {
+        setImgGrid(null);
+        setImgMeta(null);
+      }
+      await new Promise((r) => setTimeout(r, 700));
       setAnalysis(data.analysis as VisualAnalysis);
       setScanPhase("done");
     } catch (e) {
@@ -148,6 +171,19 @@ export function TeacherFlow() {
       setScanPhase("error");
     } finally {
       clearInterval(interval);
+    }
+  }
+
+  // Re-run the conversion when the teacher switches contrast/edge mode.
+  async function reconvert(mode: ConvertMode) {
+    setConvertMode(mode);
+    if (!file) return;
+    try {
+      const { grid, meta } = await fileToTactileGrid(file, { mode });
+      setImgGrid(grid);
+      setImgMeta(meta);
+    } catch {
+      /* keep previous grid */
     }
   }
 
@@ -203,6 +239,7 @@ export function TeacherFlow() {
           onScan={goScan}
           scanned={scanPhase === "done"}
           canPublish={canPublish}
+          onFile={setFile}
         />
       )}
 
@@ -214,6 +251,10 @@ export function TeacherFlow() {
           error={scanError}
           onRetry={runScan}
           onNext={() => setStep(3)}
+          imgGrid={imgGrid}
+          imgMeta={imgMeta}
+          convertMode={convertMode}
+          onMode={reconvert}
         />
       )}
 
@@ -237,6 +278,7 @@ export function TeacherFlow() {
           setLabelled={setLabelled}
           onBack={() => setStep(3)}
           onNext={() => setStep(5)}
+          imgGrid={imgGrid}
         />
       )}
 
@@ -324,6 +366,7 @@ function SetupStep({
   onScan,
   scanned,
   canPublish,
+  onFile,
 }: {
   form: { title: string; subject: string; gradeLevel: string; objective: string; material: string };
   setForm: React.Dispatch<React.SetStateAction<typeof form>>;
@@ -332,6 +375,7 @@ function SetupStep({
   onScan: () => void;
   scanned: boolean;
   canPublish: boolean;
+  onFile: (f: File | null) => void;
 }) {
   const { lang } = useLang();
   const tr = (en: string, ko: string) => (lang === "ko" ? ko : en);
@@ -349,6 +393,8 @@ function SetupStep({
       tr("file", "파일");
     setFileTypeLabel(typeLabel);
     setForm((f) => ({ ...f, material: file.name }));
+    // Hand the actual File up so the scan can convert it to a tactile grid.
+    onFile(file);
   }
 
   function onInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -511,6 +557,10 @@ function ScannerStep({
   error,
   onRetry,
   onNext,
+  imgGrid,
+  imgMeta,
+  convertMode,
+  onMode,
 }: {
   phase: ScanPhase;
   stage: number;
@@ -518,6 +568,10 @@ function ScannerStep({
   error: string | null;
   onRetry: () => void;
   onNext: () => void;
+  imgGrid: TactileGridData | null;
+  imgMeta: ImageTactileMeta | null;
+  convertMode: ConvertMode;
+  onMode: (m: ConvertMode) => void;
 }) {
   const { lang } = useLang();
   const tr = (en: string, ko: string) => (lang === "ko" ? ko : en);
@@ -566,24 +620,71 @@ function ScannerStep({
 
       {phase === "done" && analysis && (
         <div className="space-y-5">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="font-mono text-[11px] uppercase tracking-eyebrow text-faint">
-              {tr("Recognized diagram", "인식된 다이어그램")}
-            </span>
-            <StatusBadge variant="review">{tr("Science process diagram", "과학 과정 다이어그램")}</StatusBadge>
-            <StatusBadge variant="verified">{Math.round(analysis.confidence * 100)}% {tr("confidence", "신뢰도")}</StatusBadge>
-          </div>
+          {/* Real, offline conversion of the uploaded image */}
+          {imgGrid && imgMeta ? (
+            <div className="rounded-2xl border border-accent/30 bg-accent-tint/40 p-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-mono text-[11px] uppercase tracking-eyebrow text-accent">
+                  {tr("Your image, converted to tactile", "업로드한 이미지를 촉각으로 변환")}
+                </span>
+                <div className="flex gap-1.5">
+                  {(["contrast", "edges"] as ConvertMode[]).map((m) => (
+                    <button
+                      key={m}
+                      type="button"
+                      onClick={() => onMode(m)}
+                      aria-pressed={convertMode === m}
+                      className={cn(
+                        "rounded-lg border px-2.5 py-1 text-[12px] font-medium transition-colors",
+                        convertMode === m ? "border-accent bg-accent text-white" : "border-line bg-surface text-ink hover:bg-surface-sunk"
+                      )}
+                    >
+                      {m === "contrast" ? tr("Lines / contrast", "윤곽·대비") : tr("Edges", "엣지")}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="mt-3 overflow-hidden rounded-xl border border-line">
+                <TactileGrid matrix={imgGrid} objectName={tr("Converted image", "변환된 이미지")} />
+              </div>
+              <p className="mt-2 font-mono text-[11px] text-accent-soft">
+                {tr(
+                  `Detected ${imgMeta.regions} region(s) · ${Math.round(imgMeta.coverage * 100)}% raised${imgMeta.inverted ? " · auto-inverted" : ""}`,
+                  `${imgMeta.regions}개 영역 감지 · ${Math.round(imgMeta.coverage * 100)}% 돌출${imgMeta.inverted ? " · 자동 반전" : ""}`
+                )}
+              </p>
+              <p className="mt-1 text-[12px] leading-relaxed text-muted">
+                {tr(
+                  "This tactile graphic was generated from your uploaded image in the browser — change the image and it updates. To name each part in braille and add audio, open it in the Tactile Builder.",
+                  "이 촉각 그래픽은 업로드한 이미지에서 브라우저가 직접 생성했습니다 — 이미지를 바꾸면 함께 바뀝니다. 각 부분에 점자 이름과 음성을 붙이려면 촉각 빌더에서 편집하세요."
+                )}
+              </p>
+              <Link href="/builder" className="mt-3 inline-block rounded-xl border border-accent bg-surface px-3 py-2 text-[13px] font-semibold text-accent hover:bg-accent-tint">
+                {tr("Refine in Tactile Builder →", "촉각 빌더에서 다듬기 →")}
+              </Link>
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-mono text-[11px] uppercase tracking-eyebrow text-faint">
+                {tr("Recognized diagram", "인식된 다이어그램")}
+              </span>
+              <StatusBadge variant="review">{tr("Science process diagram", "과학 과정 다이어그램")}</StatusBadge>
+              <StatusBadge variant="verified">{Math.round(analysis.confidence * 100)}% {tr("confidence", "신뢰도")}</StatusBadge>
+            </div>
+          )}
 
           <div className="grid gap-4 sm:grid-cols-2">
             <Recommendation title={tr("Key objects", "주요 객체")}>
-              {analysis.detectedObjects.map((o) => L(o.label, lang)).join(", ")}
+              {imgGrid && imgMeta
+                ? tr(`${imgMeta.regions} shape(s) detected — label them in the builder`, `형태 ${imgMeta.regions}개 감지 — 빌더에서 이름 지정`)
+                : analysis.detectedObjects.map((o) => L(o.label, lang)).join(", ")}
             </Recommendation>
             <Recommendation title={tr("Recommended tactile layers", "추천 촉각 레이어")}>
               {LAYERS.map((l) => l.name[lang].replace(/ Layer| 레이어/, "")).join(", ")}
             </Recommendation>
             <Recommendation title={tr("Braille summary", "점자 요약")}>
               <span className="inline-flex items-center gap-2">
-                {tr("“water cycle”", "“물의 순환”")} <StatusBadge variant="pending">{tr("needs expert review", "전문가 검수 필요")}</StatusBadge>
+                {imgGrid ? tr("from your title", "제목 기반") : tr("“water cycle”", "“물의 순환”")} <StatusBadge variant="pending">{tr("needs expert review", "전문가 검수 필요")}</StatusBadge>
               </span>
             </Recommendation>
             <Recommendation title={tr("Guided check", "안내형 확인")}>
@@ -692,6 +793,7 @@ function LayerEditorStep({
   setLabelled,
   onBack,
   onNext,
+  imgGrid,
 }: {
   brailleStatus: string;
   previewOpen: boolean;
@@ -702,6 +804,7 @@ function LayerEditorStep({
   setLabelled: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   onBack: () => void;
   onNext: () => void;
+  imgGrid: TactileGridData | null;
 }) {
   const { lang } = useLang();
   const tr = (en: string, ko: string) => (lang === "ko" ? ko : en);
@@ -722,7 +825,11 @@ function LayerEditorStep({
 
               <TactileGrid
                 className="mt-3"
-                matrix={getMatrix(simplified[layer.id] ? "cycle" : layer.matrixId)}
+                matrix={
+                  layer.id === "overview" && imgGrid && !simplified[layer.id]
+                    ? imgGrid
+                    : getMatrix(simplified[layer.id] ? "cycle" : layer.matrixId)
+                }
                 objectName={layer.name[lang]}
               />
 

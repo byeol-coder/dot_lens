@@ -8,8 +8,8 @@ import type en from "./en";
 const ko: Record<keyof typeof en, string> = {
   // ── 브랜드 ──────────────────────────────────────────────
   "brand.name": "닷 렌즈",
-  "brand.subtitle": "AI 촉각 교육 플랫폼",
-  "brand.browserTitle": "Dot Lens | AI 촉각 교육 플랫폼",
+  "brand.subtitle": "교실 운영 플랫폼",
+  "brand.browserTitle": "Dot Lens | Dot Pad 교실 운영 플랫폼",
   "brand.tagline": "시각 자료를 촉각 학습 경험으로 바꾸는 교육용 렌즈.",
   "brand.message.see": "보이지 않던 수업 자료를, 촉각으로 이해할 수 있게.",
   "brand.message.turn": "시각 자료를 촉각 학습 경험으로 바꾸는 교육용 렌즈.",

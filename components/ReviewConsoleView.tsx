@@ -6,6 +6,7 @@ import { cn } from "@/lib/cn";
 import {
   SAMPLE_PACKAGES,
   REVIEW_STATUS_META,
+  LOCALES,
   type ReviewStatus,
   type TactileLessonPackage,
 } from "@/lib/tactileLessonPackage";
@@ -268,7 +269,9 @@ export function ReviewConsoleView() {
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
               {pkg.localizationPacks.map((lp) => (
                 <div key={lp.locale} className="flex items-center justify-between rounded-lg border border-line bg-surface-sunk px-3 py-2">
-                  <span className="text-[12.5px] font-semibold text-ink">{lp.localeName}</span>
+                  <span className="text-[12.5px] font-semibold text-ink">
+                    {LOCALES.find((l) => l.code === lp.locale)?.nameLocal ?? lp.localeName}
+                  </span>
                   <span className={cn(
                     "rounded-full px-2 py-0.5 text-[10px] font-semibold",
                     lp.status === "complete" ? "bg-verify-tint text-verify" :

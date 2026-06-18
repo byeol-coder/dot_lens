@@ -6,8 +6,8 @@
 const en = {
   // ── Brand ──────────────────────────────────────────────
   "brand.name": "Dot Lens",
-  "brand.subtitle": "AI Tactile Learning Platform",
-  "brand.browserTitle": "Dot Lens | AI Tactile Learning Platform",
+  "brand.subtitle": "Classroom Operating Platform",
+  "brand.browserTitle": "Dot Lens | Dot Pad Classroom Operating Platform",
   "brand.tagline": "A tactile lens for accessible classrooms.",
   "brand.message.see": "See classroom visuals through a tactile lens.",
   "brand.message.turn": "Turn visual lessons into tactile learning experiences.",

@@ -242,7 +242,7 @@ function DeviceCard({ device: d, lang, L, onReconnect, onDisconnect, onTest, onR
         {d.lastSyncedAt && (
           <div className="col-span-2">
             <dt className="text-faint">{L("Last Sent", "마지막 전송")}</dt>
-            <dd className="font-medium text-ink">{new Date(d.lastSyncedAt).toLocaleTimeString()}</dd>
+            <dd className="font-medium text-ink">{new Date(d.lastSyncedAt).toLocaleTimeString(lang === "ko" ? "ko-KR" : "en-US")}</dd>
           </div>
         )}
       </dl>

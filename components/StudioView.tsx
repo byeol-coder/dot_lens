@@ -216,7 +216,7 @@ export function StudioView() {
               >
                 {/* Subject icon */}
                 <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-[18px] text-accent">
-                  {pkg.subject === "science" ? "🔬" : pkg.subject === "math" ? "∑" : "가"}
+                  {pkg.subject === "science" ? "🔬" : pkg.subject === "math" ? "∑" : "𝒜"}
                 </span>
 
                 {/* Info */}

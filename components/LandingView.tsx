@@ -224,7 +224,7 @@ export function LandingView() {
                   className="flex items-center gap-4 rounded-xl border border-line bg-surface px-4 py-3.5 shadow-card"
                 >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent/10 text-[15px] text-accent">
-                    {pkg.subject === "science" ? "🔬" : pkg.subject === "math" ? "∑" : "가"}
+                    {pkg.subject === "science" ? "🔬" : pkg.subject === "math" ? "∑" : "𝒜"}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-[13.5px] font-semibold text-ink">

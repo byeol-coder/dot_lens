@@ -12,9 +12,9 @@ import "@fontsource/ibm-plex-mono/500.css";
 import { AppShell } from "@/components/AppShell";
 
 export const metadata: Metadata = {
-  title: "Dot Lens | AI Tactile Learning Platform",
+  title: "Dot Lens | Dot Pad Classroom Operating Platform",
   description:
-    "Dot Lens transforms classroom diagrams and images into tactile learning materials that blind and low-vision students can explore by touch.",
+    "Dot Lens is the end-to-end platform for creating, reviewing, and delivering tactile lessons to Dot Pad devices — for blind and low-vision students worldwide.",
 };
 
 export default function RootLayout({

@@ -7,8 +7,11 @@
     color-scheme: light;
     /* Self-hosted font stacks (bundled via @fontsource) */
     --font-display: "Sora", ui-sans-serif, system-ui, sans-serif;
-    --font-sans: "Figtree Variable", "Figtree", "Apple SD Gothic Neo",
-      "Malgun Gothic", "Noto Sans KR", system-ui, sans-serif;
+    --font-sans: "Figtree Variable", "Figtree",
+      "Noto Sans Devanagari", "Noto Sans Arabic", "Noto Sans Bengali",
+      "Noto Sans Tamil", "Noto Sans Telugu", "Noto Sans Kannada",
+      "Apple SD Gothic Neo", "Malgun Gothic", "Noto Sans KR",
+      system-ui, sans-serif;
     --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
     /* Accessibility: user-controllable base size (px). Scaled by data-font-scale. */
     --base-font-size: 16px;

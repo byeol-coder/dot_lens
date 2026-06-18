@@ -80,7 +80,7 @@ export function ClassroomModeView() {
   };
 
   const addLog = (deviceId: string, key: string) => {
-    const now = new Date().toLocaleTimeString();
+    const now = new Date().toLocaleTimeString(lang === "ko" ? "ko-KR" : "en-US");
     const d = devices.find((d) => d.id === deviceId);
     setLog((prev) => [
       { deviceId, label: d?.label ?? deviceId, key, time: now },

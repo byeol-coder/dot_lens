@@ -37,24 +37,25 @@ export interface NavGroup {
  * admin / scale / impact move into More.
  * ------------------------------------------------------------------------- */
 
-/** Primary top-level menu (Home first, then the three core roles + library). */
+/**
+ * Dot Pad Classroom Operating Platform — primary 8-item navigation.
+ * Positions Dot Lens as a production/operations tool, not a content library.
+ */
 export const MAIN_NAV: NavItem[] = [
-  { href: "/", label: "Home", labelKo: "홈", blurb: "Start here." },
-  { href: "/teacher", label: "Teacher", labelKo: "교사용", blurb: "Create accessible lessons from visual materials.", role: "teacher" },
-  { href: "/student", label: "Student Demo", labelKo: "학생 체험", blurb: "Experience a lesson by touch, braille, and audio.", role: "student" },
-  { href: "/review", label: "Expert Review", labelKo: "전문가 검토", blurb: "Review tactile materials before classroom use.", role: "expert" },
-  { href: "/lesson-library", label: "Lesson Library", labelKo: "수업 자료실", blurb: "Browse and reuse approved lessons.", role: "all" },
+  { href: "/",                  label: "Home",              labelKo: "홈",            blurb: "Platform overview and quick-action hub.",                          stage: "overview", role: "all" },
+  { href: "/studio",            label: "Dot Lens Studio",   labelKo: "닷 렌즈 스튜디오", blurb: "Create tactile lessons from visual materials. Import from TIB.", stage: "build",    role: "teacher" },
+  { href: "/student",           label: "Student Player",    labelKo: "학생 플레이어",  blurb: "Run a tactile lesson on Dot Pad with braille and audio guidance.", stage: "teach",    role: "student" },
+  { href: "/review-console",    label: "Review Console",    labelKo: "검수 콘솔",      blurb: "Review AI-generated lessons before Dot Pad output.",              stage: "review",   role: "expert" },
+  { href: "/classroom",         label: "Classroom Mode",    labelKo: "교실 모드",      blurb: "Sync and manage multiple Dot Pads during live classroom sessions.", stage: "teach",    role: "teacher" },
 ];
 
-/** Secondary menu under "More" — admin, scale, and impact surfaces. */
+/**
+ * Secondary "More" menu — device ops, impact analytics, and settings.
+ */
 export const MORE_NAV: NavItem[] = [
-  { href: "/field-data", label: "Field & Impact", labelKo: "현장 임팩트", blurb: "Adoption, training, and classroom impact across regions.", role: "activist" },
-  { href: "/champions", label: "Champion Teachers", labelKo: "챔피언 교사", blurb: "Recognize and grow local champion teachers.", role: "all" },
-  { href: "/academy", label: "Trainer Academy", labelKo: "트레이너 아카데미", blurb: "Certify trainers and grow country partners.", role: "all" },
-  { href: "/champion-kit", label: "Champion Kit", labelKo: "챔피언 패키지", blurb: "Quick-start, workshop agenda, and review checklist.", role: "all" },
-  { href: "/builder", label: "Tactile Builder", labelKo: "촉각 빌더", blurb: "Author a custom tactile lesson, object by object.", role: "teacher" },
-  { href: "/dot-pad-manager", label: "Dot Pad Manager", labelKo: "Dot Pad 관리", blurb: "Connect and manage up to 5 Dot Pads at once.", role: "all" },
-  { href: "/settings", label: "Settings", labelKo: "설정", blurb: "Accessibility, language, and localization.", role: "all" },
+  { href: "/device-management", label: "Device Management", labelKo: "기기 관리",      blurb: "Connect, monitor, and control your Dot Pad fleet.",               stage: "teach",    role: "all" },
+  { href: "/impact",            label: "Impact Dashboard",  labelKo: "임팩트 대시보드", blurb: "Field adoption, usage trends, and regional impact data.",          stage: "improve",  role: "activist" },
+  { href: "/settings",          label: "Settings",          labelKo: "설정",           blurb: "Accessibility, localization packs, and display preferences.",      role: "all" },
 ];
 
 export const NAV_GROUPS: NavGroup[] = [

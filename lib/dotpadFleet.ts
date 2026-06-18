@@ -21,17 +21,41 @@ export type DotPadConnectionStatus =
   | "error"
   | "demo";
 
+/** "mock" = simulated for demo; "real" = connected via SDK BLE. */
+export type DotPadDeviceType = "mock" | "real";
+
 export interface DotPadDevice {
   id: string;
   label: string;
   assignedStudent?: string;
   status: DotPadConnectionStatus;
+  deviceType: DotPadDeviceType;
   currentLessonId?: string;
   currentStep?: number;
   totalSteps?: number;
   lastSyncedAt?: string;
   errorMessage?: string;
   isDemoDevice?: boolean;
+  /** Battery level 0–100, undefined if unknown */
+  batteryLevel?: number;
+  /** Firmware version string e.g. "1.3.0" */
+  firmwareVersion?: string;
+  /** Current tactile frame index on device */
+  currentFrame?: number;
+}
+
+/**
+ * RealDotPadAdapter — wraps the actual Dot Inc BLE SDK.
+ * Implement this interface and inject via setFleetAdapter() to switch
+ * from simulated output to real hardware output without changing the UI.
+ */
+export interface RealDotPadAdapter extends DotPadAdapter {
+  /** Open the OS BLE picker and connect a new device. */
+  connectNew(): Promise<{ id: string; name: string; graphicCols: number; graphicRows: number; brailleCells: number }>;
+  /** Query the device's current battery level (0-100). */
+  getBatteryLevel(deviceId: string): Promise<number>;
+  /** Query the device's firmware version string. */
+  getFirmwareVersion(deviceId: string): Promise<string>;
 }
 
 export interface TactileFrame {
@@ -152,8 +176,10 @@ export async function connectRealDotPad(): Promise<boolean> {
         label: meta.name || `Dot Pad ${devices.length + 1}`,
         assignedStudent: STUDENTS[devices.length],
         status: "ready",
+        deviceType: "real",
         currentStep: 1,
         totalSteps: 4,
+        firmwareVersion: "1.3.0",
       },
     ];
     emit();
@@ -175,9 +201,13 @@ function makeDevice(i: number, status: DotPadConnectionStatus, demo: boolean): D
     label: `Dot Pad ${i}`,
     assignedStudent: STUDENTS[i - 1],
     status,
+    deviceType: "mock",
     currentStep: status === "not_connected" ? undefined : 1,
     totalSteps: 4,
     isDemoDevice: demo,
+    batteryLevel: demo ? 72 : Math.floor(60 + Math.random() * 40),
+    firmwareVersion: "1.3.0",
+    currentFrame: status === "not_connected" ? undefined : 1,
   };
 }
 

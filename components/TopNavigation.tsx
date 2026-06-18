@@ -82,7 +82,7 @@ export function TopNavigation() {
                     href={item.href}
                     aria-current={active ? "page" : undefined}
                     className={cn(
-                      "block whitespace-nowrap rounded-lg px-3 py-2 text-[13px] font-medium transition-colors",
+                      "block whitespace-nowrap rounded-lg px-2.5 py-2 text-[12.5px] font-medium transition-colors",
                       active ? "bg-accent-tint text-accent" : "text-muted hover:bg-surface-sunk hover:text-ink"
                     )}
                   >

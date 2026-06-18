@@ -104,54 +104,40 @@ export function LandingView() {
   return (
     <div className="flex flex-col">
 
-      {/* ── Platform Hero ── */}
-      <section className="relative overflow-hidden border-b border-line bg-surface">
-        <div className="pin-texture absolute inset-0 opacity-30" aria-hidden />
-        <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 lg:py-16">
-          <p className="eyebrow">
-            {L("Dot Pad Classroom Operating Platform", "Dot Pad 교실 운영 플랫폼")}
-          </p>
-          <h1 className="mt-3 max-w-3xl text-balance text-[26px] font-semibold leading-tight text-ink sm:text-[36px] lg:text-[44px]">
-            {L(
-              "From visual material to tactile classroom — end to end.",
-              "시각 자료에서 촉각 수업까지 — 모든 단계가 하나의 플랫폼에."
-            )}
-          </h1>
-          <p className="mt-4 max-w-2xl text-[16px] leading-relaxed text-muted">
-            {L(
-              "Create tactile lessons with AI, get them expert-reviewed, output to Dot Pad devices, and run live classroom sessions — all in one place.",
-              "AI로 촉각 수업을 제작하고, 전문가 검수를 받고, Dot Pad로 출력하고, 교실 수업을 실행하세요 — 모두 하나의 플랫폼에서."
-            )}
-          </p>
+      {/* ── Voice Search Hero (primary) ── */}
+      <VoiceSearchHero />
 
-          {/* Quick status strip */}
-          <div className="mt-8 flex flex-wrap gap-3">
-            <div className={cn(
-              "flex items-center gap-2 rounded-xl border px-4 py-2 text-[13px] font-semibold",
-              devSummary.connected > 0
-                ? "border-verify/30 bg-verify-tint/50 text-verify"
-                : "border-line bg-surface-sunk text-muted"
-            )}>
-              <span className={cn("h-2 w-2 rounded-full", devSummary.connected > 0 ? "bg-verify" : "bg-line")} aria-hidden />
-              {devSummary.connected > 0
-                ? `${devSummary.connected} ${L("devices online", "대 기기 온라인")}`
-                : L("No devices connected", "연결된 기기 없음")}
+      {/* ── Compact status strip ── */}
+      <div className="border-b border-line bg-surface-sunk/40">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-2 px-4 py-3 sm:px-6">
+          <div className={cn(
+            "flex items-center gap-1.5 rounded-lg border px-3 py-1 text-[12px] font-semibold",
+            devSummary.connected > 0
+              ? "border-verify/30 bg-verify-tint/50 text-verify"
+              : "border-line bg-surface text-muted"
+          )}>
+            <span className={cn("h-1.5 w-1.5 rounded-full", devSummary.connected > 0 ? "bg-verify" : "bg-line")} aria-hidden />
+            {devSummary.connected > 0
+              ? `${devSummary.connected} ${L("devices online", "대 기기 온라인")}`
+              : L("No devices connected", "연결된 기기 없음")}
+          </div>
+          {pendingReview > 0 && (
+            <div className="flex items-center gap-1.5 rounded-lg border border-warn/30 bg-warn/10 px-3 py-1 text-[12px] font-semibold text-warn">
+              <span className="h-1.5 w-1.5 rounded-full bg-warn" aria-hidden />
+              {pendingReview} {L("pending review", "개 검수 대기")}
             </div>
-            {pendingReview > 0 && (
-              <div className="flex items-center gap-2 rounded-xl border border-warn/30 bg-warn/10 px-4 py-2 text-[13px] font-semibold text-warn">
-                <span className="h-2 w-2 rounded-full bg-warn" aria-hidden />
-                {pendingReview} {L("lessons pending review", "개 수업 자료 검수 대기")}
-              </div>
-            )}
-            {readyForDotPad > 0 && (
-              <div className="flex items-center gap-2 rounded-xl border border-accent/30 bg-accent-tint px-4 py-2 text-[13px] font-semibold text-accent">
-                <span className="h-2 w-2 rounded-full bg-accent" aria-hidden />
-                {readyForDotPad} {L("lessons ready for Dot Pad", "개 수업 자료 Dot Pad 출력 가능")}
-              </div>
-            )}
+          )}
+          {readyForDotPad > 0 && (
+            <div className="flex items-center gap-1.5 rounded-lg border border-accent/30 bg-accent-tint px-3 py-1 text-[12px] font-semibold text-accent">
+              <span className="h-1.5 w-1.5 rounded-full bg-accent" aria-hidden />
+              {readyForDotPad} {L("ready for Dot Pad", "개 Dot Pad 출력 가능")}
+            </div>
+          )}
+          <div className="ml-auto hidden text-[11px] text-faint sm:block">
+            {L("Dot Pad Classroom Operating Platform", "Dot Pad 교실 운영 플랫폼")}
           </div>
         </div>
-      </section>
+      </div>
 
       {/* ── 4 Platform CTAs ── */}
       <section
@@ -205,9 +191,6 @@ export function LandingView() {
           })}
         </div>
       </section>
-
-      {/* ── Voice search (quick lesson finder) ── */}
-      <VoiceSearchHero />
 
       {/* ── Platform overview strip ── */}
       <section className="border-t border-line bg-surface-sunk/50">
